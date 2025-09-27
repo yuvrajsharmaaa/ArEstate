@@ -1,52 +1,38 @@
-<<<<<<< HEAD
-
-# ArEstate
-
-=======
-
-# KrayState - Blockchain-Based Tenant-Landlord Platform
+# 🏢 ArEstate - Dynamic Real Estate Tokenization Platform
 
 [![Solidity](https://img.shields.io/badge/Solidity-^0.8.20-blue)](https://soliditylang.org/)
 [![Hardhat](https://img.shields.io/badge/Hardhat-2.19.0-yellow)](https://hardhat.org/)
 [![OpenZeppelin](https://img.shields.io/badge/OpenZeppelin-5.0.1-green)](https://openzeppelin.com/)
 [![Integra Chain](https://img.shields.io/badge/Integra-Chain-purple)](https://integra.com/)
 
-A comprehensive blockchain-based platform for real estate tokenization, lease management, and compliance built for **Integra Chain** with **ERC-3643** compliance.
+A **dynamic and configurable** blockchain platform for real estate tokenization with advanced lease management, built for **Integra Chain** ecosystem with **ERC-3643** compliance.
 
-## 🏗️ Architecture Overview
+## � What Makes This Platform Dynamic?
 
-KrayState is a full-stack blockchain platform that enables:
+Unlike static tokenization platforms, ArEstate provides **fully configurable and dynamic** smart contracts:
 
-- **Property Tokenization** with ERC-3643 compliance
-- **Lease Agreement Management** with smart contract automation
-- **Security Deposit Escrow** with automated release conditions
-- **Rent Payment Automation** with fiat-crypto bridge integration
-- **Jurisdictional Compliance** with audit reporting
-- **Identity & KYC/AML Integration** with Soulbound Tokens
+### 🏭 **Multi-Property Creation**
 
-### Core Smart Contracts
+- **Unlimited properties** with unique parameters via PropertyFactory
+- **Category-specific compliance** (Residential, Commercial, Luxury, etc.)
+- **Dynamic token economics** per property (fees, dividends, staking)
+- **Clone-based architecture** for efficient deployment
 
-| Contract                 | Description                       | Features                                                        |
-| ------------------------ | --------------------------------- | --------------------------------------------------------------- |
-| **PropertyToken.sol**    | ERC-3643 compliant security token | Property tokenization, compliance checks, transfer restrictions |
-| **IdentityRegistry.sol** | KYC/AML identity management       | Soulbound tokens, identity verification, risk assessment        |
-| **LeaseAgreement.sol**   | Lease lifecycle management        | Lease terms, rent tracking, dispute resolution                  |
-| **EscrowPayment.sol**    | Payment & deposit automation      | Security deposits, automated payments, fiat bridge              |
-| **Compliance.sol**       | Regulatory compliance engine      | Jurisdictional rules, audit trails, transfer restrictions       |
+### 🎛️ **Configurable Compliance**
 
-## 🚀 Quick Start
+- **Per-token compliance rules** with real-time updates
+- **Risk-based investor tiers** with dynamic limits
+- **Country restrictions** and allowlists management
+- **Time-based compliance windows** and monitoring
 
-### Prerequisites
+### 📋 **Advanced Lease Terms**
 
-```bash
-# Node.js 16+ required
-node --version
+- **Variable payment frequencies** (monthly, quarterly, custom)
+- **Automatic rent escalations** with market-based adjustments
+- **Rent-to-own conversions** with ownership tracking
+- **Multi-tenant agreements** and co-tenant support
 
-# Install dependencies
-npm install
-```
-
-### Environment Setup
+## 🏗️ Smart Contract Architecture
 
 1. **Copy environment template:**
 
@@ -65,56 +51,162 @@ INTEGRA_EXPLORER_API_KEY=your_explorer_api_key
 ETHERSCAN_API_KEY=your_etherscan_api_key
 ```
 
-### Compilation & Testing
+```
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│  PropertyFactory │    │ DynamicCompliance │    │DynamicLeaseManager│
+│                 │    │                  │    │                 │
+│ • Multi-Property│    │ • Configurable   │    │ • Flexible Terms│
+│ • Token Economics│    │ • Risk-Based     │    │ • Rent-to-Own   │
+│ • Categories    │    │ • Country Rules  │    │ • Co-Tenants    │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+         │                       │                       │
+         └───────────────────────┼───────────────────────┘
+                                 │
+                    ┌─────────────────┐
+                    │ IdentityRegistry │
+                    │                 │
+                    │ • KYC/AML       │
+                    │ • Verification  │
+                    │ • Country Track │
+                    └─────────────────┘
+```
+
+### Dynamic Smart Contracts
+
+| Contract                | Purpose                 | Dynamic Features                                   |
+| ----------------------- | ----------------------- | -------------------------------------------------- |
+| **PropertyFactory**     | Multi-property creation | Unlimited properties, custom economics, categories |
+| **DynamicCompliance**   | Configurable compliance | Per-token rules, risk tiers, country restrictions  |
+| **DynamicLeaseManager** | Advanced leasing        | Rent escalations, rent-to-own, multi-tenant        |
+| **RealEstateToken**     | ERC-3643 token          | Clone-based deployment, compliance integration     |
+| **IdentityRegistry**    | KYC/AML management      | Public registration, admin verification            |
+| **MockUSDC**            | Payment infrastructure  | Faucet functionality, testing support              |
+
+## 🚀 Quick Start
+
+### Prerequisites
 
 ```bash
-# Compile contracts
-npm run compile
+# Node.js 18+ required
+node --version
 
-# Run tests
+# Install dependencies
+npm install
+```
+
+### Deployment Options
+
+#### Dynamic Platform (Full Features)
+
+```bash
+# Deploy all dynamic contracts
+npx hardhat run scripts/deployDynamic.js --network integra-testnet
+```
+
+#### Basic Platform (Simplified)
+
+```bash
+# Deploy basic contracts
+npx hardhat run scripts/deploy.js --network integra-testnet
+```
+
+### Testing
+
+```bash
+# Run all tests
 npm run test
 
-# Check contract sizes
-npm run size
+# Test dynamic features specifically
+npx hardhat test --grep "Dynamic"
 
-# Generate gas reports
-REPORT_GAS=true npm run test
+# Test property factory
+npx hardhat test --grep "PropertyFactory"
 ```
 
-### Deployment
+## 🎮 Usage Examples
 
-#### Deploy to Integra Testnet
+### 1. Create Multiple Properties
 
-```bash
-npm run deploy:testnet
+```javascript
+// Residential property
+const residential = await propertyFactory.createProperty({
+  name: "Suburban Homes",
+  category: PropertyCategory.RESIDENTIAL,
+  totalValue: ethers.utils.parseEther("2000000"),
+  tokenEconomics: { managementFee: 200, enableDividends: true },
+});
+
+// Commercial property
+const commercial = await propertyFactory.createProperty({
+  name: "Office Complex",
+  category: PropertyCategory.COMMERCIAL,
+  totalValue: ethers.utils.parseEther("10000000"),
+  tokenEconomics: { managementFee: 300, enableStaking: true },
+});
 ```
 
-#### Deploy to Integra Mainnet
+### 2. Configure Compliance Dynamically
 
-```bash
-npm run deploy:mainnet
+```javascript
+// Set risk-based limits
+await dynamicCompliance.updateComplianceRule(
+  tokenAddress,
+  RuleType.RISK_BASED,
+  { isActive: true, value1: ethers.utils.parseEther("50000") }
+);
+
+// Country restrictions
+await dynamicCompliance.setCountryRestrictions(
+  tokenAddress,
+  [840, 124],
+  true,
+  false // Allow US, Canada
+);
 ```
 
-#### Deploy to Local Network
+### 3. Advanced Lease Management
 
-```bash
-# Terminal 1: Start Hardhat node
-npx hardhat node
+```javascript
+// Create escalating rent lease
+const terms = {
+  paymentFrequency: PaymentFrequency.MONTHLY,
+  adjustmentType: RentAdjustmentType.PERCENTAGE,
+  adjustmentRate: 500, // 5% annual increase
+  rentToOwnOption: true,
+};
 
-# Terminal 2: Deploy to localhost
-npx hardhat run scripts/deploy.js --network localhost
+await dynamicLeaseManager.createDynamicLease(
+  tenant,
+  mockUSDC,
+  baseRent,
+  deposit,
+  startDate,
+  endDate,
+  terms
+);
 ```
 
 ## 📋 Contract Specifications
 
-### PropertyToken (ERC-3643)
+### PropertyFactory
 
 **Features:**
 
-- ✅ ERC-20 compatible with compliance extensions
-- ✅ Identity registry integration
-- ✅ Transfer restrictions and freezing
-- ✅ Compliance rule enforcement
+- ✅ Create unlimited properties with unique parameters
+- ✅ Clone-based deployment for gas efficiency
+- ✅ Property categorization and management
+- ✅ Dynamic token economics per property
+- ✅ Role-based access control for creators
+
+### DynamicCompliance
+
+**Features:**
+
+- ✅ Configurable compliance rules per token
+- ✅ Risk-based investor assessment (Low/Medium/High/Prohibited)
+- ✅ Dynamic country restrictions and allowlists
+- ✅ Time-based compliance windows
+- ✅ Automated compliance monitoring
 - ✅ Integra RWA Asset Passport integration
 - ✅ Batch operations support
 

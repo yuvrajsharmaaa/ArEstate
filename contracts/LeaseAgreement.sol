@@ -609,7 +609,7 @@ contract LeaseAgreement is AccessControl, ReentrancyGuard, Pausable {
     function batchCheckLeaseExpiry(uint256[] calldata _leaseIds) external {
         for (uint256 i = 0; i < _leaseIds.length; i++) {
             if (_leaseIds[i] > 0 && _leaseIds[i] <= _leaseCounter) {
-                checkLeaseExpiry(_leaseIds[i]);
+                this.checkLeaseExpiry(_leaseIds[i]);
             }
         }
     }

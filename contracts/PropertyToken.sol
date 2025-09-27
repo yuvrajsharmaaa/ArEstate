@@ -455,7 +455,7 @@ contract PropertyToken is ERC20, AccessControl, ReentrancyGuard, Pausable, IERC3
                 "PropertyToken: arrays length mismatch");
         
         for (uint256 i = 0; i < _fromList.length; i++) {
-            forcedTransfer(_fromList[i], _toList[i], _amounts[i]);
+            this.forcedTransfer(_fromList[i], _toList[i], _amounts[i]);
         }
     }
     
@@ -463,7 +463,7 @@ contract PropertyToken is ERC20, AccessControl, ReentrancyGuard, Pausable, IERC3
         require(_toList.length == _amounts.length, "PropertyToken: arrays length mismatch");
         
         for (uint256 i = 0; i < _toList.length; i++) {
-            mint(_toList[i], _amounts[i]);
+            this.mint(_toList[i], _amounts[i]);
         }
     }
     
@@ -471,7 +471,7 @@ contract PropertyToken is ERC20, AccessControl, ReentrancyGuard, Pausable, IERC3
         require(_userAddresses.length == _amounts.length, "PropertyToken: arrays length mismatch");
         
         for (uint256 i = 0; i < _userAddresses.length; i++) {
-            burn(_userAddresses[i], _amounts[i]);
+            this.burn(_userAddresses[i], _amounts[i]);
         }
     }
     
