@@ -124,18 +124,6 @@ contract IdentityRegistry is Ownable, IIdentityRegistry {
     // TODO: Add integration with Integra's Soulbound Token system
     // TODO: Add batch verification for multiple identities
     // TODO: Add revocation/suspension functionality for compliance
-}
-            country: _country,
-            isVerified: false, // Will be set to true after KYC completion
-            verificationDate: 0,
-            kycProvider: "",
-            documentHash: bytes32(0),
-            riskLevel: 3, // Default medium risk
-            isActive: true
-        });
-        
-        emit IdentityStored(_userAddress, _identity);
-    }
     
     /**
      * @dev Complete KYC verification for a user
@@ -145,7 +133,7 @@ contract IdentityRegistry is Ownable, IIdentityRegistry {
         string calldata _kycProvider,
         bytes32 _documentHash,
         uint8 _riskLevel
-    ) external onlyComplianceOfficer {
+    ) external onlyOwner {
         require(_identities[_userAddress].isActive, "IdentityRegistry: identity not found");
         require(approvedKYCProviders[_kycProvider], "IdentityRegistry: KYC provider not approved");
         require(_riskLevel >= 1 && _riskLevel <= 5, "IdentityRegistry: invalid risk level");
@@ -165,8 +153,8 @@ contract IdentityRegistry is Ownable, IIdentityRegistry {
     function deleteIdentity(address _userAddress) 
         external 
         override 
-        onlyRegistrar 
-        nonReentrant 
+        onlyOwner 
+        
     {
         require(_identities[_userAddress].isActive, "IdentityRegistry: identity not found");
         
@@ -182,7 +170,7 @@ contract IdentityRegistry is Ownable, IIdentityRegistry {
     function updateIdentity(address _userAddress, address _identity) 
         external 
         override 
-        onlyRegistrar 
+        onlyOwner 
     {
         require(_identities[_userAddress].isActive, "IdentityRegistry: identity not found");
         require(_identity != address(0), "IdentityRegistry: invalid identity address");
@@ -199,8 +187,7 @@ contract IdentityRegistry is Ownable, IIdentityRegistry {
     function updateCountry(address _userAddress, uint16 _country) 
         external 
         override 
-        onlyComplianceOfficer 
-        validCountry(_country) 
+        onlyOwner 
     {
         require(_identities[_userAddress].isActive, "IdentityRegistry: identity not found");
         
@@ -213,7 +200,7 @@ contract IdentityRegistry is Ownable, IIdentityRegistry {
      */
     function updateRiskLevel(address _userAddress, uint8 _riskLevel) 
         external 
-        onlyComplianceOfficer 
+        onlyOwner 
     {
         require(_identities[_userAddress].isActive, "IdentityRegistry: identity not found");
         require(_riskLevel >= 1 && _riskLevel <= 5, "IdentityRegistry: invalid risk level");
@@ -316,7 +303,7 @@ contract IdentityRegistry is Ownable, IIdentityRegistry {
         address[] calldata _userAddresses,
         address[] calldata _identities,
         uint16[] calldata _countries
-    ) external override onlyRegistrar nonReentrant {
+    ) external override onlyOwner {
         require(
             _userAddresses.length == _identities.length && 
             _identities.length == _countries.length,
@@ -338,7 +325,7 @@ contract IdentityRegistry is Ownable, IIdentityRegistry {
     function bindIdentityRegistry(address _identityRegistry) 
         external 
         override 
-        onlyRole(DEFAULT_ADMIN_ROLE) 
+        onlyOwner 
     {
         require(_identityRegistry != address(0), "IdentityRegistry: invalid registry address");
         require(!_registryBound[_identityRegistry], "IdentityRegistry: registry already bound");
@@ -355,7 +342,7 @@ contract IdentityRegistry is Ownable, IIdentityRegistry {
     function unbindIdentityRegistry(address _identityRegistry) 
         external 
         override 
-        onlyRole(DEFAULT_ADMIN_ROLE) 
+        onlyOwner 
     {
         require(_registryBound[_identityRegistry], "IdentityRegistry: registry not bound");
         
@@ -381,7 +368,7 @@ contract IdentityRegistry is Ownable, IIdentityRegistry {
      */
     function setSupportedCountry(uint16 _country, bool _supported) 
         external 
-        onlyRole(DEFAULT_ADMIN_ROLE) 
+        onlyOwner 
     {
         supportedCountries[_country] = _supported;
         emit CountrySupported(_country, _supported);
@@ -392,7 +379,7 @@ contract IdentityRegistry is Ownable, IIdentityRegistry {
      */
     function setRestrictedCountry(uint16 _country, bool _restricted) 
         external 
-        onlyRole(DEFAULT_ADMIN_ROLE) 
+        onlyOwner 
     {
         restrictedCountries[_country] = _restricted;
         emit CountryRestricted(_country, _restricted);
@@ -403,7 +390,7 @@ contract IdentityRegistry is Ownable, IIdentityRegistry {
      */
     function addKYCProvider(string calldata _provider) 
         external 
-        onlyRole(DEFAULT_ADMIN_ROLE) 
+        onlyOwner 
     {
         approvedKYCProviders[_provider] = true;
         emit KYCProviderAdded(_provider);
@@ -414,7 +401,7 @@ contract IdentityRegistry is Ownable, IIdentityRegistry {
      */
     function removeKYCProvider(string calldata _provider) 
         external 
-        onlyRole(DEFAULT_ADMIN_ROLE) 
+        onlyOwner 
     {
         approvedKYCProviders[_provider] = false;
         emit KYCProviderRemoved(_provider);
@@ -425,7 +412,7 @@ contract IdentityRegistry is Ownable, IIdentityRegistry {
      */
     function suspendIdentity(address _userAddress) 
         external 
-        onlyComplianceOfficer 
+        onlyOwner 
     {
         require(_identities[_userAddress].isActive, "IdentityRegistry: identity not found");
         _identities[_userAddress].isVerified = false;
@@ -438,7 +425,7 @@ contract IdentityRegistry is Ownable, IIdentityRegistry {
      */
     function reactivateIdentity(address _userAddress) 
         external 
-        onlyComplianceOfficer 
+        onlyOwner 
     {
         require(_identities[_userAddress].isActive, "IdentityRegistry: identity not found");
         require(_identities[_userAddress].verificationDate > 0, "IdentityRegistry: never verified");

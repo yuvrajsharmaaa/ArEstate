@@ -454,7 +454,7 @@ contract EscrowPayment is AccessControl, ReentrancyGuard, Pausable {
      * @dev Execute automated payment
      */
     function executeAutomatedPayment(uint256 _subscriptionId) 
-        external 
+        public 
         onlyPaymentProcessor 
         nonReentrant 
         returns (uint256) 
