@@ -63,6 +63,14 @@ contract Compliance is Ownable, ICompliance {
     }
     
     /**
+     * @dev Modifier to ensure only the bound token can call certain functions
+     */
+    modifier onlyToken() {
+        require(msg.sender == boundToken, "Compliance: only bound token");
+        _;
+    }
+    
+    /**
      * @dev Check if a transfer is compliant
      * @param _from The sender address
      * @param _to The recipient address  
@@ -230,6 +238,33 @@ contract Compliance is Ownable, ICompliance {
         if (newBalance > maxBalancePerInvestor) return false;
         
         return true;
+    }
+
+    /**
+     * @dev Hook called when tokens are created (minted)
+     * @param _to The recipient address
+     * @param _amount The amount minted
+     */
+    function created(address _to, uint256 _amount) external override onlyToken {
+        // Update holder balance tracking
+        if (_holderBalances[_to] == 0 && _amount > 0) {
+            _totalHolders++;
+        }
+        _holderBalances[_to] += _amount;
+    }
+
+    /**
+     * @dev Hook called when tokens are destroyed (burned)
+     * @param _from The address from which tokens are burned
+     * @param _amount The amount burned
+     */
+    function destroyed(address _from, uint256 _amount) external override onlyToken {
+        // Update holder balance tracking
+        require(_holderBalances[_from] >= _amount, "Compliance: insufficient balance to burn");
+        _holderBalances[_from] -= _amount;
+        if (_holderBalances[_from] == 0) {
+            _totalHolders--;
+        }
     }
     
     // TODO: Add time-based restrictions (lock periods, vesting)

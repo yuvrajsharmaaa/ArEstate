@@ -33,6 +33,20 @@ interface ICompliance {
      * @param _amount The transfer amount
      */
     function transferred(address _from, address _to, uint256 _amount) external;
+
+    /**
+     * @dev Hook called when tokens are created (minted)
+     * @param _to The recipient address
+     * @param _amount The amount minted
+     */
+    function created(address _to, uint256 _amount) external;
+
+    /**
+     * @dev Hook called when tokens are destroyed (burned)
+     * @param _from The address from which tokens are burned
+     * @param _amount The amount burned
+     */
+    function destroyed(address _from, uint256 _amount) external;
     
     /**
      * @dev Add address to blacklist
@@ -52,4 +66,10 @@ interface ICompliance {
      * @return bool True if blacklisted
      */
     function isBlacklisted(address _address) external view returns (bool);
+    
+    /**
+     * @dev Get total number of token holders
+     * @return uint256 Number of holders
+     */
+    function getTotalHolders() external view returns (uint256);
 }

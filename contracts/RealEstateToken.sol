@@ -241,11 +241,8 @@ contract RealEstateToken is ERC20, AccessControl, ReentrancyGuard {
      */
     function _afterTokenTransfer(address from, address to, uint256 amount) 
         internal 
-        virtual 
-        override 
+        override
     {
-        super._afterTokenTransfer(from, to, amount);
-        
         // Update compliance contract holder counts
         compliance.transferred(from, to, amount);
     }

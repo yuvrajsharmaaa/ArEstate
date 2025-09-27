@@ -1,0 +1,3594 @@
+{
+  "version": "3.4",
+  "log": [
+    {
+      "@openzeppelin/contracts/access/AccessControl.sol:AccessControl": {
+        "src": "@openzeppelin\\contracts\\access\\AccessControl.sol:49",
+        "inherit": [
+          "@openzeppelin/contracts/utils/introspection/ERC165.sol:ERC165",
+          "@openzeppelin/contracts/utils/introspection/IERC165.sol:IERC165",
+          "@openzeppelin/contracts/access/IAccessControl.sol:IAccessControl",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "supportsInterface(bytes4)",
+          "hasRole(bytes32,address)",
+          "getRoleAdmin(bytes32)",
+          "grantRole(bytes32,address)",
+          "revokeRole(bytes32,address)",
+          "renounceRole(bytes32,address)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [
+            {
+              "label": "_roles",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_mapping(t_bytes32,t_struct(RoleData)22_storage)",
+              "contract": "AccessControl",
+              "src": "@openzeppelin\\contracts\\access\\AccessControl.sol:55"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_bytes32": {
+              "label": "bytes32",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_bool)": {
+              "label": "mapping(address => bool)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_bytes32,t_struct(RoleData)22_storage)": {
+              "label": "mapping(bytes32 => struct AccessControl.RoleData)",
+              "numberOfBytes": "32"
+            },
+            "t_struct(RoleData)22_storage": {
+              "label": "struct AccessControl.RoleData",
+              "members": [
+                {
+                  "label": "hasRole",
+                  "type": "t_mapping(t_address,t_bool)",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "adminRole",
+                  "type": "t_bytes32",
+                  "offset": 0,
+                  "slot": "1"
+                }
+              ],
+              "numberOfBytes": "64"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/access/IAccessControl.sol:IAccessControl": {
+        "src": "@openzeppelin\\contracts\\access\\IAccessControl.sol:9",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "hasRole(bytes32,address)",
+          "getRoleAdmin(bytes32)",
+          "grantRole(bytes32,address)",
+          "revokeRole(bytes32,address)",
+          "renounceRole(bytes32,address)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/access/Ownable.sol:Ownable": {
+        "src": "@openzeppelin\\contracts\\access\\Ownable.sol:20",
+        "inherit": [
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "owner()",
+          "renounceOwnership()",
+          "transferOwnership(address)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "Ownable",
+            "src": "@openzeppelin\\contracts\\access\\Ownable.sol:38"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_owner",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_address",
+              "contract": "Ownable",
+              "src": "@openzeppelin\\contracts\\access\\Ownable.sol:21"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/interfaces/IERC1363.sol:IERC1363": {
+        "src": "@openzeppelin\\contracts\\interfaces\\IERC1363.sol:16",
+        "inherit": [
+          "@openzeppelin/contracts/utils/introspection/IERC165.sol:IERC165",
+          "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20"
+        ],
+        "libraries": [],
+        "methods": [
+          "transferAndCall(address,uint256)",
+          "transferAndCall(address,uint256,bytes)",
+          "transferFromAndCall(address,address,uint256)",
+          "transferFromAndCall(address,address,uint256,bytes)",
+          "approveAndCall(address,uint256)",
+          "approveAndCall(address,uint256,bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/interfaces/draft-IERC6093.sol:IERC1155Errors": {
+        "src": "@openzeppelin\\contracts\\interfaces\\draft-IERC6093.sol:113",
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/interfaces/draft-IERC6093.sol:IERC20Errors": {
+        "src": "@openzeppelin\\contracts\\interfaces\\draft-IERC6093.sol:9",
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/interfaces/draft-IERC6093.sol:IERC721Errors": {
+        "src": "@openzeppelin\\contracts\\interfaces\\draft-IERC6093.sol:55",
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/proxy/Clones.sol:Clones": {
+        "src": "@openzeppelin\\contracts\\proxy\\Clones.sol:20",
+        "version": {
+          "withMetadata": "37398cbf1a21dc0a0a4213220b3731efee9423292b452db0eb4ed82974e75c03",
+          "withoutMetadata": "e2a89a66865458f0d9fedd4bc7faf0ee62e4c341d176ab79d29bd77a1bdfc32a",
+          "linkedWithoutMetadata": "e2a89a66865458f0d9fedd4bc7faf0ee62e4c341d176ab79d29bd77a1bdfc32a"
+        },
+        "inherit": [],
+        "libraries": [
+          "@openzeppelin/contracts/utils/Create2.sol:Create2",
+          "@openzeppelin/contracts/utils/Errors.sol:Errors"
+        ],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/token/ERC20/ERC20.sol:ERC20": {
+        "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:29",
+        "inherit": [
+          "@openzeppelin/contracts/interfaces/draft-IERC6093.sol:IERC20Errors",
+          "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol:IERC20Metadata",
+          "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "name()",
+          "symbol()",
+          "decimals()",
+          "totalSupply()",
+          "balanceOf(address)",
+          "transfer(address,uint256)",
+          "allowance(address,address)",
+          "approve(address,uint256)",
+          "transferFrom(address,address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "ERC20",
+            "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:44"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_balances",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_mapping(t_address,t_uint256)",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:30"
+            },
+            {
+              "label": "_allowances",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:32"
+            },
+            {
+              "label": "_totalSupply",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_uint256",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:34"
+            },
+            {
+              "label": "_name",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_string_storage",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:36"
+            },
+            {
+              "label": "_symbol",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_string_storage",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:37"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_mapping(t_address,t_mapping(t_address,t_uint256))": {
+              "label": "mapping(address => mapping(address => uint256))",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_uint256)": {
+              "label": "mapping(address => uint256)",
+              "numberOfBytes": "32"
+            },
+            "t_string_storage": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20": {
+        "src": "@openzeppelin\\contracts\\token\\ERC20\\IERC20.sol:9",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "totalSupply()",
+          "balanceOf(address)",
+          "transfer(address,uint256)",
+          "allowance(address,address)",
+          "approve(address,uint256)",
+          "transferFrom(address,address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol:IERC20Metadata": {
+        "src": "@openzeppelin\\contracts\\token\\ERC20\\extensions\\IERC20Metadata.sol:11",
+        "inherit": [
+          "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20"
+        ],
+        "libraries": [],
+        "methods": [
+          "name()",
+          "symbol()",
+          "decimals()"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol:SafeERC20": {
+        "src": "@openzeppelin\\contracts\\token\\ERC20\\utils\\SafeERC20.sol:18",
+        "version": {
+          "withMetadata": "dd0f45ebb12b27e40c59a5b7688ef67522fd9a6bdb281f0d921344f6886c776b",
+          "withoutMetadata": "e2a89a66865458f0d9fedd4bc7faf0ee62e4c341d176ab79d29bd77a1bdfc32a",
+          "linkedWithoutMetadata": "e2a89a66865458f0d9fedd4bc7faf0ee62e4c341d176ab79d29bd77a1bdfc32a"
+        },
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/utils/Context.sol:Context": {
+        "src": "@openzeppelin\\contracts\\utils\\Context.sol:16",
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/utils/Create2.sol:Create2": {
+        "src": "@openzeppelin\\contracts\\utils\\Create2.sol:17",
+        "version": {
+          "withMetadata": "cde892e9b45e9677c7bfd101c7aab3f494aef24709b054ccc1943ec00029f9d3",
+          "withoutMetadata": "e2a89a66865458f0d9fedd4bc7faf0ee62e4c341d176ab79d29bd77a1bdfc32a",
+          "linkedWithoutMetadata": "e2a89a66865458f0d9fedd4bc7faf0ee62e4c341d176ab79d29bd77a1bdfc32a"
+        },
+        "inherit": [],
+        "libraries": [
+          "@openzeppelin/contracts/utils/Errors.sol:Errors"
+        ],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/utils/Errors.sol:Errors": {
+        "src": "@openzeppelin\\contracts\\utils\\Errors.sol:14",
+        "version": {
+          "withMetadata": "75d428d4d0a9980e6b2df96a1c0a64db2f6c9e17d14940bd5f886a1759f67886",
+          "withoutMetadata": "e2a89a66865458f0d9fedd4bc7faf0ee62e4c341d176ab79d29bd77a1bdfc32a",
+          "linkedWithoutMetadata": "e2a89a66865458f0d9fedd4bc7faf0ee62e4c341d176ab79d29bd77a1bdfc32a"
+        },
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/utils/Pausable.sol:Pausable": {
+        "src": "@openzeppelin\\contracts\\utils\\Pausable.sol:17",
+        "inherit": [
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "paused()"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [
+            {
+              "label": "_paused",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_bool",
+              "contract": "Pausable",
+              "src": "@openzeppelin\\contracts\\utils\\Pausable.sol:18"
+            }
+          ],
+          "types": {
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/utils/ReentrancyGuard.sol:ReentrancyGuard": {
+        "src": "@openzeppelin\\contracts\\utils\\ReentrancyGuard.sol:25",
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "ReentrancyGuard",
+            "src": "@openzeppelin\\contracts\\utils\\ReentrancyGuard.sol:47"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_status",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_uint256",
+              "contract": "ReentrancyGuard",
+              "src": "@openzeppelin\\contracts\\utils\\ReentrancyGuard.sol:40"
+            }
+          ],
+          "types": {
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/utils/introspection/ERC165.sol:ERC165": {
+        "src": "@openzeppelin\\contracts\\utils\\introspection\\ERC165.sol:20",
+        "inherit": [
+          "@openzeppelin/contracts/utils/introspection/IERC165.sol:IERC165"
+        ],
+        "libraries": [],
+        "methods": [
+          "supportsInterface(bytes4)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/utils/introspection/IERC165.sol:IERC165": {
+        "src": "@openzeppelin\\contracts\\utils\\introspection\\IERC165.sol:15",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "supportsInterface(bytes4)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/Compliance.sol:Compliance": {
+        "src": "contracts\\Compliance.sol:23",
+        "version": {
+          "withMetadata": "b434f0bcb2fa5426766cb97c6d55e84c4cbbd75e8aab8938656f23cdf0820f6d",
+          "withoutMetadata": "409b2c1a99e79a17bff1cf0c98563acca8a24b466a3f41305420479fe27bad13",
+          "linkedWithoutMetadata": "409b2c1a99e79a17bff1cf0c98563acca8a24b466a3f41305420479fe27bad13"
+        },
+        "inherit": [
+          "contracts/interfaces/ICompliance.sol:ICompliance",
+          "@openzeppelin/contracts/access/Ownable.sol:Ownable",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "(address)",
+          "bindToken(address)",
+          "canTransfer(address,address,uint256)",
+          "transferred(address,address,uint256)",
+          "addToBlacklist(address)",
+          "removeFromBlacklist(address)",
+          "isBlacklisted(address)",
+          "addRestrictedCountry(uint16)",
+          "removeRestrictedCountry(uint16)",
+          "isCountryRestricted(uint16)",
+          "setMaxBalancePerInvestor(uint256)",
+          "getTotalHolders()",
+          "getHolderBalance(address)",
+          "created(address,uint256)",
+          "destroyed(address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "Compliance",
+            "src": "contracts\\Compliance.sol:44"
+          },
+          {
+            "kind": "state-variable-immutable",
+            "name": "identityRegistry",
+            "src": "contracts\\Compliance.sol:26"
+          },
+          {
+            "kind": "state-variable-assignment",
+            "name": "maxBalancePerInvestor",
+            "src": "contracts\\Compliance.sol:35"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_owner",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_address",
+              "contract": "Ownable",
+              "src": "@openzeppelin\\contracts\\access\\Ownable.sol:21"
+            },
+            {
+              "label": "_blacklisted",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_mapping(t_address,t_bool)",
+              "contract": "Compliance",
+              "src": "contracts\\Compliance.sol:29"
+            },
+            {
+              "label": "_restrictedCountries",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_mapping(t_uint16,t_bool)",
+              "contract": "Compliance",
+              "src": "contracts\\Compliance.sol:32"
+            },
+            {
+              "label": "maxBalancePerInvestor",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_uint256",
+              "contract": "Compliance",
+              "src": "contracts\\Compliance.sol:35"
+            },
+            {
+              "label": "_holderBalances",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_mapping(t_address,t_uint256)",
+              "contract": "Compliance",
+              "src": "contracts\\Compliance.sol:38"
+            },
+            {
+              "label": "_totalHolders",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_uint256",
+              "contract": "Compliance",
+              "src": "contracts\\Compliance.sol:39"
+            },
+            {
+              "label": "boundToken",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_address",
+              "contract": "Compliance",
+              "src": "contracts\\Compliance.sol:42"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_mapping(t_address,t_bool)": {
+              "label": "mapping(address => bool)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_uint256)": {
+              "label": "mapping(address => uint256)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint16,t_bool)": {
+              "label": "mapping(uint16 => bool)",
+              "numberOfBytes": "32"
+            },
+            "t_uint16": {
+              "label": "uint16",
+              "numberOfBytes": "2"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/DynamicLeaseManager.sol:DynamicLeaseManager": {
+        "src": "contracts\\DynamicLeaseManager.sol:24",
+        "version": {
+          "withMetadata": "ec06f625c0761ba33383e538f1607115e132edae986ed98a7c4eb20034b0e81d",
+          "withoutMetadata": "ec06f625c0761ba33383e538f1607115e132edae986ed98a7c4eb20034b0e81d",
+          "linkedWithoutMetadata": "ec06f625c0761ba33383e538f1607115e132edae986ed98a7c4eb20034b0e81d"
+        },
+        "inherit": [
+          "@openzeppelin/contracts/utils/ReentrancyGuard.sol:ReentrancyGuard",
+          "@openzeppelin/contracts/access/AccessControl.sol:AccessControl",
+          "@openzeppelin/contracts/utils/introspection/ERC165.sol:ERC165",
+          "@openzeppelin/contracts/utils/introspection/IERC165.sol:IERC165",
+          "@openzeppelin/contracts/access/IAccessControl.sol:IAccessControl",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [
+          "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol:SafeERC20"
+        ],
+        "methods": [
+          "(address)",
+          "createDynamicLease(address,address,uint256,uint256,uint256,uint256,(uint8,uint256,uint8,uint256,uint256,bool,uint256,bool,uint256,uint256,uint256,bool,uint256),string)",
+          "activateLease(uint256)",
+          "payRent(uint256)",
+          "adjustRent(uint256)",
+          "activateRentToOwn(uint256)",
+          "addCoTenant(uint256,address)",
+          "updateMarketRate(string,uint256)",
+          "autoRenewLease(uint256)",
+          "getDynamicLease(uint256)",
+          "getPaymentSchedule(uint256)",
+          "isPaymentDue(uint256)",
+          "addApprovedToken(address)",
+          "removeApprovedToken(address)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "DynamicLeaseManager",
+            "src": "contracts\\DynamicLeaseManager.sol:170"
+          },
+          {
+            "kind": "state-variable-immutable",
+            "name": "identityRegistry",
+            "src": "contracts\\DynamicLeaseManager.sol:33"
+          },
+          {
+            "kind": "state-variable-assignment",
+            "name": "_nextLeaseId",
+            "src": "contracts\\DynamicLeaseManager.sol:126"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_roles",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_mapping(t_bytes32,t_struct(RoleData)22_storage)",
+              "contract": "AccessControl",
+              "src": "@openzeppelin\\contracts\\access\\AccessControl.sol:55"
+            },
+            {
+              "label": "_status",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_uint256",
+              "contract": "ReentrancyGuard",
+              "src": "@openzeppelin\\contracts\\utils\\ReentrancyGuard.sol:40"
+            },
+            {
+              "label": "leases",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_mapping(t_uint256,t_struct(DynamicLease)3255_storage)",
+              "contract": "DynamicLeaseManager",
+              "src": "contracts\\DynamicLeaseManager.sol:115"
+            },
+            {
+              "label": "paymentSchedules",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_mapping(t_uint256,t_array(t_struct(PaymentSchedule)3266_storage)dyn_storage)",
+              "contract": "DynamicLeaseManager",
+              "src": "contracts\\DynamicLeaseManager.sol:116"
+            },
+            {
+              "label": "landlordLeases",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)",
+              "contract": "DynamicLeaseManager",
+              "src": "contracts\\DynamicLeaseManager.sol:117"
+            },
+            {
+              "label": "tenantLeases",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)",
+              "contract": "DynamicLeaseManager",
+              "src": "contracts\\DynamicLeaseManager.sol:118"
+            },
+            {
+              "label": "approvedTokens",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_mapping(t_address,t_bool)",
+              "contract": "DynamicLeaseManager",
+              "src": "contracts\\DynamicLeaseManager.sol:119"
+            },
+            {
+              "label": "authorizedManagers",
+              "offset": 0,
+              "slot": "7",
+              "type": "t_mapping(t_uint256,t_mapping(t_address,t_bool))",
+              "contract": "DynamicLeaseManager",
+              "src": "contracts\\DynamicLeaseManager.sol:120"
+            },
+            {
+              "label": "marketRates",
+              "offset": 0,
+              "slot": "8",
+              "type": "t_mapping(t_string_memory_ptr,t_uint256)",
+              "contract": "DynamicLeaseManager",
+              "src": "contracts\\DynamicLeaseManager.sol:123"
+            },
+            {
+              "label": "cpiIndex",
+              "offset": 0,
+              "slot": "9",
+              "type": "t_mapping(t_string_memory_ptr,t_uint256)",
+              "contract": "DynamicLeaseManager",
+              "src": "contracts\\DynamicLeaseManager.sol:124"
+            },
+            {
+              "label": "_nextLeaseId",
+              "offset": 0,
+              "slot": "10",
+              "type": "t_uint256",
+              "contract": "DynamicLeaseManager",
+              "src": "contracts\\DynamicLeaseManager.sol:126"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_array(t_address)dyn_storage": {
+              "label": "address[]",
+              "numberOfBytes": "32"
+            },
+            "t_array(t_struct(PaymentSchedule)3266_storage)dyn_storage": {
+              "label": "struct DynamicLeaseManager.PaymentSchedule[]",
+              "numberOfBytes": "32"
+            },
+            "t_array(t_uint256)dyn_storage": {
+              "label": "uint256[]",
+              "numberOfBytes": "32"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_bytes32": {
+              "label": "bytes32",
+              "numberOfBytes": "32"
+            },
+            "t_contract(IERC20)1746": {
+              "label": "contract IERC20",
+              "numberOfBytes": "20"
+            },
+            "t_enum(LeaseStatus)3171": {
+              "label": "enum DynamicLeaseManager.LeaseStatus",
+              "members": [
+                "DRAFT",
+                "ACTIVE",
+                "PAUSED",
+                "RENEWAL",
+                "COMPLETED",
+                "TERMINATED",
+                "DEFAULTED",
+                "CONVERTING"
+              ],
+              "numberOfBytes": "1"
+            },
+            "t_enum(PaymentFrequency)3177": {
+              "label": "enum DynamicLeaseManager.PaymentFrequency",
+              "members": [
+                "MONTHLY",
+                "QUARTERLY",
+                "SEMI_ANNUALLY",
+                "ANNUALLY",
+                "CUSTOM"
+              ],
+              "numberOfBytes": "1"
+            },
+            "t_enum(RentAdjustmentType)3183": {
+              "label": "enum DynamicLeaseManager.RentAdjustmentType",
+              "members": [
+                "FIXED",
+                "PERCENTAGE",
+                "MARKET_RATE",
+                "PERFORMANCE",
+                "CPI_INDEXED"
+              ],
+              "numberOfBytes": "1"
+            },
+            "t_mapping(t_address,t_array(t_uint256)dyn_storage)": {
+              "label": "mapping(address => uint256[])",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_bool)": {
+              "label": "mapping(address => bool)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_bytes32,t_struct(RoleData)22_storage)": {
+              "label": "mapping(bytes32 => struct AccessControl.RoleData)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_string_memory_ptr,t_uint256)": {
+              "label": "mapping(string => uint256)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_array(t_struct(PaymentSchedule)3266_storage)dyn_storage)": {
+              "label": "mapping(uint256 => struct DynamicLeaseManager.PaymentSchedule[])",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_mapping(t_address,t_bool))": {
+              "label": "mapping(uint256 => mapping(address => bool))",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_struct(DynamicLease)3255_storage)": {
+              "label": "mapping(uint256 => struct DynamicLeaseManager.DynamicLease)",
+              "numberOfBytes": "32"
+            },
+            "t_string_memory_ptr": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_string_storage": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_struct(DynamicLease)3255_storage": {
+              "label": "struct DynamicLeaseManager.DynamicLease",
+              "members": [
+                {
+                  "label": "leaseId",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "landlord",
+                  "type": "t_address",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "tenant",
+                  "type": "t_address",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "coTenants",
+                  "type": "t_array(t_address)dyn_storage",
+                  "offset": 0,
+                  "slot": "3"
+                },
+                {
+                  "label": "paymentToken",
+                  "type": "t_contract(IERC20)1746",
+                  "offset": 0,
+                  "slot": "4"
+                },
+                {
+                  "label": "baseRent",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "5"
+                },
+                {
+                  "label": "currentRent",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "6"
+                },
+                {
+                  "label": "securityDeposit",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "7"
+                },
+                {
+                  "label": "startDate",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "8"
+                },
+                {
+                  "label": "endDate",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "9"
+                },
+                {
+                  "label": "nextPaymentDue",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "10"
+                },
+                {
+                  "label": "nextAdjustmentDate",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "11"
+                },
+                {
+                  "label": "status",
+                  "type": "t_enum(LeaseStatus)3171",
+                  "offset": 0,
+                  "slot": "12"
+                },
+                {
+                  "label": "terms",
+                  "type": "t_struct(LeaseTerms)3212_storage",
+                  "offset": 0,
+                  "slot": "13"
+                },
+                {
+                  "label": "propertyMetadata",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "26"
+                },
+                {
+                  "label": "totalPaid",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "27"
+                },
+                {
+                  "label": "paymentsMissed",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "28"
+                },
+                {
+                  "label": "ownershipPercentage",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "29"
+                },
+                {
+                  "label": "isRentToOwn",
+                  "type": "t_bool",
+                  "offset": 0,
+                  "slot": "30"
+                }
+              ],
+              "numberOfBytes": "992"
+            },
+            "t_struct(LeaseTerms)3212_storage": {
+              "label": "struct DynamicLeaseManager.LeaseTerms",
+              "members": [
+                {
+                  "label": "paymentFrequency",
+                  "type": "t_enum(PaymentFrequency)3177",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "customPaymentDays",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "adjustmentType",
+                  "type": "t_enum(RentAdjustmentType)3183",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "adjustmentRate",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "3"
+                },
+                {
+                  "label": "adjustmentInterval",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "4"
+                },
+                {
+                  "label": "autoRenewal",
+                  "type": "t_bool",
+                  "offset": 0,
+                  "slot": "5"
+                },
+                {
+                  "label": "renewalTerms",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "6"
+                },
+                {
+                  "label": "rentToOwnOption",
+                  "type": "t_bool",
+                  "offset": 0,
+                  "slot": "7"
+                },
+                {
+                  "label": "ownershipConversionRate",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "8"
+                },
+                {
+                  "label": "maxRentIncrease",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "9"
+                },
+                {
+                  "label": "gracePeriod",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "10"
+                },
+                {
+                  "label": "earlyTerminationAllowed",
+                  "type": "t_bool",
+                  "offset": 0,
+                  "slot": "11"
+                },
+                {
+                  "label": "earlyTerminationPenalty",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "12"
+                }
+              ],
+              "numberOfBytes": "416"
+            },
+            "t_struct(PaymentSchedule)3266_storage": {
+              "label": "struct DynamicLeaseManager.PaymentSchedule",
+              "members": [
+                {
+                  "label": "dueDate",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "amount",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "isPaid",
+                  "type": "t_bool",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "paidDate",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "3"
+                },
+                {
+                  "label": "paidAmount",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "4"
+                }
+              ],
+              "numberOfBytes": "160"
+            },
+            "t_struct(RoleData)22_storage": {
+              "label": "struct AccessControl.RoleData",
+              "members": [
+                {
+                  "label": "hasRole",
+                  "type": "t_mapping(t_address,t_bool)",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "adminRole",
+                  "type": "t_bytes32",
+                  "offset": 0,
+                  "slot": "1"
+                }
+              ],
+              "numberOfBytes": "64"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/EscrowPayment.sol:EscrowPayment": {
+        "src": "contracts\\EscrowPayment.sol:16",
+        "version": {
+          "withMetadata": "3f711047e0bc2ef8245c025fe83388a0c99edf78e19f7d27683b1d2cf3a71ffa",
+          "withoutMetadata": "3f711047e0bc2ef8245c025fe83388a0c99edf78e19f7d27683b1d2cf3a71ffa",
+          "linkedWithoutMetadata": "3f711047e0bc2ef8245c025fe83388a0c99edf78e19f7d27683b1d2cf3a71ffa"
+        },
+        "inherit": [
+          "@openzeppelin/contracts/utils/Pausable.sol:Pausable",
+          "@openzeppelin/contracts/utils/ReentrancyGuard.sol:ReentrancyGuard",
+          "@openzeppelin/contracts/access/AccessControl.sol:AccessControl",
+          "@openzeppelin/contracts/utils/introspection/ERC165.sol:ERC165",
+          "@openzeppelin/contracts/utils/introspection/IERC165.sol:IERC165",
+          "@openzeppelin/contracts/access/IAccessControl.sol:IAccessControl",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [
+          "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol:SafeERC20"
+        ],
+        "methods": [
+          "(address,address)",
+          "createSecurityDepositEscrow(uint256,address,address,address,uint256,uint256,string,bytes32)",
+          "fundSecurityDeposit(uint256)",
+          "releaseSecurityDeposit(uint256,address,uint256,string)",
+          "refundSecurityDeposit(uint256,string)",
+          "processRentPayment(uint256,address,address,address,uint256,uint256,uint8,string,bytes32)",
+          "createPaymentSubscription(uint256,address,address,address,uint256,uint256,uint256)",
+          "executeAutomatedPayment(uint256)",
+          "cancelPaymentSubscription(uint256)",
+          "raiseEscrowDispute(uint256,string)",
+          "resolveEscrowDispute(uint256,address,uint256,string)",
+          "getSecurityDeposit(uint256)",
+          "getRentPayment(uint256)",
+          "getPaymentSubscription(uint256)",
+          "getLandlordEscrows(address)",
+          "getTenantEscrows(address)",
+          "getLeaseEscrow(uint256)",
+          "getLeaseSubscription(uint256)",
+          "setApprovedToken(address,bool)",
+          "setFiatBridge(address)",
+          "updateConfiguration(uint256,uint256,uint256,uint256)",
+          "pause()",
+          "unpause()",
+          "batchExecuteAutomatedPayments(uint256[])"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "EscrowPayment",
+            "src": "contracts\\EscrowPayment.sol:170"
+          },
+          {
+            "kind": "state-variable-assignment",
+            "name": "defaultEscrowPeriod",
+            "src": "contracts\\EscrowPayment.sol:109"
+          },
+          {
+            "kind": "state-variable-assignment",
+            "name": "maxEscrowPeriod",
+            "src": "contracts\\EscrowPayment.sol:110"
+          },
+          {
+            "kind": "state-variable-assignment",
+            "name": "automatedPaymentGracePeriod",
+            "src": "contracts\\EscrowPayment.sol:111"
+          },
+          {
+            "kind": "state-variable-assignment",
+            "name": "maxFailedPayments",
+            "src": "contracts\\EscrowPayment.sol:112"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_roles",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_mapping(t_bytes32,t_struct(RoleData)22_storage)",
+              "contract": "AccessControl",
+              "src": "@openzeppelin\\contracts\\access\\AccessControl.sol:55"
+            },
+            {
+              "label": "_status",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_uint256",
+              "contract": "ReentrancyGuard",
+              "src": "@openzeppelin\\contracts\\utils\\ReentrancyGuard.sol:40"
+            },
+            {
+              "label": "_paused",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_bool",
+              "contract": "Pausable",
+              "src": "@openzeppelin\\contracts\\utils\\Pausable.sol:18"
+            },
+            {
+              "label": "securityDeposits",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_mapping(t_uint256,t_struct(SecurityDepositEscrow)4691_storage)",
+              "contract": "EscrowPayment",
+              "src": "contracts\\EscrowPayment.sol:89"
+            },
+            {
+              "label": "rentPayments",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_mapping(t_uint256,t_struct(RentPayment)4717_storage)",
+              "contract": "EscrowPayment",
+              "src": "contracts\\EscrowPayment.sol:90"
+            },
+            {
+              "label": "paymentSubscriptions",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_mapping(t_uint256,t_struct(PaymentSubscription)4742_storage)",
+              "contract": "EscrowPayment",
+              "src": "contracts\\EscrowPayment.sol:91"
+            },
+            {
+              "label": "leaseToEscrow",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_mapping(t_uint256,t_uint256)",
+              "contract": "EscrowPayment",
+              "src": "contracts\\EscrowPayment.sol:92"
+            },
+            {
+              "label": "leaseToSubscription",
+              "offset": 0,
+              "slot": "7",
+              "type": "t_mapping(t_uint256,t_uint256)",
+              "contract": "EscrowPayment",
+              "src": "contracts\\EscrowPayment.sol:93"
+            },
+            {
+              "label": "approvedTokens",
+              "offset": 0,
+              "slot": "8",
+              "type": "t_mapping(t_address,t_bool)",
+              "contract": "EscrowPayment",
+              "src": "contracts\\EscrowPayment.sol:94"
+            },
+            {
+              "label": "landlordEscrows",
+              "offset": 0,
+              "slot": "9",
+              "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)",
+              "contract": "EscrowPayment",
+              "src": "contracts\\EscrowPayment.sol:95"
+            },
+            {
+              "label": "tenantEscrows",
+              "offset": 0,
+              "slot": "10",
+              "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)",
+              "contract": "EscrowPayment",
+              "src": "contracts\\EscrowPayment.sol:96"
+            },
+            {
+              "label": "_escrowCounter",
+              "offset": 0,
+              "slot": "11",
+              "type": "t_uint256",
+              "contract": "EscrowPayment",
+              "src": "contracts\\EscrowPayment.sol:99"
+            },
+            {
+              "label": "_paymentCounter",
+              "offset": 0,
+              "slot": "12",
+              "type": "t_uint256",
+              "contract": "EscrowPayment",
+              "src": "contracts\\EscrowPayment.sol:100"
+            },
+            {
+              "label": "_subscriptionCounter",
+              "offset": 0,
+              "slot": "13",
+              "type": "t_uint256",
+              "contract": "EscrowPayment",
+              "src": "contracts\\EscrowPayment.sol:101"
+            },
+            {
+              "label": "identityRegistry",
+              "offset": 0,
+              "slot": "14",
+              "type": "t_contract(IIdentityRegistry)11363",
+              "contract": "EscrowPayment",
+              "src": "contracts\\EscrowPayment.sol:104"
+            },
+            {
+              "label": "leaseAgreementContract",
+              "offset": 0,
+              "slot": "15",
+              "type": "t_address",
+              "contract": "EscrowPayment",
+              "src": "contracts\\EscrowPayment.sol:105"
+            },
+            {
+              "label": "fiatBridge",
+              "offset": 0,
+              "slot": "16",
+              "type": "t_address",
+              "contract": "EscrowPayment",
+              "src": "contracts\\EscrowPayment.sol:106"
+            },
+            {
+              "label": "defaultEscrowPeriod",
+              "offset": 0,
+              "slot": "17",
+              "type": "t_uint256",
+              "contract": "EscrowPayment",
+              "src": "contracts\\EscrowPayment.sol:109"
+            },
+            {
+              "label": "maxEscrowPeriod",
+              "offset": 0,
+              "slot": "18",
+              "type": "t_uint256",
+              "contract": "EscrowPayment",
+              "src": "contracts\\EscrowPayment.sol:110"
+            },
+            {
+              "label": "automatedPaymentGracePeriod",
+              "offset": 0,
+              "slot": "19",
+              "type": "t_uint256",
+              "contract": "EscrowPayment",
+              "src": "contracts\\EscrowPayment.sol:111"
+            },
+            {
+              "label": "maxFailedPayments",
+              "offset": 0,
+              "slot": "20",
+              "type": "t_uint256",
+              "contract": "EscrowPayment",
+              "src": "contracts\\EscrowPayment.sol:112"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_array(t_uint256)dyn_storage": {
+              "label": "uint256[]",
+              "numberOfBytes": "32"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_bytes32": {
+              "label": "bytes32",
+              "numberOfBytes": "32"
+            },
+            "t_contract(IIdentityRegistry)11363": {
+              "label": "contract IIdentityRegistry",
+              "numberOfBytes": "20"
+            },
+            "t_enum(EscrowStatus)4663": {
+              "label": "enum EscrowPayment.EscrowStatus",
+              "members": [
+                "CREATED",
+                "FUNDED",
+                "RELEASED",
+                "REFUNDED",
+                "DISPUTED",
+                "EXPIRED"
+              ],
+              "numberOfBytes": "1"
+            },
+            "t_enum(PaymentMethod)4667": {
+              "label": "enum EscrowPayment.PaymentMethod",
+              "members": [
+                "CRYPTO",
+                "FIAT_BRIDGE",
+                "HYBRID"
+              ],
+              "numberOfBytes": "1"
+            },
+            "t_mapping(t_address,t_array(t_uint256)dyn_storage)": {
+              "label": "mapping(address => uint256[])",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_bool)": {
+              "label": "mapping(address => bool)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_bytes32,t_struct(RoleData)22_storage)": {
+              "label": "mapping(bytes32 => struct AccessControl.RoleData)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_struct(PaymentSubscription)4742_storage)": {
+              "label": "mapping(uint256 => struct EscrowPayment.PaymentSubscription)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_struct(RentPayment)4717_storage)": {
+              "label": "mapping(uint256 => struct EscrowPayment.RentPayment)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_struct(SecurityDepositEscrow)4691_storage)": {
+              "label": "mapping(uint256 => struct EscrowPayment.SecurityDepositEscrow)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_uint256)": {
+              "label": "mapping(uint256 => uint256)",
+              "numberOfBytes": "32"
+            },
+            "t_string_storage": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_struct(PaymentSubscription)4742_storage": {
+              "label": "struct EscrowPayment.PaymentSubscription",
+              "members": [
+                {
+                  "label": "subscriptionId",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "leaseId",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "tenant",
+                  "type": "t_address",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "landlord",
+                  "type": "t_address",
+                  "offset": 0,
+                  "slot": "3"
+                },
+                {
+                  "label": "paymentToken",
+                  "type": "t_address",
+                  "offset": 0,
+                  "slot": "4"
+                },
+                {
+                  "label": "amount",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "5"
+                },
+                {
+                  "label": "startDate",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "6"
+                },
+                {
+                  "label": "endDate",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "7"
+                },
+                {
+                  "label": "lastPayment",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "8"
+                },
+                {
+                  "label": "nextPayment",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "9"
+                },
+                {
+                  "label": "isActive",
+                  "type": "t_bool",
+                  "offset": 0,
+                  "slot": "10"
+                },
+                {
+                  "label": "failedPayments",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "11"
+                }
+              ],
+              "numberOfBytes": "384"
+            },
+            "t_struct(RentPayment)4717_storage": {
+              "label": "struct EscrowPayment.RentPayment",
+              "members": [
+                {
+                  "label": "paymentId",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "leaseId",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "landlord",
+                  "type": "t_address",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "tenant",
+                  "type": "t_address",
+                  "offset": 0,
+                  "slot": "3"
+                },
+                {
+                  "label": "paymentToken",
+                  "type": "t_address",
+                  "offset": 0,
+                  "slot": "4"
+                },
+                {
+                  "label": "amount",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "5"
+                },
+                {
+                  "label": "dueDate",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "6"
+                },
+                {
+                  "label": "paidDate",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "7"
+                },
+                {
+                  "label": "method",
+                  "type": "t_enum(PaymentMethod)4667",
+                  "offset": 0,
+                  "slot": "8"
+                },
+                {
+                  "label": "fiatReference",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "9"
+                },
+                {
+                  "label": "proofHash",
+                  "type": "t_bytes32",
+                  "offset": 0,
+                  "slot": "10"
+                },
+                {
+                  "label": "isAutomated",
+                  "type": "t_bool",
+                  "offset": 0,
+                  "slot": "11"
+                }
+              ],
+              "numberOfBytes": "384"
+            },
+            "t_struct(RoleData)22_storage": {
+              "label": "struct AccessControl.RoleData",
+              "members": [
+                {
+                  "label": "hasRole",
+                  "type": "t_mapping(t_address,t_bool)",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "adminRole",
+                  "type": "t_bytes32",
+                  "offset": 0,
+                  "slot": "1"
+                }
+              ],
+              "numberOfBytes": "64"
+            },
+            "t_struct(SecurityDepositEscrow)4691_storage": {
+              "label": "struct EscrowPayment.SecurityDepositEscrow",
+              "members": [
+                {
+                  "label": "escrowId",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "leaseId",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "landlord",
+                  "type": "t_address",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "tenant",
+                  "type": "t_address",
+                  "offset": 0,
+                  "slot": "3"
+                },
+                {
+                  "label": "paymentToken",
+                  "type": "t_address",
+                  "offset": 0,
+                  "slot": "4"
+                },
+                {
+                  "label": "amount",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "5"
+                },
+                {
+                  "label": "createdAt",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "6"
+                },
+                {
+                  "label": "releaseDate",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "7"
+                },
+                {
+                  "label": "status",
+                  "type": "t_enum(EscrowStatus)4663",
+                  "offset": 0,
+                  "slot": "8"
+                },
+                {
+                  "label": "releaseConditions",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "9"
+                },
+                {
+                  "label": "conditionsHash",
+                  "type": "t_bytes32",
+                  "offset": 0,
+                  "slot": "10"
+                }
+              ],
+              "numberOfBytes": "352"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/IdentityRegistry.sol:IdentityRegistry": {
+        "src": "contracts\\IdentityRegistry.sol:6",
+        "version": {
+          "withMetadata": "e8054398bfad31fff5711bc46c7898d04da444a4ce91b481abe4ac6dae2429f1",
+          "withoutMetadata": "58416890447641ec2f76b055f23f10344fcb6a646621b79eb58cbcc4f3e6eb3f",
+          "linkedWithoutMetadata": "58416890447641ec2f76b055f23f10344fcb6a646621b79eb58cbcc4f3e6eb3f"
+        },
+        "inherit": [
+          "@openzeppelin/contracts/access/Ownable.sol:Ownable",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "()",
+          "registerIdentity(address)",
+          "adminVerify(address,address,uint16)",
+          "isVerified(address)",
+          "investorCountry(address)",
+          "getCountry(address)",
+          "getIdentityDetails(address)",
+          "isRegistered(address)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "IdentityRegistry",
+            "src": "contracts\\IdentityRegistry.sol:21"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_owner",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_address",
+              "contract": "Ownable",
+              "src": "@openzeppelin\\contracts\\access\\Ownable.sol:21"
+            },
+            {
+              "label": "_identities",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_mapping(t_address,t_struct(Identity)6345_storage)",
+              "contract": "IdentityRegistry",
+              "src": "contracts\\IdentityRegistry.sol:15"
+            },
+            {
+              "label": "_registered",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_mapping(t_address,t_bool)",
+              "contract": "IdentityRegistry",
+              "src": "contracts\\IdentityRegistry.sol:16"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_mapping(t_address,t_bool)": {
+              "label": "mapping(address => bool)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_struct(Identity)6345_storage)": {
+              "label": "mapping(address => struct IdentityRegistry.Identity)",
+              "numberOfBytes": "32"
+            },
+            "t_struct(Identity)6345_storage": {
+              "label": "struct IdentityRegistry.Identity",
+              "members": [
+                {
+                  "label": "onchainId",
+                  "type": "t_address",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "country",
+                  "type": "t_uint16",
+                  "offset": 20,
+                  "slot": "0"
+                },
+                {
+                  "label": "isVerified",
+                  "type": "t_bool",
+                  "offset": 22,
+                  "slot": "0"
+                },
+                {
+                  "label": "timestamp",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "1"
+                }
+              ],
+              "numberOfBytes": "64"
+            },
+            "t_uint16": {
+              "label": "uint16",
+              "numberOfBytes": "2"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/LeaseAgreement.sol:LeaseAgreement": {
+        "src": "contracts\\LeaseAgreement.sol:15",
+        "version": {
+          "withMetadata": "0c273a0b1a5064e4697ca6f8c6fe00cf351ad5280330f77810405670cf5a1215",
+          "withoutMetadata": "0c273a0b1a5064e4697ca6f8c6fe00cf351ad5280330f77810405670cf5a1215",
+          "linkedWithoutMetadata": "0c273a0b1a5064e4697ca6f8c6fe00cf351ad5280330f77810405670cf5a1215"
+        },
+        "inherit": [
+          "@openzeppelin/contracts/utils/Pausable.sol:Pausable",
+          "@openzeppelin/contracts/utils/ReentrancyGuard.sol:ReentrancyGuard",
+          "@openzeppelin/contracts/access/AccessControl.sol:AccessControl",
+          "@openzeppelin/contracts/utils/introspection/ERC165.sol:ERC165",
+          "@openzeppelin/contracts/utils/introspection/IERC165.sol:IERC165",
+          "@openzeppelin/contracts/access/IAccessControl.sol:IAccessControl",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "(address,address)",
+          "createLease(address,uint256,address,address,uint256,uint256,address,uint256,uint256,string,string,bytes32)",
+          "activateLease(uint256)",
+          "recordRentPayment(uint256,uint256,string)",
+          "terminateLease(uint256,string)",
+          "checkLeaseExpiry(uint256)",
+          "raiseDispute(uint256,string)",
+          "resolveDispute(uint256,string)",
+          "getLease(uint256)",
+          "getLeasePayments(uint256)",
+          "getLandlordLeases(address)",
+          "getTenantLeases(address)",
+          "isRentOverdue(uint256)",
+          "getNextPaymentInfo(uint256)",
+          "setApprovedPaymentToken(address,bool)",
+          "setDefaultGracePeriod(uint256)",
+          "setLeaseDurationLimits(uint256,uint256)",
+          "setEscrowContract(address)",
+          "pause()",
+          "unpause()",
+          "batchCheckLeaseExpiry(uint256[])"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "LeaseAgreement",
+            "src": "contracts\\LeaseAgreement.sol:158"
+          },
+          {
+            "kind": "state-variable-assignment",
+            "name": "defaultGracePeriod",
+            "src": "contracts\\LeaseAgreement.sol:114"
+          },
+          {
+            "kind": "state-variable-assignment",
+            "name": "maxLeaseDuration",
+            "src": "contracts\\LeaseAgreement.sol:115"
+          },
+          {
+            "kind": "state-variable-assignment",
+            "name": "minLeaseDuration",
+            "src": "contracts\\LeaseAgreement.sol:116"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_roles",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_mapping(t_bytes32,t_struct(RoleData)22_storage)",
+              "contract": "AccessControl",
+              "src": "@openzeppelin\\contracts\\access\\AccessControl.sol:55"
+            },
+            {
+              "label": "_status",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_uint256",
+              "contract": "ReentrancyGuard",
+              "src": "@openzeppelin\\contracts\\utils\\ReentrancyGuard.sol:40"
+            },
+            {
+              "label": "_paused",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_bool",
+              "contract": "Pausable",
+              "src": "@openzeppelin\\contracts\\utils\\Pausable.sol:18"
+            },
+            {
+              "label": "leases",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_mapping(t_uint256,t_struct(Lease)6661_storage)",
+              "contract": "LeaseAgreement",
+              "src": "contracts\\LeaseAgreement.sol:100"
+            },
+            {
+              "label": "leasePayments",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_mapping(t_uint256,t_array(t_struct(PaymentRecord)6679_storage)dyn_storage)",
+              "contract": "LeaseAgreement",
+              "src": "contracts\\LeaseAgreement.sol:101"
+            },
+            {
+              "label": "landlordLeases",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)",
+              "contract": "LeaseAgreement",
+              "src": "contracts\\LeaseAgreement.sol:102"
+            },
+            {
+              "label": "tenantLeases",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)",
+              "contract": "LeaseAgreement",
+              "src": "contracts\\LeaseAgreement.sol:103"
+            },
+            {
+              "label": "approvedPaymentTokens",
+              "offset": 0,
+              "slot": "7",
+              "type": "t_mapping(t_address,t_bool)",
+              "contract": "LeaseAgreement",
+              "src": "contracts\\LeaseAgreement.sol:104"
+            },
+            {
+              "label": "_leaseCounter",
+              "offset": 0,
+              "slot": "8",
+              "type": "t_uint256",
+              "contract": "LeaseAgreement",
+              "src": "contracts\\LeaseAgreement.sol:106"
+            },
+            {
+              "label": "_paymentCounter",
+              "offset": 0,
+              "slot": "9",
+              "type": "t_uint256",
+              "contract": "LeaseAgreement",
+              "src": "contracts\\LeaseAgreement.sol:107"
+            },
+            {
+              "label": "identityRegistry",
+              "offset": 0,
+              "slot": "10",
+              "type": "t_contract(IIdentityRegistry)11363",
+              "contract": "LeaseAgreement",
+              "src": "contracts\\LeaseAgreement.sol:110"
+            },
+            {
+              "label": "escrowContract",
+              "offset": 0,
+              "slot": "11",
+              "type": "t_address",
+              "contract": "LeaseAgreement",
+              "src": "contracts\\LeaseAgreement.sol:111"
+            },
+            {
+              "label": "defaultGracePeriod",
+              "offset": 0,
+              "slot": "12",
+              "type": "t_uint256",
+              "contract": "LeaseAgreement",
+              "src": "contracts\\LeaseAgreement.sol:114"
+            },
+            {
+              "label": "maxLeaseDuration",
+              "offset": 0,
+              "slot": "13",
+              "type": "t_uint256",
+              "contract": "LeaseAgreement",
+              "src": "contracts\\LeaseAgreement.sol:115"
+            },
+            {
+              "label": "minLeaseDuration",
+              "offset": 0,
+              "slot": "14",
+              "type": "t_uint256",
+              "contract": "LeaseAgreement",
+              "src": "contracts\\LeaseAgreement.sol:116"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_array(t_struct(PaymentRecord)6679_storage)dyn_storage": {
+              "label": "struct LeaseAgreement.PaymentRecord[]",
+              "numberOfBytes": "32"
+            },
+            "t_array(t_uint256)dyn_storage": {
+              "label": "uint256[]",
+              "numberOfBytes": "32"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_bytes32": {
+              "label": "bytes32",
+              "numberOfBytes": "32"
+            },
+            "t_contract(IIdentityRegistry)11363": {
+              "label": "contract IIdentityRegistry",
+              "numberOfBytes": "20"
+            },
+            "t_enum(DisputeStatus)6612": {
+              "label": "enum LeaseAgreement.DisputeStatus",
+              "members": [
+                "NONE",
+                "RAISED",
+                "UNDER_REVIEW",
+                "RESOLVED",
+                "ARBITRATED"
+              ],
+              "numberOfBytes": "1"
+            },
+            "t_enum(LeaseStatus)6600": {
+              "label": "enum LeaseAgreement.LeaseStatus",
+              "members": [
+                "DRAFT",
+                "ACTIVE",
+                "DEFAULTED",
+                "TERMINATED",
+                "EXPIRED",
+                "DISPUTED"
+              ],
+              "numberOfBytes": "1"
+            },
+            "t_enum(PaymentStatus)6606": {
+              "label": "enum LeaseAgreement.PaymentStatus",
+              "members": [
+                "PENDING",
+                "PAID",
+                "LATE",
+                "PARTIAL",
+                "DEFAULTED"
+              ],
+              "numberOfBytes": "1"
+            },
+            "t_mapping(t_address,t_array(t_uint256)dyn_storage)": {
+              "label": "mapping(address => uint256[])",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_bool)": {
+              "label": "mapping(address => bool)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_bytes32,t_struct(RoleData)22_storage)": {
+              "label": "mapping(bytes32 => struct AccessControl.RoleData)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_array(t_struct(PaymentRecord)6679_storage)dyn_storage)": {
+              "label": "mapping(uint256 => struct LeaseAgreement.PaymentRecord[])",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_struct(Lease)6661_storage)": {
+              "label": "mapping(uint256 => struct LeaseAgreement.Lease)",
+              "numberOfBytes": "32"
+            },
+            "t_string_storage": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_struct(Lease)6661_storage": {
+              "label": "struct LeaseAgreement.Lease",
+              "members": [
+                {
+                  "label": "leaseId",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "propertyToken",
+                  "type": "t_address",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "propertyTokenId",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "landlord",
+                  "type": "t_address",
+                  "offset": 0,
+                  "slot": "3"
+                },
+                {
+                  "label": "tenant",
+                  "type": "t_address",
+                  "offset": 0,
+                  "slot": "4"
+                },
+                {
+                  "label": "monthlyRent",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "5"
+                },
+                {
+                  "label": "securityDeposit",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "6"
+                },
+                {
+                  "label": "totalRentPaid",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "7"
+                },
+                {
+                  "label": "paymentToken",
+                  "type": "t_address",
+                  "offset": 0,
+                  "slot": "8"
+                },
+                {
+                  "label": "startDate",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "9"
+                },
+                {
+                  "label": "endDate",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "10"
+                },
+                {
+                  "label": "nextPaymentDue",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "11"
+                },
+                {
+                  "label": "gracePeriodDays",
+                  "type": "t_uint32",
+                  "offset": 0,
+                  "slot": "12"
+                },
+                {
+                  "label": "propertyAddress",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "13"
+                },
+                {
+                  "label": "leaseTermsHash",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "14"
+                },
+                {
+                  "label": "documentHash",
+                  "type": "t_bytes32",
+                  "offset": 0,
+                  "slot": "15"
+                },
+                {
+                  "label": "status",
+                  "type": "t_enum(LeaseStatus)6600",
+                  "offset": 0,
+                  "slot": "16"
+                },
+                {
+                  "label": "createdAt",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "17"
+                },
+                {
+                  "label": "lastModified",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "18"
+                },
+                {
+                  "label": "disputeStatus",
+                  "type": "t_enum(DisputeStatus)6612",
+                  "offset": 0,
+                  "slot": "19"
+                },
+                {
+                  "label": "disputeDetails",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "20"
+                },
+                {
+                  "label": "disputeRaisedBy",
+                  "type": "t_address",
+                  "offset": 0,
+                  "slot": "21"
+                },
+                {
+                  "label": "disputeRaisedAt",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "22"
+                }
+              ],
+              "numberOfBytes": "736"
+            },
+            "t_struct(PaymentRecord)6679_storage": {
+              "label": "struct LeaseAgreement.PaymentRecord",
+              "members": [
+                {
+                  "label": "paymentId",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "leaseId",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "amount",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "dueDate",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "3"
+                },
+                {
+                  "label": "paidDate",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "4"
+                },
+                {
+                  "label": "status",
+                  "type": "t_enum(PaymentStatus)6606",
+                  "offset": 0,
+                  "slot": "5"
+                },
+                {
+                  "label": "paidBy",
+                  "type": "t_address",
+                  "offset": 1,
+                  "slot": "5"
+                },
+                {
+                  "label": "paymentReference",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "6"
+                }
+              ],
+              "numberOfBytes": "224"
+            },
+            "t_struct(RoleData)22_storage": {
+              "label": "struct AccessControl.RoleData",
+              "members": [
+                {
+                  "label": "hasRole",
+                  "type": "t_mapping(t_address,t_bool)",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "adminRole",
+                  "type": "t_bytes32",
+                  "offset": 0,
+                  "slot": "1"
+                }
+              ],
+              "numberOfBytes": "64"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            },
+            "t_uint32": {
+              "label": "uint32",
+              "numberOfBytes": "4"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/LeaseManager.sol:LeaseManager": {
+        "src": "contracts\\LeaseManager.sol:27",
+        "version": {
+          "withMetadata": "e5820b21c7bb57b10e169855e251edf4eb32c42091b892eb136f2d13ed27ee8a",
+          "withoutMetadata": "e500becbd5b7efb01fd1581b0a7f350ed8634ef56e0877ffaee0e4ce16fac3ec",
+          "linkedWithoutMetadata": "e500becbd5b7efb01fd1581b0a7f350ed8634ef56e0877ffaee0e4ce16fac3ec"
+        },
+        "inherit": [
+          "@openzeppelin/contracts/utils/ReentrancyGuard.sol:ReentrancyGuard",
+          "@openzeppelin/contracts/access/Ownable.sol:Ownable",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [
+          "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol:SafeERC20"
+        ],
+        "methods": [
+          "(address)",
+          "createLease(address,address,uint256,uint256,uint256,uint256,string)",
+          "paySecurityDeposit(uint256)",
+          "payRent(uint256)",
+          "returnDeposit(uint256,uint256)",
+          "terminateLease(uint256)",
+          "markDefault(uint256)",
+          "addApprovedToken(address)",
+          "removeApprovedToken(address)",
+          "getLease(uint256)",
+          "getLandlordLeases(address)",
+          "getTenantLeases(address)",
+          "isRentOverdue(uint256)",
+          "getTotalLeases()",
+          "emergencyWithdraw(address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "LeaseManager",
+            "src": "contracts\\LeaseManager.sol:101"
+          },
+          {
+            "kind": "state-variable-immutable",
+            "name": "identityRegistry",
+            "src": "contracts\\LeaseManager.sol:31"
+          },
+          {
+            "kind": "state-variable-assignment",
+            "name": "_nextLeaseId",
+            "src": "contracts\\LeaseManager.sol:65"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_owner",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_address",
+              "contract": "Ownable",
+              "src": "@openzeppelin\\contracts\\access\\Ownable.sol:21"
+            },
+            {
+              "label": "_status",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_uint256",
+              "contract": "ReentrancyGuard",
+              "src": "@openzeppelin\\contracts\\utils\\ReentrancyGuard.sol:40"
+            },
+            {
+              "label": "leases",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_mapping(t_uint256,t_struct(Lease)8095_storage)",
+              "contract": "LeaseManager",
+              "src": "contracts\\LeaseManager.sol:60"
+            },
+            {
+              "label": "landlordLeases",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)",
+              "contract": "LeaseManager",
+              "src": "contracts\\LeaseManager.sol:61"
+            },
+            {
+              "label": "tenantLeases",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)",
+              "contract": "LeaseManager",
+              "src": "contracts\\LeaseManager.sol:62"
+            },
+            {
+              "label": "approvedTokens",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_mapping(t_address,t_bool)",
+              "contract": "LeaseManager",
+              "src": "contracts\\LeaseManager.sol:63"
+            },
+            {
+              "label": "_nextLeaseId",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_uint256",
+              "contract": "LeaseManager",
+              "src": "contracts\\LeaseManager.sol:65"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_array(t_uint256)dyn_storage": {
+              "label": "uint256[]",
+              "numberOfBytes": "32"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_contract(IERC20)1746": {
+              "label": "contract IERC20",
+              "numberOfBytes": "20"
+            },
+            "t_enum(LeaseStatus)8066": {
+              "label": "enum LeaseManager.LeaseStatus",
+              "members": [
+                "CREATED",
+                "ACTIVE",
+                "COMPLETED",
+                "TERMINATED",
+                "DEFAULTED"
+              ],
+              "numberOfBytes": "1"
+            },
+            "t_mapping(t_address,t_array(t_uint256)dyn_storage)": {
+              "label": "mapping(address => uint256[])",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_bool)": {
+              "label": "mapping(address => bool)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_struct(Lease)8095_storage)": {
+              "label": "mapping(uint256 => struct LeaseManager.Lease)",
+              "numberOfBytes": "32"
+            },
+            "t_string_storage": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_struct(Lease)8095_storage": {
+              "label": "struct LeaseManager.Lease",
+              "members": [
+                {
+                  "label": "leaseId",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "landlord",
+                  "type": "t_address",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "tenant",
+                  "type": "t_address",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "paymentToken",
+                  "type": "t_contract(IERC20)1746",
+                  "offset": 0,
+                  "slot": "3"
+                },
+                {
+                  "label": "monthlyRent",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "4"
+                },
+                {
+                  "label": "securityDeposit",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "5"
+                },
+                {
+                  "label": "leaseStart",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "6"
+                },
+                {
+                  "label": "leaseEnd",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "7"
+                },
+                {
+                  "label": "status",
+                  "type": "t_enum(LeaseStatus)8066",
+                  "offset": 0,
+                  "slot": "8"
+                },
+                {
+                  "label": "depositPaid",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "9"
+                },
+                {
+                  "label": "lastRentPayment",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "10"
+                },
+                {
+                  "label": "totalRentPaid",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "11"
+                },
+                {
+                  "label": "propertyMetadata",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "12"
+                }
+              ],
+              "numberOfBytes": "416"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/MockUSDC.sol:MockUSDC": {
+        "src": "contracts\\MockUSDC.sol:23",
+        "version": {
+          "withMetadata": "51a0a89e5ae053d46b692ab221f192c7f54ba9bdef0f5a9b604456c2a2218a4c",
+          "withoutMetadata": "63c6ad9a82b2a86fe970698ba5f3215775c22f9d1dc0b0cc687406f2c5747cc0",
+          "linkedWithoutMetadata": "63c6ad9a82b2a86fe970698ba5f3215775c22f9d1dc0b0cc687406f2c5747cc0"
+        },
+        "inherit": [
+          "@openzeppelin/contracts/access/Ownable.sol:Ownable",
+          "@openzeppelin/contracts/token/ERC20/ERC20.sol:ERC20",
+          "@openzeppelin/contracts/interfaces/draft-IERC6093.sol:IERC20Errors",
+          "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol:IERC20Metadata",
+          "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "()",
+          "decimals()",
+          "faucet()",
+          "mint(address,uint256)",
+          "batchMint(address[],uint256[])",
+          "burn(uint256)",
+          "burnFrom(address,uint256)",
+          "getFaucetCooldownRemaining(address)",
+          "canUseFaucet(address)",
+          "emergencyWithdraw(address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "MockUSDC",
+            "src": "contracts\\MockUSDC.sol:40"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_balances",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_mapping(t_address,t_uint256)",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:30"
+            },
+            {
+              "label": "_allowances",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:32"
+            },
+            {
+              "label": "_totalSupply",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_uint256",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:34"
+            },
+            {
+              "label": "_name",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_string_storage",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:36"
+            },
+            {
+              "label": "_symbol",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_string_storage",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:37"
+            },
+            {
+              "label": "_owner",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_address",
+              "contract": "Ownable",
+              "src": "@openzeppelin\\contracts\\access\\Ownable.sol:21"
+            },
+            {
+              "label": "lastFaucetUsage",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_mapping(t_address,t_uint256)",
+              "contract": "MockUSDC",
+              "src": "contracts\\MockUSDC.sol:35"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_mapping(t_address,t_mapping(t_address,t_uint256))": {
+              "label": "mapping(address => mapping(address => uint256))",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_uint256)": {
+              "label": "mapping(address => uint256)",
+              "numberOfBytes": "32"
+            },
+            "t_string_storage": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/PropertyFactory.sol:PropertyFactory": {
+        "src": "contracts\\PropertyFactory.sol:23",
+        "version": {
+          "withMetadata": "31ffb62626c2170700f5bff8134014878c822e5ba940d472c7b3316a6e277b6e",
+          "withoutMetadata": "31ffb62626c2170700f5bff8134014878c822e5ba940d472c7b3316a6e277b6e",
+          "linkedWithoutMetadata": "31ffb62626c2170700f5bff8134014878c822e5ba940d472c7b3316a6e277b6e"
+        },
+        "inherit": [
+          "@openzeppelin/contracts/utils/ReentrancyGuard.sol:ReentrancyGuard",
+          "@openzeppelin/contracts/access/AccessControl.sol:AccessControl",
+          "@openzeppelin/contracts/utils/introspection/ERC165.sol:ERC165",
+          "@openzeppelin/contracts/utils/introspection/IERC165.sol:IERC165",
+          "@openzeppelin/contracts/access/IAccessControl.sol:IAccessControl",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [
+          "@openzeppelin/contracts/proxy/Clones.sol:Clones"
+        ],
+        "methods": [
+          "(address,address,address)",
+          "createProperty((string,string,uint8,string,string,uint256,uint256,uint256,uint256,bool,string,address[],uint256,bool),(uint256,uint256,uint256,bool,bool,bool,uint256))",
+          "updateProperty(uint256,string,bool)",
+          "updateTokenEconomics(uint256,(uint256,uint256,uint256,bool,bool,bool,uint256))",
+          "setCategoryCompliance(uint8,address)",
+          "addPropertyManager(uint256,address)",
+          "getPropertyToken(uint256)",
+          "getCreatorProperties(address)",
+          "getPropertyConfig(uint256)",
+          "getTokenEconomics(uint256)",
+          "getPropertiesByCategory(uint8)",
+          "emergencyPause(uint256,bool)",
+          "getActivePropertiesCount()"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "PropertyFactory",
+            "src": "contracts\\PropertyFactory.sol:110"
+          },
+          {
+            "kind": "state-variable-immutable",
+            "name": "identityRegistry",
+            "src": "contracts\\PropertyFactory.sol:31"
+          },
+          {
+            "kind": "state-variable-immutable",
+            "name": "complianceTemplate",
+            "src": "contracts\\PropertyFactory.sol:32"
+          },
+          {
+            "kind": "state-variable-immutable",
+            "name": "tokenImplementation",
+            "src": "contracts\\PropertyFactory.sol:33"
+          },
+          {
+            "kind": "state-variable-assignment",
+            "name": "_nextPropertyId",
+            "src": "contracts\\PropertyFactory.sol:81"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_roles",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_mapping(t_bytes32,t_struct(RoleData)22_storage)",
+              "contract": "AccessControl",
+              "src": "@openzeppelin\\contracts\\access\\AccessControl.sol:55"
+            },
+            {
+              "label": "_status",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_uint256",
+              "contract": "ReentrancyGuard",
+              "src": "@openzeppelin\\contracts\\utils\\ReentrancyGuard.sol:40"
+            },
+            {
+              "label": "properties",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_mapping(t_uint256,t_address)",
+              "contract": "PropertyFactory",
+              "src": "contracts\\PropertyFactory.sol:75"
+            },
+            {
+              "label": "propertyConfigs",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_mapping(t_uint256,t_struct(PropertyConfig)9441_storage)",
+              "contract": "PropertyFactory",
+              "src": "contracts\\PropertyFactory.sol:76"
+            },
+            {
+              "label": "tokenEconomics",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_mapping(t_uint256,t_struct(TokenEconomics)9456_storage)",
+              "contract": "PropertyFactory",
+              "src": "contracts\\PropertyFactory.sol:77"
+            },
+            {
+              "label": "categoryCompliance",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_mapping(t_enum(PropertyCategory)9410,t_address)",
+              "contract": "PropertyFactory",
+              "src": "contracts\\PropertyFactory.sol:78"
+            },
+            {
+              "label": "creatorProperties",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)",
+              "contract": "PropertyFactory",
+              "src": "contracts\\PropertyFactory.sol:79"
+            },
+            {
+              "label": "_nextPropertyId",
+              "offset": 0,
+              "slot": "7",
+              "type": "t_uint256",
+              "contract": "PropertyFactory",
+              "src": "contracts\\PropertyFactory.sol:81"
+            },
+            {
+              "label": "totalProperties",
+              "offset": 0,
+              "slot": "8",
+              "type": "t_uint256",
+              "contract": "PropertyFactory",
+              "src": "contracts\\PropertyFactory.sol:82"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_array(t_address)dyn_storage": {
+              "label": "address[]",
+              "numberOfBytes": "32"
+            },
+            "t_array(t_uint256)dyn_storage": {
+              "label": "uint256[]",
+              "numberOfBytes": "32"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_bytes32": {
+              "label": "bytes32",
+              "numberOfBytes": "32"
+            },
+            "t_enum(PropertyCategory)9410": {
+              "label": "enum PropertyFactory.PropertyCategory",
+              "members": [
+                "RESIDENTIAL",
+                "COMMERCIAL",
+                "INDUSTRIAL",
+                "MIXED_USE",
+                "LUXURY",
+                "AFFORDABLE_HOUSING"
+              ],
+              "numberOfBytes": "1"
+            },
+            "t_mapping(t_address,t_array(t_uint256)dyn_storage)": {
+              "label": "mapping(address => uint256[])",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_bool)": {
+              "label": "mapping(address => bool)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_bytes32,t_struct(RoleData)22_storage)": {
+              "label": "mapping(bytes32 => struct AccessControl.RoleData)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_enum(PropertyCategory)9410,t_address)": {
+              "label": "mapping(enum PropertyFactory.PropertyCategory => address)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_address)": {
+              "label": "mapping(uint256 => address)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_struct(PropertyConfig)9441_storage)": {
+              "label": "mapping(uint256 => struct PropertyFactory.PropertyConfig)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_struct(TokenEconomics)9456_storage)": {
+              "label": "mapping(uint256 => struct PropertyFactory.TokenEconomics)",
+              "numberOfBytes": "32"
+            },
+            "t_string_storage": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_struct(PropertyConfig)9441_storage": {
+              "label": "struct PropertyFactory.PropertyConfig",
+              "members": [
+                {
+                  "label": "name",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "symbol",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "category",
+                  "type": "t_enum(PropertyCategory)9410",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "location",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "3"
+                },
+                {
+                  "label": "description",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "4"
+                },
+                {
+                  "label": "totalValue",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "5"
+                },
+                {
+                  "label": "totalSupply",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "6"
+                },
+                {
+                  "label": "minInvestment",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "7"
+                },
+                {
+                  "label": "maxInvestment",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "8"
+                },
+                {
+                  "label": "fractionalOwnership",
+                  "type": "t_bool",
+                  "offset": 0,
+                  "slot": "9"
+                },
+                {
+                  "label": "metadataCID",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "10"
+                },
+                {
+                  "label": "authorizedManagers",
+                  "type": "t_array(t_address)dyn_storage",
+                  "offset": 0,
+                  "slot": "11"
+                },
+                {
+                  "label": "creationTime",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "12"
+                },
+                {
+                  "label": "isActive",
+                  "type": "t_bool",
+                  "offset": 0,
+                  "slot": "13"
+                }
+              ],
+              "numberOfBytes": "448"
+            },
+            "t_struct(RoleData)22_storage": {
+              "label": "struct AccessControl.RoleData",
+              "members": [
+                {
+                  "label": "hasRole",
+                  "type": "t_mapping(t_address,t_bool)",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "adminRole",
+                  "type": "t_bytes32",
+                  "offset": 0,
+                  "slot": "1"
+                }
+              ],
+              "numberOfBytes": "64"
+            },
+            "t_struct(TokenEconomics)9456_storage": {
+              "label": "struct PropertyFactory.TokenEconomics",
+              "members": [
+                {
+                  "label": "managementFee",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "performanceFee",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "liquidityBuffer",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "enableDividends",
+                  "type": "t_bool",
+                  "offset": 0,
+                  "slot": "3"
+                },
+                {
+                  "label": "enableBuyback",
+                  "type": "t_bool",
+                  "offset": 1,
+                  "slot": "3"
+                },
+                {
+                  "label": "enableStaking",
+                  "type": "t_bool",
+                  "offset": 2,
+                  "slot": "3"
+                },
+                {
+                  "label": "stakingReward",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "4"
+                }
+              ],
+              "numberOfBytes": "160"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/RealEstateToken.sol:RealEstateToken": {
+        "src": "contracts\\RealEstateToken.sol:27",
+        "version": {
+          "withMetadata": "33fec4ca63c8d89eeb4343c3d475c55a3eb4f60266e4ebc3e6e5e7d8f0ac7cfa",
+          "withoutMetadata": "33fec4ca63c8d89eeb4343c3d475c55a3eb4f60266e4ebc3e6e5e7d8f0ac7cfa",
+          "linkedWithoutMetadata": "33fec4ca63c8d89eeb4343c3d475c55a3eb4f60266e4ebc3e6e5e7d8f0ac7cfa"
+        },
+        "inherit": [
+          "@openzeppelin/contracts/utils/ReentrancyGuard.sol:ReentrancyGuard",
+          "@openzeppelin/contracts/access/AccessControl.sol:AccessControl",
+          "@openzeppelin/contracts/utils/introspection/ERC165.sol:ERC165",
+          "@openzeppelin/contracts/utils/introspection/IERC165.sol:IERC165",
+          "@openzeppelin/contracts/access/IAccessControl.sol:IAccessControl",
+          "@openzeppelin/contracts/token/ERC20/ERC20.sol:ERC20",
+          "@openzeppelin/contracts/interfaces/draft-IERC6093.sol:IERC20Errors",
+          "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol:IERC20Metadata",
+          "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "(string,string,address,address,(string,string,uint256,uint256,bool))",
+          "initialize(string,string,address,address,(string,string,uint256,uint256,bool),address)",
+          "transfer(address,uint256)",
+          "transferFrom(address,address,uint256)",
+          "forcedTransfer(address,address,uint256)",
+          "mint(address,uint256)",
+          "burn(address,uint256)",
+          "updateAssetPassport(string)",
+          "updateAssetMetadata(string,uint256,uint256,bool)",
+          "getAssetMetadata()",
+          "canReceive(address)",
+          "getHolderCount()",
+          "canTransfer(address,address,uint256)",
+          "hasRole(bytes32,address)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "RealEstateToken",
+            "src": "contracts\\RealEstateToken.sol:59"
+          },
+          {
+            "kind": "state-variable-immutable",
+            "name": "identityRegistry",
+            "src": "contracts\\RealEstateToken.sol:35"
+          },
+          {
+            "kind": "state-variable-immutable",
+            "name": "compliance",
+            "src": "contracts\\RealEstateToken.sol:36"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_balances",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_mapping(t_address,t_uint256)",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:30"
+            },
+            {
+              "label": "_allowances",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:32"
+            },
+            {
+              "label": "_totalSupply",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_uint256",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:34"
+            },
+            {
+              "label": "_name",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_string_storage",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:36"
+            },
+            {
+              "label": "_symbol",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_string_storage",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:37"
+            },
+            {
+              "label": "_roles",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_mapping(t_bytes32,t_struct(RoleData)22_storage)",
+              "contract": "AccessControl",
+              "src": "@openzeppelin\\contracts\\access\\AccessControl.sol:55"
+            },
+            {
+              "label": "_status",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_uint256",
+              "contract": "ReentrancyGuard",
+              "src": "@openzeppelin\\contracts\\utils\\ReentrancyGuard.sol:40"
+            },
+            {
+              "label": "assetMetadata",
+              "offset": 0,
+              "slot": "7",
+              "type": "t_struct(AssetMetadata)10318_storage",
+              "contract": "RealEstateToken",
+              "src": "contracts\\RealEstateToken.sol:47"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_bytes32": {
+              "label": "bytes32",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_bool)": {
+              "label": "mapping(address => bool)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_mapping(t_address,t_uint256))": {
+              "label": "mapping(address => mapping(address => uint256))",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_uint256)": {
+              "label": "mapping(address => uint256)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_bytes32,t_struct(RoleData)22_storage)": {
+              "label": "mapping(bytes32 => struct AccessControl.RoleData)",
+              "numberOfBytes": "32"
+            },
+            "t_string_storage": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_struct(AssetMetadata)10318_storage": {
+              "label": "struct RealEstateToken.AssetMetadata",
+              "members": [
+                {
+                  "label": "propertyAddress",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "assetPassportCID",
+                  "type": "t_string_storage",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "totalValue",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "tokenizedShares",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "3"
+                },
+                {
+                  "label": "isActive",
+                  "type": "t_bool",
+                  "offset": 0,
+                  "slot": "4"
+                }
+              ],
+              "numberOfBytes": "160"
+            },
+            "t_struct(RoleData)22_storage": {
+              "label": "struct AccessControl.RoleData",
+              "members": [
+                {
+                  "label": "hasRole",
+                  "type": "t_mapping(t_address,t_bool)",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "adminRole",
+                  "type": "t_bytes32",
+                  "offset": 0,
+                  "slot": "1"
+                }
+              ],
+              "numberOfBytes": "64"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/interfaces/ICompliance.sol:ICompliance": {
+        "src": "contracts\\interfaces\\ICompliance.sol:9",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "canTransfer(address,address,uint256)",
+          "transferred(address,address,uint256)",
+          "created(address,uint256)",
+          "destroyed(address,uint256)",
+          "addToBlacklist(address)",
+          "removeFromBlacklist(address)",
+          "isBlacklisted(address)",
+          "getTotalHolders()"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/interfaces/IERC3643.sol:IERC3643": {
+        "src": "contracts\\interfaces\\IERC3643.sol:9",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "name()",
+          "symbol()",
+          "decimals()",
+          "totalSupply()",
+          "balanceOf(address)",
+          "transfer(address,uint256)",
+          "allowance(address,address)",
+          "approve(address,uint256)",
+          "transferFrom(address,address,uint256)",
+          "identityRegistry()",
+          "compliance()",
+          "isAddressFrozen(address)",
+          "getFrozenTokens(address)",
+          "setAddressFrozen(address,bool)",
+          "freezePartialTokens(address,uint256)",
+          "unfreezePartialTokens(address,uint256)",
+          "forcedTransfer(address,address,uint256)",
+          "mint(address,uint256)",
+          "burn(address,uint256)",
+          "recoveryAddress(address,address,address)",
+          "setName(string)",
+          "setSymbol(string)",
+          "setIdentityRegistry(address)",
+          "setCompliance(address)",
+          "batchTransfer(address[],uint256[])",
+          "batchForcedTransfer(address[],address[],uint256[])",
+          "batchMint(address[],uint256[])",
+          "batchBurn(address[],uint256[])",
+          "batchSetAddressFrozen(address[],bool[])",
+          "batchFreezePartialTokens(address[],uint256[])",
+          "batchUnfreezePartialTokens(address[],uint256[])",
+          "paused()",
+          "canTransfer(address,address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/interfaces/IIdentityRegistry.sol:IIdentityRegistry": {
+        "src": "contracts\\interfaces\\IIdentityRegistry.sol:9",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "registerIdentity(address)",
+          "adminVerify(address,address,uint16)",
+          "isVerified(address)",
+          "getCountry(address)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/mocks/MockERC20.sol:MockERC20": {
+        "src": "contracts\\mocks\\MockERC20.sol:10",
+        "version": {
+          "withMetadata": "6bfbf64a30040f7a9870d0939cf1db3b10583aee122e2b9e746737e621e09e99",
+          "withoutMetadata": "d309ac371dc123d82c2d73d3b4867eff92430d6e2df19c2b805d174925e7687f",
+          "linkedWithoutMetadata": "d309ac371dc123d82c2d73d3b4867eff92430d6e2df19c2b805d174925e7687f"
+        },
+        "inherit": [
+          "@openzeppelin/contracts/token/ERC20/ERC20.sol:ERC20",
+          "@openzeppelin/contracts/interfaces/draft-IERC6093.sol:IERC20Errors",
+          "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol:IERC20Metadata",
+          "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "(string,string,uint8)",
+          "decimals()",
+          "mint(address,uint256)",
+          "burn(address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "MockERC20",
+            "src": "contracts\\mocks\\MockERC20.sol:13"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_balances",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_mapping(t_address,t_uint256)",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:30"
+            },
+            {
+              "label": "_allowances",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:32"
+            },
+            {
+              "label": "_totalSupply",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_uint256",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:34"
+            },
+            {
+              "label": "_name",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_string_storage",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:36"
+            },
+            {
+              "label": "_symbol",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_string_storage",
+              "contract": "ERC20",
+              "src": "@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol:37"
+            },
+            {
+              "label": "_decimals",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_uint8",
+              "contract": "MockERC20",
+              "src": "contracts\\mocks\\MockERC20.sol:11"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_mapping(t_address,t_mapping(t_address,t_uint256))": {
+              "label": "mapping(address => mapping(address => uint256))",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_uint256)": {
+              "label": "mapping(address => uint256)",
+              "numberOfBytes": "32"
+            },
+            "t_string_storage": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            },
+            "t_uint8": {
+              "label": "uint8",
+              "numberOfBytes": "1"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      }
+    }
+  ]
+}

@@ -239,7 +239,7 @@ contract PropertyToken is ERC20, AccessControl, ReentrancyGuard, Pausable, IERC3
      * @dev Freeze/unfreeze an address
      */
     function setAddressFrozen(address _userAddress, bool _freeze) 
-        external 
+        public 
         override 
         onlyCompliance 
     {
@@ -251,7 +251,7 @@ contract PropertyToken is ERC20, AccessControl, ReentrancyGuard, Pausable, IERC3
      * @dev Freeze partial tokens
      */
     function freezePartialTokens(address _userAddress, uint256 _amount) 
-        external 
+        public 
         override 
         onlyCompliance 
     {
@@ -267,7 +267,7 @@ contract PropertyToken is ERC20, AccessControl, ReentrancyGuard, Pausable, IERC3
      * @dev Unfreeze partial tokens
      */
     function unfreezePartialTokens(address _userAddress, uint256 _amount) 
-        external 
+        public 
         override 
         onlyCompliance 
     {
@@ -327,7 +327,7 @@ contract PropertyToken is ERC20, AccessControl, ReentrancyGuard, Pausable, IERC3
      * @dev Burn tokens
      */
     function burn(address _userAddress, uint256 _amount) 
-        external 
+        public 
         override 
         onlyTokenAgent 
         nonReentrant 
