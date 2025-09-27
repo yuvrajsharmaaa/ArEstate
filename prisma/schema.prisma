@@ -1,0 +1,120 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String      @id @default(cuid())
+  name       String
+  email      String      @unique
+  phone      String
+  password   String
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  properties Property[]
+  requests   Request[]   @relation("UserRequests")
+  received   Request[]   @relation("ReceivedRequests")
+  saved      Saved[]
+
+  @@map("users")
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  name      String
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("admins")
+}
+
+model Property {
+  id           String    @id @default(cuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name         String
+  address      String
+  price        String
+  type         String
+  offer        String
+  status       String
+  furnished    String
+  bhk          String
+  deposit      String?
+  bedroom      String
+  bathroom     String
+  balcony      String
+  carpet       String
+  age          String
+  totalFloors  String
+  roomFloor    String
+  loan         String
+  lift         Boolean   @default(false)
+  securityGuard Boolean  @default(false)
+  playGround   Boolean   @default(false)
+  garden       Boolean   @default(false)
+  waterSupply  Boolean   @default(false)
+  powerBackup  Boolean   @default(false)
+  parkingArea  Boolean   @default(false)
+  gym          Boolean   @default(false)
+  shoppingMall Boolean   @default(false)
+  hospital     Boolean   @default(false)
+  school       Boolean   @default(false)
+  marketArea   Boolean   @default(false)
+  image01      String
+  image02      String?
+  image03      String?
+  image04      String?
+  image05      String?
+  description  String    @db.Text
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  requests     Request[]
+  saved        Saved[]
+
+  @@map("properties")
+}
+
+model Request {
+  id         String   @id @default(cuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  senderId   String
+  sender     User     @relation("UserRequests", fields: [senderId], references: [id], onDelete: Cascade)
+  receiverId String
+  receiver   User     @relation("ReceivedRequests", fields: [receiverId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@map("requests")
+}
+
+model Saved {
+  id         String   @id @default(cuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@unique([propertyId, userId])
+  @@map("saved")
+}
+
+model Message {
+  id      String @id @default(cuid())
+  name    String
+  email   String
+  phone   String
+  message String @db.Text
+  createdAt DateTime @default(now())
+
+  @@map("messages")
+}

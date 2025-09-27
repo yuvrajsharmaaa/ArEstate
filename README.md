@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Real Estate Next.js Application
+
+A modern real estate platform built with Next.js, TypeScript, Prisma, and MySQL. This application allows users to browse, search, and manage property listings with authentication and user management features.
+
+## Features
+
+- 🏠 **Property Listings**: Browse and search properties by location, type, and price
+- 🔐 **Authentication**: User registration and login system
+- 📱 **Responsive Design**: Mobile-friendly interface built with Tailwind CSS
+- 🏢 **Admin Panel**: Administrative features for managing properties and users
+- 💾 **Database Integration**: MySQL database with Prisma ORM
+- 📧 **Contact System**: Contact form for user inquiries
+- ❤️ **Saved Properties**: Users can save favorite properties
+- 📋 **Property Management**: Users can post and manage their own properties
+
+## Tech Stack
+
+- **Frontend**: Next.js 15, React, TypeScript
+- **Styling**: Tailwind CSS
+- **Database**: MySQL with Prisma ORM
+- **Authentication**: Custom JWT-based authentication
+- **Icons**: Lucide React
+- **Form Handling**: React Hook Form with Zod validation
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Node.js 18.17 or later
+- MySQL database
+- npm or yarn package manager
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. **Set up environment variables**
+   Update the `.env.local` file with your database credentials:
+   ```env
+   DATABASE_URL="mysql://root:password@localhost:3306/home_db"
+   JWT_SECRET="your-jwt-secret-key-here-make-it-long-and-secure"
+   ```
 
-## Learn More
+3. **Set up the database**
+   ```bash
+   # Generate Prisma client
+   npx prisma generate
+   
+   # Push database schema
+   npx prisma db push
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+4. **Start the development server**
+   ```bash
+   npm run dev
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+5. **Open your browser**
+   Navigate to `http://localhost:3000`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## API Endpoints
 
-## Deploy on Vercel
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
+- `GET /api/properties` - Get properties (with filters)
+- `POST /api/properties` - Create new property
+- `POST /api/messages` - Send contact message
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Key Features
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Modern, responsive design with Tailwind CSS
+- JWT-based authentication system
+- Property search and filtering
+- Contact form with database storage
+- Clean, minimal UI optimized for performance
