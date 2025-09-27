@@ -15,30 +15,11 @@
         {
           "indexed": true,
           "internalType": "address",
-          "name": "ruleAddress",
+          "name": "ruleContract",
           "type": "address"
         }
       ],
-      "name": "RuleAdded",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "bytes32",
-          "name": "ruleType",
-          "type": "bytes32"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "ruleAddress",
-          "type": "address"
-        }
-      ],
-      "name": "RuleRemoved",
+      "name": "ComplianceRuleAdded",
       "type": "event"
     },
     {
@@ -71,16 +52,16 @@
       "inputs": [
         {
           "internalType": "bytes32",
-          "name": "_ruleType",
+          "name": "ruleType",
           "type": "bytes32"
         },
         {
           "internalType": "address",
-          "name": "_ruleAddress",
+          "name": "ruleContract",
           "type": "address"
         }
       ],
-      "name": "addRule",
+      "name": "addComplianceRule",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -89,7 +70,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "_token",
+          "name": "token",
           "type": "address"
         }
       ],
@@ -102,17 +83,17 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "_from",
+          "name": "from",
           "type": "address"
         },
         {
           "internalType": "address",
-          "name": "_to",
+          "name": "to",
           "type": "address"
         },
         {
           "internalType": "uint256",
-          "name": "_amount",
+          "name": "amount",
           "type": "uint256"
         }
       ],
@@ -131,12 +112,12 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "_to",
+          "name": "to",
           "type": "address"
         },
         {
           "internalType": "uint256",
-          "name": "_amount",
+          "name": "amount",
           "type": "uint256"
         }
       ],
@@ -149,12 +130,12 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "_from",
+          "name": "from",
           "type": "address"
         },
         {
           "internalType": "uint256",
-          "name": "_amount",
+          "name": "amount",
           "type": "uint256"
         }
       ],
@@ -166,36 +147,17 @@
     {
       "inputs": [
         {
-          "internalType": "address",
-          "name": "_user",
-          "type": "address"
-        }
-      ],
-      "name": "getComplianceStatus",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "bytes32",
-          "name": "_ruleType",
+          "name": "ruleType",
           "type": "bytes32"
         }
       ],
-      "name": "getRules",
+      "name": "getComplianceRule",
       "outputs": [
         {
-          "internalType": "address[]",
+          "internalType": "address",
           "name": "",
-          "type": "address[]"
+          "type": "address"
         }
       ],
       "stateMutability": "view",
@@ -205,31 +167,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "_from",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "_to",
-          "type": "address"
-        }
-      ],
-      "name": "getTransferRestrictions",
-      "outputs": [
-        {
-          "internalType": "string[]",
-          "name": "",
-          "type": "string[]"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_token",
+          "name": "token",
           "type": "address"
         }
       ],
@@ -248,16 +186,11 @@
       "inputs": [
         {
           "internalType": "bytes32",
-          "name": "_ruleType",
+          "name": "ruleType",
           "type": "bytes32"
-        },
-        {
-          "internalType": "address",
-          "name": "_ruleAddress",
-          "type": "address"
         }
       ],
-      "name": "removeRule",
+      "name": "removeComplianceRule",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -266,17 +199,17 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "_from",
+          "name": "from",
           "type": "address"
         },
         {
           "internalType": "address",
-          "name": "_to",
+          "name": "to",
           "type": "address"
         },
         {
           "internalType": "uint256",
-          "name": "_amount",
+          "name": "amount",
           "type": "uint256"
         }
       ],
@@ -289,7 +222,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "_token",
+          "name": "token",
           "type": "address"
         }
       ],

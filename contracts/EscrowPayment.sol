@@ -1,733 +1,278 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/utils/Pausable.sol";
-import "./interfaces/IIdentityRegistry.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "./LeaseAgreement.sol";
 
 /**
  * @title EscrowPayment
- * @dev Manages security deposits, rent payments, and escrow functionality
- * Integrates with Integra's fiat payment rails and on-chain proof-of-payment
+ * @dev Handles escrow payments and automated rent collection
  */
-contract EscrowPayment is AccessControl, ReentrancyGuard, Pausable {
+contract EscrowPayment is AccessControl, ReentrancyGuard {
     using SafeERC20 for IERC20;
     
-    // Roles
     bytes32 public constant ESCROW_AGENT_ROLE = keccak256("ESCROW_AGENT_ROLE");
     bytes32 public constant PAYMENT_PROCESSOR_ROLE = keccak256("PAYMENT_PROCESSOR_ROLE");
-    bytes32 public constant DISPUTE_RESOLVER_ROLE = keccak256("DISPUTE_RESOLVER_ROLE");
     
-    // Escrow status enumeration
-    enum EscrowStatus {
-        CREATED,        // Escrow created, awaiting deposit
-        FUNDED,         // Funds deposited in escrow
-        RELEASED,       // Funds released to recipient
-        REFUNDED,       // Funds refunded to depositor
-        DISPUTED,       // Escrow under dispute
-        EXPIRED         // Escrow expired
-    }
+    enum EscrowStatus { PENDING, FUNDED, RELEASED, REFUNDED, DISPUTED }
     
-    // Payment method enumeration
-    enum PaymentMethod {
-        CRYPTO,         // Direct crypto payment
-        FIAT_BRIDGE,    // Fiat payment via Integra bridge
-        HYBRID          // Combination of crypto and fiat
-    }
-    
-    // Escrow structure for security deposits
-    struct SecurityDepositEscrow {
+    struct EscrowDeposit {
         uint256 escrowId;
-        uint256 leaseId;            // Associated lease agreement
-        address landlord;           // Funds recipient
-        address tenant;             // Funds depositor
-        address paymentToken;       // ERC-20 token (USDC, IRL, etc.)
-        uint256 amount;             // Deposit amount
-        uint256 createdAt;          // Creation timestamp
-        uint256 releaseDate;        // Earliest release date
-        EscrowStatus status;        // Current status
-        string releaseConditions;   // IPFS hash of release conditions
-        bytes32 conditionsHash;     // Hash of conditions for verification
-    }
-    
-    // Rent payment structure
-    struct RentPayment {
-        uint256 paymentId;
-        uint256 leaseId;            // Associated lease
-        address landlord;           // Payment recipient
-        address tenant;             // Payment sender
-        address paymentToken;       // Payment token
-        uint256 amount;             // Payment amount
-        uint256 dueDate;            // Payment due date
-        uint256 paidDate;           // Actual payment date
-        PaymentMethod method;       // Payment method used
-        string fiatReference;       // Fiat payment reference (if applicable)
-        bytes32 proofHash;          // Hash of payment proof
-        bool isAutomated;           // Whether payment was automated
-    }
-    
-    // Automated payment subscription
-    struct PaymentSubscription {
-        uint256 subscriptionId;
         uint256 leaseId;
-        address tenant;
-        address landlord;
-        address paymentToken;
-        uint256 amount;             // Monthly payment amount
-        uint256 startDate;          // Subscription start
-        uint256 endDate;            // Subscription end
-        uint256 lastPayment;        // Last successful payment
-        uint256 nextPayment;        // Next scheduled payment
-        bool isActive;              // Subscription status
-        uint256 failedPayments;     // Failed payment counter
+        address depositor;
+        address beneficiary;
+        address token;
+        uint256 amount;
+        EscrowStatus status;
+        uint256 createdAt;
+        uint256 releaseDate;
+        string purpose;
     }
     
-    // Storage mappings
-    mapping(uint256 => SecurityDepositEscrow) public securityDeposits;
-    mapping(uint256 => RentPayment) public rentPayments;
-    mapping(uint256 => PaymentSubscription) public paymentSubscriptions;
-    mapping(uint256 => uint256) public leaseToEscrow;           // leaseId => escrowId
-    mapping(uint256 => uint256) public leaseToSubscription;     // leaseId => subscriptionId
-    mapping(address => bool) public approvedTokens;
-    mapping(address => uint256[]) public landlordEscrows;
-    mapping(address => uint256[]) public tenantEscrows;
+    struct RentPayment {
+        uint256 leaseId;
+        uint256 amount;
+        address token;
+        uint256 dueDate;
+        uint256 paidDate;
+        bool isPaid;
+        address payer;
+    }
     
-    // Counters
+    LeaseAgreement public immutable leaseAgreement;
+    
     uint256 private _escrowCounter;
     uint256 private _paymentCounter;
-    uint256 private _subscriptionCounter;
     
-    // Contract references
-    IIdentityRegistry public identityRegistry;
-    address public leaseAgreementContract;
-    address public fiatBridge;                  // Integra fiat bridge contract
-    
-    // Configuration
-    uint256 public defaultEscrowPeriod = 365 days;
-    uint256 public maxEscrowPeriod = 5 * 365 days;
-    uint256 public automatedPaymentGracePeriod = 3 days;
-    uint256 public maxFailedPayments = 3;
+    mapping(uint256 => EscrowDeposit) private _escrows;
+    mapping(uint256 => RentPayment) private _rentPayments;
+    mapping(uint256 => uint256[]) private _leasePayments; // leaseId => paymentIds
     
     // Events
-    event SecurityDepositCreated(
+    event EscrowCreated(
         uint256 indexed escrowId,
         uint256 indexed leaseId,
-        address indexed tenant,
-        address landlord,
+        address indexed depositor,
         uint256 amount
     );
     
-    event SecurityDepositFunded(
-        uint256 indexed escrowId,
-        address indexed tenant,
-        uint256 amount
-    );
+    event EscrowFunded(uint256 indexed escrowId, uint256 amount);
+    event EscrowReleased(uint256 indexed escrowId, address indexed to, uint256 amount);
+    event EscrowRefunded(uint256 indexed escrowId, address indexed to, uint256 amount);
     
-    event SecurityDepositReleased(
-        uint256 indexed escrowId,
-        address indexed recipient,
-        uint256 amount,
-        string reason
-    );
-    
-    event RentPaymentProcessed(
+    event RentPaymentCreated(
         uint256 indexed paymentId,
         uint256 indexed leaseId,
-        address indexed tenant,
-        address landlord,
         uint256 amount,
-        PaymentMethod method
+        uint256 dueDate
     );
     
-    event PaymentSubscriptionCreated(
-        uint256 indexed subscriptionId,
-        uint256 indexed leaseId,
-        address indexed tenant,
-        uint256 amount
-    );
-    
-    event AutomatedPaymentExecuted(
-        uint256 indexed subscriptionId,
+    event RentPaid(
         uint256 indexed paymentId,
+        uint256 indexed leaseId,
+        address indexed payer,
         uint256 amount
     );
     
-    event AutomatedPaymentFailed(
-        uint256 indexed subscriptionId,
-        uint256 failureCount,
-        string reason
-    );
-    
-    event DisputeRaised(
-        uint256 indexed escrowId,
-        address indexed raisedBy,
-        string reason
-    );
-    
-    constructor(
-        address _identityRegistry,
-        address _leaseAgreementContract
-    ) {
-        require(_identityRegistry != address(0), "EscrowPayment: invalid identity registry");
-        require(_leaseAgreementContract != address(0), "EscrowPayment: invalid lease contract");
+    constructor(address _leaseAgreement) {
+        require(_leaseAgreement != address(0), "Invalid lease agreement");
+        leaseAgreement = LeaseAgreement(_leaseAgreement);
         
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(ESCROW_AGENT_ROLE, msg.sender);
         _grantRole(PAYMENT_PROCESSOR_ROLE, msg.sender);
-        _grantRole(DISPUTE_RESOLVER_ROLE, msg.sender);
+    }
+    
+    // Escrow functions
+    function createEscrow(
+        uint256 leaseId,
+        address beneficiary,
+        address token,
+        uint256 amount,
+        uint256 releaseDate,
+        string memory purpose
+    ) external returns (uint256) {
+        require(beneficiary != address(0), "Invalid beneficiary");
+        require(token != address(0), "Invalid token");
+        require(amount > 0, "Amount must be greater than 0");
+        require(releaseDate > block.timestamp, "Release date must be in the future");
         
-        identityRegistry = IIdentityRegistry(_identityRegistry);
-        leaseAgreementContract = _leaseAgreementContract;
-    }
-    
-    // Modifiers
-    modifier onlyEscrowAgent() {
-        require(hasRole(ESCROW_AGENT_ROLE, msg.sender), "EscrowPayment: not an escrow agent");
-        _;
-    }
-    
-    modifier onlyPaymentProcessor() {
-        require(hasRole(PAYMENT_PROCESSOR_ROLE, msg.sender), "EscrowPayment: not payment processor");
-        _;
-    }
-    
-    modifier onlyDisputeResolver() {
-        require(hasRole(DISPUTE_RESOLVER_ROLE, msg.sender), "EscrowPayment: not dispute resolver");
-        _;
-    }
-    
-    modifier validEscrow(uint256 _escrowId) {
-        require(_escrowId > 0 && _escrowId <= _escrowCounter, "EscrowPayment: invalid escrow ID");
-        require(securityDeposits[_escrowId].landlord != address(0), "EscrowPayment: escrow not found");
-        _;
-    }
-    
-    modifier onlyEscrowParties(uint256 _escrowId) {
-        require(
-            msg.sender == securityDeposits[_escrowId].landlord || 
-            msg.sender == securityDeposits[_escrowId].tenant,
-            "EscrowPayment: not an escrow party"
-        );
-        _;
-    }
-    
-    modifier verifiedUsers(address _landlord, address _tenant) {
-        require(identityRegistry.isVerified(_landlord), "EscrowPayment: landlord not verified");
-        require(identityRegistry.isVerified(_tenant), "EscrowPayment: tenant not verified");
-        _;
-    }
-    
-    // Security Deposit Functions
-    
-    /**
-     * @dev Create security deposit escrow for a lease
-     */
-    function createSecurityDepositEscrow(
-        uint256 _leaseId,
-        address _landlord,
-        address _tenant,
-        address _paymentToken,
-        uint256 _amount,
-        uint256 _releaseDate,
-        string calldata _releaseConditions,
-        bytes32 _conditionsHash
-    ) external 
-        whenNotPaused 
-        verifiedUsers(_landlord, _tenant) 
-        returns (uint256) 
-    {
-        require(_leaseId > 0, "EscrowPayment: invalid lease ID");
-        require(_amount > 0, "EscrowPayment: invalid amount");
-        require(approvedTokens[_paymentToken], "EscrowPayment: token not approved");
-        require(_releaseDate > block.timestamp, "EscrowPayment: invalid release date");
-        require(_releaseDate <= block.timestamp + maxEscrowPeriod, "EscrowPayment: release date too far");
-        require(leaseToEscrow[_leaseId] == 0, "EscrowPayment: escrow already exists for lease");
+        // Verify lease exists
+        LeaseAgreement.Lease memory lease = leaseAgreement.getLease(leaseId);
+        require(lease.leaseId != 0, "Lease does not exist");
         
         _escrowCounter++;
         uint256 escrowId = _escrowCounter;
         
-        securityDeposits[escrowId] = SecurityDepositEscrow({
+        _escrows[escrowId] = EscrowDeposit({
             escrowId: escrowId,
-            leaseId: _leaseId,
-            landlord: _landlord,
-            tenant: _tenant,
-            paymentToken: _paymentToken,
-            amount: _amount,
+            leaseId: leaseId,
+            depositor: msg.sender,
+            beneficiary: beneficiary,
+            token: token,
+            amount: amount,
+            status: EscrowStatus.PENDING,
             createdAt: block.timestamp,
-            releaseDate: _releaseDate,
-            status: EscrowStatus.CREATED,
-            releaseConditions: _releaseConditions,
-            conditionsHash: _conditionsHash
+            releaseDate: releaseDate,
+            purpose: purpose
         });
         
-        leaseToEscrow[_leaseId] = escrowId;
-        landlordEscrows[_landlord].push(escrowId);
-        tenantEscrows[_tenant].push(escrowId);
-        
-        emit SecurityDepositCreated(escrowId, _leaseId, _tenant, _landlord, _amount);
-        
+        emit EscrowCreated(escrowId, leaseId, msg.sender, amount);
         return escrowId;
     }
     
-    /**
-     * @dev Fund security deposit escrow
-     */
-    function fundSecurityDeposit(uint256 _escrowId) 
-        external 
-        validEscrow(_escrowId) 
-        nonReentrant 
-    {
-        SecurityDepositEscrow storage escrow = securityDeposits[_escrowId];
-        require(msg.sender == escrow.tenant, "EscrowPayment: only tenant can fund");
-        require(escrow.status == EscrowStatus.CREATED, "EscrowPayment: escrow not in created status");
+    function fundEscrow(uint256 escrowId) external nonReentrant {
+        EscrowDeposit storage escrow = _escrows[escrowId];
+        require(escrow.escrowId != 0, "Escrow does not exist");
+        require(escrow.status == EscrowStatus.PENDING, "Escrow already funded");
+        require(msg.sender == escrow.depositor, "Only depositor can fund");
         
-        IERC20 token = IERC20(escrow.paymentToken);
-        require(token.balanceOf(msg.sender) >= escrow.amount, "EscrowPayment: insufficient balance");
-        
-        token.safeTransferFrom(msg.sender, address(this), escrow.amount);
-        
+        IERC20(escrow.token).safeTransferFrom(msg.sender, address(this), escrow.amount);
         escrow.status = EscrowStatus.FUNDED;
         
-        emit SecurityDepositFunded(_escrowId, msg.sender, escrow.amount);
+        emit EscrowFunded(escrowId, escrow.amount);
     }
     
-    /**
-     * @dev Release security deposit
-     */
-    function releaseSecurityDeposit(
-        uint256 _escrowId, 
-        address _recipient,
-        uint256 _amount,
-        string calldata _reason
-    ) external validEscrow(_escrowId) onlyEscrowAgent nonReentrant {
-        SecurityDepositEscrow storage escrow = securityDeposits[_escrowId];
-        require(escrow.status == EscrowStatus.FUNDED, "EscrowPayment: escrow not funded");
-        require(block.timestamp >= escrow.releaseDate, "EscrowPayment: release date not reached");
-        require(_amount <= escrow.amount, "EscrowPayment: amount exceeds deposit");
-        require(
-            _recipient == escrow.landlord || _recipient == escrow.tenant,
-            "EscrowPayment: invalid recipient"
-        );
+    function releaseEscrow(uint256 escrowId) external onlyRole(ESCROW_AGENT_ROLE) nonReentrant {
+        EscrowDeposit storage escrow = _escrows[escrowId];
+        require(escrow.escrowId != 0, "Escrow does not exist");
+        require(escrow.status == EscrowStatus.FUNDED, "Escrow not funded");
+        require(block.timestamp >= escrow.releaseDate, "Release date not reached");
         
-        IERC20 token = IERC20(escrow.paymentToken);
-        token.safeTransfer(_recipient, _amount);
+        escrow.status = EscrowStatus.RELEASED;
+        IERC20(escrow.token).safeTransfer(escrow.beneficiary, escrow.amount);
         
-        if (_amount == escrow.amount) {
-            escrow.status = EscrowStatus.RELEASED;
-        } else {
-            // Partial release - reduce escrow amount
-            escrow.amount -= _amount;
-        }
-        
-        emit SecurityDepositReleased(_escrowId, _recipient, _amount, _reason);
+        emit EscrowReleased(escrowId, escrow.beneficiary, escrow.amount);
     }
     
-    /**
-     * @dev Refund security deposit to tenant
-     */
-    function refundSecurityDeposit(uint256 _escrowId, string calldata _reason) 
-        external 
-        validEscrow(_escrowId) 
-        onlyEscrowAgent 
-        nonReentrant 
-    {
-        SecurityDepositEscrow storage escrow = securityDeposits[_escrowId];
-        require(escrow.status == EscrowStatus.FUNDED, "EscrowPayment: escrow not funded");
-        
-        IERC20 token = IERC20(escrow.paymentToken);
-        token.safeTransfer(escrow.tenant, escrow.amount);
+    function refundEscrow(uint256 escrowId) external onlyRole(ESCROW_AGENT_ROLE) nonReentrant {
+        EscrowDeposit storage escrow = _escrows[escrowId];
+        require(escrow.escrowId != 0, "Escrow does not exist");
+        require(escrow.status == EscrowStatus.FUNDED, "Escrow not funded");
         
         escrow.status = EscrowStatus.REFUNDED;
+        IERC20(escrow.token).safeTransfer(escrow.depositor, escrow.amount);
         
-        emit SecurityDepositReleased(_escrowId, escrow.tenant, escrow.amount, _reason);
+        emit EscrowRefunded(escrowId, escrow.depositor, escrow.amount);
     }
     
-    // Rent Payment Functions
-    
-    /**
-     * @dev Process rent payment
-     */
-    function processRentPayment(
-        uint256 _leaseId,
-        address _landlord,
-        address _tenant,
-        address _paymentToken,
-        uint256 _amount,
-        uint256 _dueDate,
-        PaymentMethod _method,
-        string calldata _fiatReference,
-        bytes32 _proofHash
-    ) external 
-        whenNotPaused 
-        onlyPaymentProcessor 
-        nonReentrant 
-        returns (uint256) 
-    {
-        require(_amount > 0, "EscrowPayment: invalid amount");
-        require(approvedTokens[_paymentToken], "EscrowPayment: token not approved");
-        require(identityRegistry.isVerified(_landlord), "EscrowPayment: landlord not verified");
-        require(identityRegistry.isVerified(_tenant), "EscrowPayment: tenant not verified");
+    // Rent payment functions
+    function createRentPayment(
+        uint256 leaseId,
+        uint256 amount,
+        address token,
+        uint256 dueDate
+    ) external onlyRole(PAYMENT_PROCESSOR_ROLE) returns (uint256) {
+        require(amount > 0, "Amount must be greater than 0");
+        require(token != address(0), "Invalid token");
+        require(dueDate > block.timestamp, "Due date must be in the future");
+        
+        // Verify lease exists and is active
+        require(leaseAgreement.isLeaseActive(leaseId), "Lease is not active");
         
         _paymentCounter++;
         uint256 paymentId = _paymentCounter;
         
-        if (_method == PaymentMethod.CRYPTO) {
-            IERC20 token = IERC20(_paymentToken);
-            token.safeTransferFrom(_tenant, _landlord, _amount);
-        }
-        // For FIAT_BRIDGE and HYBRID, funds are handled by external bridge
-        
-        rentPayments[paymentId] = RentPayment({
-            paymentId: paymentId,
-            leaseId: _leaseId,
-            landlord: _landlord,
-            tenant: _tenant,
-            paymentToken: _paymentToken,
-            amount: _amount,
-            dueDate: _dueDate,
-            paidDate: block.timestamp,
-            method: _method,
-            fiatReference: _fiatReference,
-            proofHash: _proofHash,
-            isAutomated: false
+        _rentPayments[paymentId] = RentPayment({
+            leaseId: leaseId,
+            amount: amount,
+            token: token,
+            dueDate: dueDate,
+            paidDate: 0,
+            isPaid: false,
+            payer: address(0)
         });
         
-        emit RentPaymentProcessed(paymentId, _leaseId, _tenant, _landlord, _amount, _method);
+        _leasePayments[leaseId].push(paymentId);
         
+        emit RentPaymentCreated(paymentId, leaseId, amount, dueDate);
         return paymentId;
     }
     
-    // Automated Payment Functions
-    
-    /**
-     * @dev Create automated payment subscription for rent
-     */
-    function createPaymentSubscription(
-        uint256 _leaseId,
-        address _tenant,
-        address _landlord,
-        address _paymentToken,
-        uint256 _monthlyAmount,
-        uint256 _startDate,
-        uint256 _endDate
-    ) external 
-        whenNotPaused 
-        verifiedUsers(_landlord, _tenant) 
-        returns (uint256) 
-    {
-        require(_leaseId > 0, "EscrowPayment: invalid lease ID");
-        require(_monthlyAmount > 0, "EscrowPayment: invalid amount");
-        require(approvedTokens[_paymentToken], "EscrowPayment: token not approved");
-        require(_startDate >= block.timestamp, "EscrowPayment: start date in past");
-        require(_endDate > _startDate, "EscrowPayment: invalid subscription period");
-        require(leaseToSubscription[_leaseId] == 0, "EscrowPayment: subscription already exists");
+    function payRent(uint256 paymentId) external nonReentrant {
+        RentPayment storage payment = _rentPayments[paymentId];
+        require(payment.leaseId != 0, "Payment does not exist");
+        require(!payment.isPaid, "Payment already made");
+        require(block.timestamp <= payment.dueDate + 7 days, "Payment deadline passed");
         
-        _subscriptionCounter++;
-        uint256 subscriptionId = _subscriptionCounter;
+        // Get lease details
+        LeaseAgreement.Lease memory lease = leaseAgreement.getLease(payment.leaseId);
+        require(msg.sender == lease.tenant, "Only tenant can pay rent");
         
-        paymentSubscriptions[subscriptionId] = PaymentSubscription({
-            subscriptionId: subscriptionId,
-            leaseId: _leaseId,
-            tenant: _tenant,
-            landlord: _landlord,
-            paymentToken: _paymentToken,
-            amount: _monthlyAmount,
-            startDate: _startDate,
-            endDate: _endDate,
-            lastPayment: 0,
-            nextPayment: _startDate,
-            isActive: true,
-            failedPayments: 0
-        });
+        IERC20(payment.token).safeTransferFrom(msg.sender, lease.landlord, payment.amount);
         
-        leaseToSubscription[_leaseId] = subscriptionId;
+        payment.isPaid = true;
+        payment.paidDate = block.timestamp;
+        payment.payer = msg.sender;
         
-        emit PaymentSubscriptionCreated(subscriptionId, _leaseId, _tenant, _monthlyAmount);
-        
-        return subscriptionId;
+        emit RentPaid(paymentId, payment.leaseId, msg.sender, payment.amount);
     }
     
-    /**
-     * @dev Execute automated payment
-     */
-    function executeAutomatedPayment(uint256 _subscriptionId) 
-        public 
-        onlyPaymentProcessor 
-        nonReentrant 
-        returns (uint256) 
-    {
-        PaymentSubscription storage subscription = paymentSubscriptions[_subscriptionId];
-        require(subscription.isActive, "EscrowPayment: subscription not active");
-        require(block.timestamp >= subscription.nextPayment, "EscrowPayment: payment not due");
-        require(block.timestamp <= subscription.endDate, "EscrowPayment: subscription expired");
+    // View functions
+    function getEscrow(uint256 escrowId) external view returns (EscrowDeposit memory) {
+        require(_escrows[escrowId].escrowId != 0, "Escrow does not exist");
+        return _escrows[escrowId];
+    }
+    
+    function getRentPayment(uint256 paymentId) external view returns (RentPayment memory) {
+        require(_rentPayments[paymentId].leaseId != 0, "Payment does not exist");
+        return _rentPayments[paymentId];
+    }
+    
+    function getLeasePayments(uint256 leaseId) external view returns (uint256[] memory) {
+        return _leasePayments[leaseId];
+    }
+    
+    function getTotalEscrows() external view returns (uint256) {
+        return _escrowCounter;
+    }
+    
+    function getTotalPayments() external view returns (uint256) {
+        return _paymentCounter;
+    }
+    
+    function isPaymentDue(uint256 paymentId) external view returns (bool) {
+        RentPayment memory payment = _rentPayments[paymentId];
+        return !payment.isPaid && block.timestamp >= payment.dueDate;
+    }
+    
+    function getOverduePayments(uint256 leaseId) external view returns (uint256[] memory) {
+        uint256[] memory leasePaymentIds = _leasePayments[leaseId];
+        uint256 overdueCount = 0;
         
-        IERC20 token = IERC20(subscription.paymentToken);
-        
-        try token.transferFrom(subscription.tenant, subscription.landlord, subscription.amount) {
-            _paymentCounter++;
-            uint256 paymentId = _paymentCounter;
-            
-            rentPayments[paymentId] = RentPayment({
-                paymentId: paymentId,
-                leaseId: subscription.leaseId,
-                landlord: subscription.landlord,
-                tenant: subscription.tenant,
-                paymentToken: subscription.paymentToken,
-                amount: subscription.amount,
-                dueDate: subscription.nextPayment,
-                paidDate: block.timestamp,
-                method: PaymentMethod.CRYPTO,
-                fiatReference: "",
-                proofHash: bytes32(0),
-                isAutomated: true
-            });
-            
-            subscription.lastPayment = block.timestamp;
-            subscription.nextPayment += 30 days; // Move to next month
-            subscription.failedPayments = 0; // Reset failure counter
-            
-            emit AutomatedPaymentExecuted(_subscriptionId, paymentId, subscription.amount);
-            emit RentPaymentProcessed(
-                paymentId, 
-                subscription.leaseId, 
-                subscription.tenant, 
-                subscription.landlord, 
-                subscription.amount, 
-                PaymentMethod.CRYPTO
-            );
-            
-            return paymentId;
-        } catch {
-            subscription.failedPayments++;
-            
-            if (subscription.failedPayments >= maxFailedPayments) {
-                subscription.isActive = false;
+        // Count overdue payments
+        for (uint256 i = 0; i < leasePaymentIds.length; i++) {
+            RentPayment memory payment = _rentPayments[leasePaymentIds[i]];
+            if (!payment.isPaid && block.timestamp > payment.dueDate) {
+                overdueCount++;
             }
-            
-            emit AutomatedPaymentFailed(_subscriptionId, subscription.failedPayments, "Transfer failed");
-            
-            return 0;
-        }
-    }
-    
-    /**
-     * @dev Cancel payment subscription
-     */
-    function cancelPaymentSubscription(uint256 _subscriptionId) 
-        external 
-    {
-        PaymentSubscription storage subscription = paymentSubscriptions[_subscriptionId];
-        require(
-            msg.sender == subscription.tenant || 
-            msg.sender == subscription.landlord ||
-            hasRole(DEFAULT_ADMIN_ROLE, msg.sender),
-            "EscrowPayment: not authorized to cancel"
-        );
-        
-        subscription.isActive = false;
-    }
-    
-    // Dispute Functions
-    
-    /**
-     * @dev Raise dispute on escrow
-     */
-    function raiseEscrowDispute(uint256 _escrowId, string calldata _reason) 
-        external 
-        validEscrow(_escrowId) 
-        onlyEscrowParties(_escrowId) 
-    {
-        SecurityDepositEscrow storage escrow = securityDeposits[_escrowId];
-        require(escrow.status == EscrowStatus.FUNDED, "EscrowPayment: escrow not funded");
-        
-        escrow.status = EscrowStatus.DISPUTED;
-        
-        emit DisputeRaised(_escrowId, msg.sender, _reason);
-    }
-    
-    /**
-     * @dev Resolve escrow dispute
-     */
-    function resolveEscrowDispute(
-        uint256 _escrowId, 
-        address _recipient,
-        uint256 _amount,
-        string calldata _resolution
-    ) external validEscrow(_escrowId) onlyDisputeResolver nonReentrant {
-        SecurityDepositEscrow storage escrow = securityDeposits[_escrowId];
-        require(escrow.status == EscrowStatus.DISPUTED, "EscrowPayment: not disputed");
-        require(_amount <= escrow.amount, "EscrowPayment: amount exceeds deposit");
-        require(
-            _recipient == escrow.landlord || _recipient == escrow.tenant,
-            "EscrowPayment: invalid recipient"
-        );
-        
-        IERC20 token = IERC20(escrow.paymentToken);
-        token.safeTransfer(_recipient, _amount);
-        
-        if (_amount == escrow.amount) {
-            escrow.status = EscrowStatus.RELEASED;
-        } else {
-            escrow.amount -= _amount;
-            escrow.status = EscrowStatus.FUNDED; // Return to funded status for remainder
         }
         
-        emit SecurityDepositReleased(_escrowId, _recipient, _amount, _resolution);
+        // Build overdue payments array
+        uint256[] memory overduePayments = new uint256[](overdueCount);
+        uint256 index = 0;
+        
+        for (uint256 i = 0; i < leasePaymentIds.length; i++) {
+            RentPayment memory payment = _rentPayments[leasePaymentIds[i]];
+            if (!payment.isPaid && block.timestamp > payment.dueDate) {
+                overduePayments[index] = leasePaymentIds[i];
+                index++;
+            }
+        }
+        
+        return overduePayments;
     }
     
-    // View Functions
-    
-    /**
-     * @dev Get security deposit details
-     */
-    function getSecurityDeposit(uint256 _escrowId) 
-        external 
-        view 
-        validEscrow(_escrowId) 
-        returns (SecurityDepositEscrow memory) 
-    {
-        return securityDeposits[_escrowId];
-    }
-    
-    /**
-     * @dev Get rent payment details
-     */
-    function getRentPayment(uint256 _paymentId) 
-        external 
-        view 
-        returns (RentPayment memory) 
-    {
-        require(_paymentId > 0 && _paymentId <= _paymentCounter, "EscrowPayment: invalid payment ID");
-        return rentPayments[_paymentId];
-    }
-    
-    /**
-     * @dev Get payment subscription details
-     */
-    function getPaymentSubscription(uint256 _subscriptionId) 
-        external 
-        view 
-        returns (PaymentSubscription memory) 
-    {
-        require(_subscriptionId > 0 && _subscriptionId <= _subscriptionCounter, 
-                "EscrowPayment: invalid subscription ID");
-        return paymentSubscriptions[_subscriptionId];
-    }
-    
-    /**
-     * @dev Get landlord's escrows
-     */
-    function getLandlordEscrows(address _landlord) 
-        external 
-        view 
-        returns (uint256[] memory) 
-    {
-        return landlordEscrows[_landlord];
-    }
-    
-    /**
-     * @dev Get tenant's escrows
-     */
-    function getTenantEscrows(address _tenant) 
-        external 
-        view 
-        returns (uint256[] memory) 
-    {
-        return tenantEscrows[_tenant];
-    }
-    
-    /**
-     * @dev Get escrow ID for lease
-     */
-    function getLeaseEscrow(uint256 _leaseId) 
-        external 
-        view 
-        returns (uint256) 
-    {
-        return leaseToEscrow[_leaseId];
-    }
-    
-    /**
-     * @dev Get subscription ID for lease
-     */
-    function getLeaseSubscription(uint256 _leaseId) 
-        external 
-        view 
-        returns (uint256) 
-    {
-        return leaseToSubscription[_leaseId];
-    }
-    
-    // Administrative Functions
-    
-    /**
-     * @dev Set approved payment token
-     */
-    function setApprovedToken(address _token, bool _approved) 
-        external 
-        onlyRole(DEFAULT_ADMIN_ROLE) 
-    {
-        approvedTokens[_token] = _approved;
-    }
-    
-    /**
-     * @dev Set fiat bridge contract
-     */
-    function setFiatBridge(address _fiatBridge) 
-        external 
-        onlyRole(DEFAULT_ADMIN_ROLE) 
-    {
-        fiatBridge = _fiatBridge;
-    }
-    
-    /**
-     * @dev Update configuration parameters
-     */
-    function updateConfiguration(
-        uint256 _defaultEscrowPeriod,
-        uint256 _maxEscrowPeriod,
-        uint256 _gracePeriod,
-        uint256 _maxFailedPayments
+    // Emergency functions
+    function emergencyWithdraw(
+        address token,
+        uint256 amount,
+        address to
     ) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        defaultEscrowPeriod = _defaultEscrowPeriod;
-        maxEscrowPeriod = _maxEscrowPeriod;
-        automatedPaymentGracePeriod = _gracePeriod;
-        maxFailedPayments = _maxFailedPayments;
-    }
-    
-    /**
-     * @dev Emergency pause
-     */
-    function pause() external onlyRole(DEFAULT_ADMIN_ROLE) {
-        _pause();
-    }
-    
-    /**
-     * @dev Unpause
-     */
-    function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) {
-        _unpause();
-    }
-    
-    /**
-     * @dev Batch execute automated payments
-     */
-    function batchExecuteAutomatedPayments(uint256[] calldata _subscriptionIds) 
-        external 
-        onlyPaymentProcessor 
-    {
-        for (uint256 i = 0; i < _subscriptionIds.length; i++) {
-            if (_subscriptionIds[i] > 0 && _subscriptionIds[i] <= _subscriptionCounter) {
-                PaymentSubscription memory subscription = paymentSubscriptions[_subscriptionIds[i]];
-                if (subscription.isActive && 
-                    block.timestamp >= subscription.nextPayment &&
-                    block.timestamp <= subscription.endDate) {
-                    executeAutomatedPayment(_subscriptionIds[i]);
-                }
-            }
-        }
+        require(to != address(0), "Invalid recipient");
+        IERC20(token).safeTransfer(to, amount);
     }
 }

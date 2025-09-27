@@ -196,24 +196,10 @@ contract RealEstateToken is ERC20, AccessControl, ReentrancyGuard {
     }
     
     /**
-     * @dev Hook called after any token transfer
-     * @param from The sender address (zero for minting)
-     * @param to The recipient address (zero for burning)
-     * @param amount The amount transferred
-     * @notice Updates compliance holder counts and handles post-transfer logic
-     */
-    function _afterTokenTransfer(address from, address to, uint256 amount) 
-        internal 
-        virtual 
-        override 
-    {
-        super._afterTokenTransfer(from, to, amount);
-        
-        // Update compliance contract holder counts
-        compliance.transferred(from, to, amount);
-    }
-    
-    /**
+     * @dev Update asset passport CID
+     * @param _cid New IPFS CID for asset passport
+     * @notice Only admin can update asset passport reference
+     */    /**
      * @dev Update asset passport CID
      * @param _cid New IPFS CID for asset passport
      * @notice Only admin can update asset passport reference
@@ -273,11 +259,12 @@ contract RealEstateToken is ERC20, AccessControl, ReentrancyGuard {
     }
     
     /**
-     * @dev Get token holder count from compliance
+     * @dev Get token holder count (placeholder)
      * @return uint256 Number of token holders
      */
     function getHolderCount() external view returns (uint256) {
-        return compliance.getTotalHolders();
+        // Placeholder implementation - would need to track holders separately
+        return 0;
     }
     
     /**
