@@ -2,35 +2,46 @@
 pragma solidity ^0.8.20;
 
 /**
- * @title IIdentityRegistry Interface
- * @dev Interface for Integra-compliant identity registry
+ * @title IIdentityRegistry
+ * @dev Interface for identity registry - maintains KYC/AML compliance
+ * @notice This interface defines the core functions for managing investor identities
  */
 interface IIdentityRegistry {
-    // Events
-    event IdentityStored(address indexed investorAddress, address indexed identity);
-    event IdentityUnstored(address indexed investorAddress, address indexed identity);
-    event IdentityModified(address indexed oldIdentity, address indexed newIdentity);
-    event CountryModified(address indexed investorAddress, uint16 indexed country);
-    event IdentityRegistryBound(address indexed identityRegistry);
-    event IdentityRegistryUnbound(address indexed identityRegistry);
+    /**
+     * @dev Emitted when a new identity is registered
+     */
+    event IdentityRegistered(address indexed wallet, address indexed onchainId);
     
-    // Core functions
-    function identity(address _userAddress) external view returns (address);
-    function investorCountry(address _userAddress) external view returns (uint16);
-    function isVerified(address _userAddress) external view returns (bool);
-    function contains(address _userAddress) external view returns (bool);
+    /**
+     * @dev Emitted when an identity is verified by admin
+     */
+    event IdentityVerified(address indexed wallet, address indexed onchainId, uint16 country);
     
-    function registerIdentity(address _userAddress, address _identity, uint16 _country) external;
-    function deleteIdentity(address _userAddress) external;
-    function updateIdentity(address _userAddress, address _identity) external;
-    function updateCountry(address _userAddress, uint16 _country) external;
+    /**
+     * @dev Register an identity (public for demo purposes)
+     * @param _onchainId The on-chain identity contract address
+     */
+    function registerIdentity(address _onchainId) external;
     
-    function batchRegisterIdentity(
-        address[] calldata _userAddresses, 
-        address[] calldata _identities, 
-        uint16[] calldata _countries
-    ) external;
+    /**
+     * @dev Admin verifies an identity after KYC process
+     * @param _wallet The wallet address to verify
+     * @param _onchainId The on-chain identity contract
+     * @param _country ISO 3166-1 country code
+     */
+    function adminVerify(address _wallet, address _onchainId, uint16 _country) external;
     
-    function bindIdentityRegistry(address _identityRegistry) external;
-    function unbindIdentityRegistry(address _identityRegistry) external;
+    /**
+     * @dev Check if a wallet is verified
+     * @param _wallet The wallet address to check
+     * @return bool True if wallet is KYC verified
+     */
+    function isVerified(address _wallet) external view returns (bool);
+    
+    /**
+     * @dev Get the country of a verified wallet
+     * @param _wallet The wallet address
+     * @return uint16 The country code
+     */
+    function getCountry(address _wallet) external view returns (uint16);
 }

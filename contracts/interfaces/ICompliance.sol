@@ -2,33 +2,54 @@
 pragma solidity ^0.8.20;
 
 /**
- * @title ICompliance Interface  
- * @dev Interface for compliance rules and validation
+ * @title ICompliance
+ * @dev Interface for compliance engine - handles transfer restrictions and validation
+ * @notice This interface defines compliance rules for token transfers
  */
 interface ICompliance {
-    // Events
-    event TokenBound(address indexed token);
-    event TokenUnbound(address indexed token);
-    event RuleAdded(bytes32 indexed ruleType, address indexed ruleAddress);
-    event RuleRemoved(bytes32 indexed ruleType, address indexed ruleAddress);
+    /**
+     * @dev Emitted when compliance rules are updated
+     */
+    event ComplianceRuleAdded(string indexed ruleType, address indexed target);
     
-    // Core compliance functions
+    /**
+     * @dev Emitted when a forced transfer occurs
+     */
+    event ForcedTransfer(address indexed from, address indexed to, uint256 amount);
+    
+    /**
+     * @dev Check if a transfer is compliant
+     * @param _from The sender address
+     * @param _to The recipient address  
+     * @param _amount The transfer amount
+     * @return bool True if transfer is allowed
+     */
     function canTransfer(address _from, address _to, uint256 _amount) external view returns (bool);
+    
+    /**
+     * @dev Hook called after token transfer to update holder counts
+     * @param _from The sender address
+     * @param _to The recipient address
+     * @param _amount The transfer amount
+     */
     function transferred(address _from, address _to, uint256 _amount) external;
-    function created(address _to, uint256 _amount) external;
-    function destroyed(address _from, uint256 _amount) external;
     
-    // Token binding
-    function bindToken(address _token) external;
-    function unbindToken(address _token) external;
-    function isTokenBound(address _token) external view returns (bool);
+    /**
+     * @dev Add address to blacklist
+     * @param _address The address to blacklist
+     */
+    function addToBlacklist(address _address) external;
     
-    // Rule management
-    function addRule(bytes32 _ruleType, address _ruleAddress) external;
-    function removeRule(bytes32 _ruleType, address _ruleAddress) external;
-    function getRules(bytes32 _ruleType) external view returns (address[] memory);
+    /**
+     * @dev Remove address from blacklist  
+     * @param _address The address to remove from blacklist
+     */
+    function removeFromBlacklist(address _address) external;
     
-    // Compliance status
-    function getComplianceStatus(address _user) external view returns (bool);
-    function getTransferRestrictions(address _from, address _to) external view returns (string[] memory);
+    /**
+     * @dev Check if address is blacklisted
+     * @param _address The address to check
+     * @return bool True if blacklisted
+     */
+    function isBlacklisted(address _address) external view returns (bool);
 }

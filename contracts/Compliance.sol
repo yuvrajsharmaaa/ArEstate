@@ -1,149 +1,74 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/ICompliance.sol";
 import "./interfaces/IIdentityRegistry.sol";
 
 /**
  * @title Compliance
- * @dev Manages jurisdictional compliance rules, transfer restrictions, and audit reporting
- * Integrates with Integra's policy-based privacy and regulatory frameworks
+ * @dev Basic compliance engine for ERC-3643 token transfers
+ * @notice Purpose: Enforce transfer restrictions and blacklist management
+ * 
+ * Expected edits for production:
+ * - Add more sophisticated compliance rules
+ * - Implement time-based restrictions
+ * - Add integration with regulatory APIs
+ * 
+ * Security notes:
+ * - Only owner can manage blacklist and restrictions
+ * - All transfer validations must pass for token operations
+ * - Holder count tracking for regulatory reporting
  */
-contract Compliance is AccessControl, ReentrancyGuard, ICompliance {
+contract Compliance is Ownable, ICompliance {
     
-    // Roles
-    bytes32 public constant COMPLIANCE_OFFICER_ROLE = keccak256("COMPLIANCE_OFFICER_ROLE");
-    bytes32 public constant RULE_MANAGER_ROLE = keccak256("RULE_MANAGER_ROLE");
-    bytes32 public constant AUDITOR_ROLE = keccak256("AUDITOR_ROLE");
+    // Identity registry reference
+    IIdentityRegistry public immutable identityRegistry;
     
-    // Compliance rule types
-    bytes32 public constant TRANSFER_LIMIT_RULE = keccak256("TRANSFER_LIMIT_RULE");
-    bytes32 public constant COUNTRY_RESTRICTION_RULE = keccak256("COUNTRY_RESTRICTION_RULE");
-    bytes32 public constant INVESTOR_TYPE_RULE = keccak256("INVESTOR_TYPE_RULE");
-    bytes32 public constant TIME_LOCK_RULE = keccak256("TIME_LOCK_RULE");
-    bytes32 public constant KYC_REQUIREMENT_RULE = keccak256("KYC_REQUIREMENT_RULE");
-    bytes32 public constant HOLDING_PERIOD_RULE = keccak256("HOLDING_PERIOD_RULE");
+    // Blacklisted addresses (cannot send or receive tokens)
+    mapping(address => bool) private _blacklisted;
     
-    // Investor types for compliance
-    enum InvestorType {
-        RETAIL,
-        ACCREDITED,
-        INSTITUTIONAL,
-        QUALIFIED
-    }
+    // Restricted countries (cannot participate in transfers)
+    mapping(uint16 => bool) private _restrictedCountries;
     
-    // Compliance rule structure
-    struct ComplianceRule {
-        bytes32 ruleType;
-        address ruleAddress;        // External rule contract
-        bool isActive;
-        uint256 priority;          // Higher number = higher priority
-        string description;
-        bytes32 configHash;        // Hash of rule configuration
-        uint256 createdAt;
-        uint256 lastModified;
-    }
+    // Maximum balance per investor (for regulatory compliance)
+    uint256 public maxBalancePerInvestor = 1000000 * 10**18; // 1M tokens default
     
-    // Transfer restriction structure
-    struct TransferRestriction {
-        uint16 fromCountry;        // Source country (0 = any)
-        uint16 toCountry;          // Destination country (0 = any)
-        InvestorType fromType;     // Source investor type
-        InvestorType toType;       // Destination investor type
-        uint256 minAmount;         // Minimum transfer amount
-        uint256 maxAmount;         // Maximum transfer amount
-        uint256 dailyLimit;        // Daily transfer limit
-        uint256 monthlyLimit;      // Monthly transfer limit
-        bool isBlocked;            // Complete block
-        string reason;             // Restriction reason
-    }
+    // Holder count tracking
+    mapping(address => uint256) private _holderBalances;
+    uint256 private _totalHolders;
     
-    // Holding period requirement
-    struct HoldingPeriod {
-        address investor;
-        uint256 amount;
-        uint256 acquisitionDate;
-        uint256 minimumHoldPeriod;
-        bool isLocked;
-    }
+    // Token contract that this compliance is bound to
+    address public boundToken;
     
-    // Audit trail entry
-    struct AuditEntry {
-        uint256 timestamp;
-        address user;
-        string action;
-        bytes32 dataHash;
-        bool isCompliant;
-        string details;
-    }
-    
-    // Storage mappings
-    mapping(address => bool) private _boundTokens;
-    mapping(bytes32 => ComplianceRule[]) private _rules;
-    mapping(address => mapping(address => uint256)) private _dailyTransfers;   // user => token => amount
-    mapping(address => mapping(address => uint256)) private _monthlyTransfers; // user => token => amount
-    mapping(address => mapping(address => uint256)) private _lastTransferDate; // user => token => date
-    mapping(address => InvestorType) public investorTypes;
-    mapping(bytes32 => bool) public restrictedCountryPairs; // hash(fromCountry, toCountry) => blocked
-    mapping(address => HoldingPeriod[]) public investorHoldings;
-    mapping(uint256 => TransferRestriction) public transferRestrictions;
-    
-    // Audit trail
-    AuditEntry[] public auditTrail;
-    mapping(address => uint256[]) public userAuditHistory; // user => audit indices
-    
-    // Contract references
-    IIdentityRegistry public identityRegistry;
-    
-    // Configuration
-    uint256 public defaultHoldingPeriod = 365 days;
-    uint256 public maxTransferAmount = 1000000 * 10**18; // 1M tokens
-    uint256 public maxDailyTransfers = 10;
-    bool public globalTransfersPaused = false;
-    
-    // Counters
-    uint256 private _restrictionCounter;
-    
-    constructor(address _identityRegistry) {
+    constructor(address _identityRegistry) Ownable(msg.sender) {
         require(_identityRegistry != address(0), "Compliance: invalid identity registry");
-        
-        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _grantRole(COMPLIANCE_OFFICER_ROLE, msg.sender);
-        _grantRole(RULE_MANAGER_ROLE, msg.sender);
-        _grantRole(AUDITOR_ROLE, msg.sender);
-        
         identityRegistry = IIdentityRegistry(_identityRegistry);
         
-        _addAuditEntry(msg.sender, "CONTRACT_DEPLOYED", bytes32(0), true, "Compliance contract deployed");
+        // Add some default restricted countries for demo (optional)
+        // _restrictedCountries[408] = true; // North Korea
+        // _restrictedCountries[364] = true; // Iran
     }
-    
-    // Modifiers
-    modifier onlyComplianceOfficer() {
-        require(hasRole(COMPLIANCE_OFFICER_ROLE, msg.sender), "Compliance: not compliance officer");
-        _;
-    }
-    
-    modifier onlyRuleManager() {
-        require(hasRole(RULE_MANAGER_ROLE, msg.sender), "Compliance: not rule manager");
-        _;
-    }
-    
-    modifier onlyAuditor() {
-        require(hasRole(AUDITOR_ROLE, msg.sender), "Compliance: not auditor");
-        _;
-    }
-    
-    modifier onlyBoundToken() {
-        require(_boundTokens[msg.sender], "Compliance: token not bound");
-        _;
-    }
-    
-    // Core Compliance Functions (ICompliance implementation)
     
     /**
-     * @dev Check if transfer is compliant with all rules
+     * @dev Bind this compliance to a token contract
+     * @param _token The token contract address
+     * @notice Only one token can be bound per compliance contract
+     */
+    function bindToken(address _token) external onlyOwner {
+        require(_token != address(0), "Compliance: invalid token");
+        require(boundToken == address(0), "Compliance: already bound");
+        
+        boundToken = _token;
+    }
+    
+    /**
+     * @dev Check if a transfer is compliant
+     * @param _from The sender address
+     * @param _to The recipient address  
+     * @param _amount The transfer amount
+     * @return bool True if transfer is allowed
+     * @notice This is called by RealEstateToken before every transfer
      */
     function canTransfer(address _from, address _to, uint256 _amount) 
         external 
@@ -151,589 +76,163 @@ contract Compliance is AccessControl, ReentrancyGuard, ICompliance {
         override 
         returns (bool) 
     {
-        if (globalTransfersPaused) return false;
-        
-        // Basic identity verification
-        if (!identityRegistry.isVerified(_from) || !identityRegistry.isVerified(_to)) {
-            return false;
+        // Skip checks for minting (from zero address)
+        if (_from == address(0)) {
+            return _canReceive(_to, _amount);
         }
+        
+        // Skip checks for burning (to zero address)
+        if (_to == address(0)) {
+            return !_blacklisted[_from];
+        }
+        
+        // Check sender can send
+        if (_blacklisted[_from]) return false;
+        
+        // Check recipient can receive
+        return _canReceive(_to, _amount);
+    }
+    
+    /**
+     * @dev Hook called after token transfer to update holder counts
+     * @param _from The sender address
+     * @param _to The recipient address
+     * @param _amount The transfer amount
+     * @notice Updates holder statistics for regulatory reporting
+     */
+    function transferred(address _from, address _to, uint256 _amount) external override {
+        require(msg.sender == boundToken, "Compliance: only bound token");
+        
+        // Update holder balances for tracking
+        if (_from != address(0)) {
+            _holderBalances[_from] -= _amount;
+            if (_holderBalances[_from] == 0) {
+                _totalHolders--;
+            }
+        }
+        
+        if (_to != address(0)) {
+            if (_holderBalances[_to] == 0) {
+                _totalHolders++;
+            }
+            _holderBalances[_to] += _amount;
+        }
+    }
+    
+    /**
+     * @dev Add address to blacklist
+     * @param _address The address to blacklist
+     * @notice Blacklisted addresses cannot send or receive tokens
+     */
+    function addToBlacklist(address _address) external override onlyOwner {
+        require(_address != address(0), "Compliance: invalid address");
+        _blacklisted[_address] = true;
+        
+        emit ComplianceRuleAdded("BLACKLIST_ADD", _address);
+    }
+    
+    /**
+     * @dev Remove address from blacklist  
+     * @param _address The address to remove from blacklist
+     */
+    function removeFromBlacklist(address _address) external override onlyOwner {
+        _blacklisted[_address] = false;
+        
+        emit ComplianceRuleAdded("BLACKLIST_REMOVE", _address);
+    }
+    
+    /**
+     * @dev Check if address is blacklisted
+     * @param _address The address to check
+     * @return bool True if blacklisted
+     */
+    function isBlacklisted(address _address) external view override returns (bool) {
+        return _blacklisted[_address];
+    }
+    
+    /**
+     * @dev Add country to restricted list
+     * @param _country ISO 3166-1 country code
+     * @notice Addresses from restricted countries cannot participate
+     */
+    function addRestrictedCountry(uint16 _country) external onlyOwner {
+        _restrictedCountries[_country] = true;
+        
+        emit ComplianceRuleAdded("COUNTRY_RESTRICT", address(uint160(_country)));
+    }
+    
+    /**
+     * @dev Remove country from restricted list
+     * @param _country ISO 3166-1 country code
+     */
+    function removeRestrictedCountry(uint16 _country) external onlyOwner {
+        _restrictedCountries[_country] = false;
+        
+        emit ComplianceRuleAdded("COUNTRY_UNRESTRICT", address(uint160(_country)));
+    }
+    
+    /**
+     * @dev Check if country is restricted
+     * @param _country ISO 3166-1 country code
+     * @return bool True if restricted
+     */
+    function isCountryRestricted(uint16 _country) external view returns (bool) {
+        return _restrictedCountries[_country];
+    }
+    
+    /**
+     * @dev Set maximum balance per investor
+     * @param _maxBalance The maximum balance allowed per investor
+     * @notice Used for regulatory compliance (accredited investor limits)
+     */
+    function setMaxBalancePerInvestor(uint256 _maxBalance) external onlyOwner {
+        maxBalancePerInvestor = _maxBalance;
+        
+        emit ComplianceRuleAdded("MAX_BALANCE_SET", address(uint160(_maxBalance)));
+    }
+    
+    /**
+     * @dev Get total number of token holders
+     * @return uint256 Number of addresses with non-zero balance
+     */
+    function getTotalHolders() external view returns (uint256) {
+        return _totalHolders;
+    }
+    
+    /**
+     * @dev Get holder balance (for tracking purposes)
+     * @param _holder The holder address
+     * @return uint256 The tracked balance
+     */
+    function getHolderBalance(address _holder) external view returns (uint256) {
+        return _holderBalances[_holder];
+    }
+    
+    /**
+     * @dev Internal function to check if address can receive tokens
+     * @param _to The recipient address
+     * @param _amount The amount to receive
+     * @return bool True if can receive
+     */
+    function _canReceive(address _to, uint256 _amount) internal view returns (bool) {
+        // Cannot send to blacklisted address
+        if (_blacklisted[_to]) return false;
+        
+        // Must be verified by identity registry
+        if (!identityRegistry.isVerified(_to)) return false;
         
         // Check country restrictions
-        uint16 fromCountry = identityRegistry.investorCountry(_from);
-        uint16 toCountry = identityRegistry.investorCountry(_to);
-        bytes32 countryPairHash = keccak256(abi.encodePacked(fromCountry, toCountry));
-        if (restrictedCountryPairs[countryPairHash]) {
-            return false;
-        }
+        uint16 country = identityRegistry.getCountry(_to);
+        if (_restrictedCountries[country]) return false;
         
-        // Check investor type restrictions
-        InvestorType fromType = investorTypes[_from];
-        InvestorType toType = investorTypes[_to];
+        // Check maximum balance limit
+        uint256 newBalance = _holderBalances[_to] + _amount;
+        if (newBalance > maxBalancePerInvestor) return false;
         
-        // Check amount limits
-        if (_amount > maxTransferAmount) return false;
-        
-        // Check daily transfer limits
-        uint256 dailyTotal = _dailyTransfers[_from][msg.sender];
-        if (dailyTotal + _amount > maxTransferAmount) return false;
-        
-        // Check holding periods
-        if (!_checkHoldingPeriod(_from, _amount)) return false;
-        
-        // Execute rule-based checks
-        return _executeRuleChecks(_from, _to, _amount);
-    }
-    
-    /**
-     * @dev Called after successful transfer to update state
-     */
-    function transferred(address _from, address _to, uint256 _amount) 
-        external 
-        override 
-        onlyBoundToken 
-    {
-        // Update transfer counters
-        _updateTransferCounters(_from, _amount);
-        
-        // Update holding periods
-        _updateHoldingPeriods(_from, _to, _amount);
-        
-        // Log audit entry
-        _addAuditEntry(
-            _from, 
-            "TRANSFER_EXECUTED", 
-            keccak256(abi.encodePacked(_from, _to, _amount)), 
-            true, 
-            string(abi.encodePacked("Transferred ", _uint2str(_amount), " to ", _addressToString(_to)))
-        );
-    }
-    
-    /**
-     * @dev Called after token creation/minting
-     */
-    function created(address _to, uint256 _amount) 
-        external 
-        override 
-        onlyBoundToken 
-    {
-        // Add new holding period for minted tokens
-        investorHoldings[_to].push(HoldingPeriod({
-            investor: _to,
-            amount: _amount,
-            acquisitionDate: block.timestamp,
-            minimumHoldPeriod: defaultHoldingPeriod,
-            isLocked: true
-        }));
-        
-        _addAuditEntry(
-            _to, 
-            "TOKENS_CREATED", 
-            keccak256(abi.encodePacked(_to, _amount)), 
-            true, 
-            string(abi.encodePacked("Created ", _uint2str(_amount), " tokens"))
-        );
-    }
-    
-    /**
-     * @dev Called after token destruction/burning
-     */
-    function destroyed(address _from, uint256 _amount) 
-        external 
-        override 
-        onlyBoundToken 
-    {
-        // Remove holding periods for burned tokens
-        _removeHoldingPeriods(_from, _amount);
-        
-        _addAuditEntry(
-            _from, 
-            "TOKENS_DESTROYED", 
-            keccak256(abi.encodePacked(_from, _amount)), 
-            true, 
-            string(abi.encodePacked("Destroyed ", _uint2str(_amount), " tokens"))
-        );
-    }
-    
-    // Token Binding Functions
-    
-    /**
-     * @dev Bind compliance to token contract
-     */
-    function bindToken(address _token) 
-        external 
-        override 
-        onlyRole(DEFAULT_ADMIN_ROLE) 
-    {
-        require(_token != address(0), "Compliance: invalid token address");
-        _boundTokens[_token] = true;
-        
-        emit TokenBound(_token);
-        _addAuditEntry(msg.sender, "TOKEN_BOUND", bytes32(uint256(uint160(_token))), true, "Token bound to compliance");
-    }
-    
-    /**
-     * @dev Unbind compliance from token contract
-     */
-    function unbindToken(address _token) 
-        external 
-        override 
-        onlyRole(DEFAULT_ADMIN_ROLE) 
-    {
-        _boundTokens[_token] = false;
-        
-        emit TokenUnbound(_token);
-        _addAuditEntry(msg.sender, "TOKEN_UNBOUND", bytes32(uint256(uint160(_token))), true, "Token unbound from compliance");
-    }
-    
-    /**
-     * @dev Check if token is bound
-     */
-    function isTokenBound(address _token) 
-        external 
-        view 
-        override 
-        returns (bool) 
-    {
-        return _boundTokens[_token];
-    }
-    
-    // Rule Management Functions
-    
-    /**
-     * @dev Add compliance rule
-     */
-    function addRule(bytes32 _ruleType, address _ruleAddress) 
-        external 
-        override 
-        onlyRuleManager 
-    {
-        require(_ruleAddress != address(0), "Compliance: invalid rule address");
-        
-        _rules[_ruleType].push(ComplianceRule({
-            ruleType: _ruleType,
-            ruleAddress: _ruleAddress,
-            isActive: true,
-            priority: 100, // Default priority
-            description: "",
-            configHash: bytes32(0),
-            createdAt: block.timestamp,
-            lastModified: block.timestamp
-        }));
-        
-        emit RuleAdded(_ruleType, _ruleAddress);
-        _addAuditEntry(msg.sender, "RULE_ADDED", _ruleType, true, "New compliance rule added");
-    }
-    
-    /**
-     * @dev Remove compliance rule
-     */
-    function removeRule(bytes32 _ruleType, address _ruleAddress) 
-        external 
-        override 
-        onlyRuleManager 
-    {
-        ComplianceRule[] storage rules = _rules[_ruleType];
-        
-        for (uint256 i = 0; i < rules.length; i++) {
-            if (rules[i].ruleAddress == _ruleAddress) {
-                rules[i] = rules[rules.length - 1];
-                rules.pop();
-                break;
-            }
-        }
-        
-        emit RuleRemoved(_ruleType, _ruleAddress);
-        _addAuditEntry(msg.sender, "RULE_REMOVED", _ruleType, true, "Compliance rule removed");
-    }
-    
-    /**
-     * @dev Get rules for type
-     */
-    function getRules(bytes32 _ruleType) 
-        external 
-        view 
-        override 
-        returns (address[] memory) 
-    {
-        ComplianceRule[] memory rules = _rules[_ruleType];
-        address[] memory ruleAddresses = new address[](rules.length);
-        
-        for (uint256 i = 0; i < rules.length; i++) {
-            ruleAddresses[i] = rules[i].ruleAddress;
-        }
-        
-        return ruleAddresses;
-    }
-    
-    // Compliance Status Functions
-    
-    /**
-     * @dev Get compliance status for user
-     */
-    function getComplianceStatus(address _user) 
-        external 
-        view 
-        override 
-        returns (bool) 
-    {
-        if (!identityRegistry.isVerified(_user)) return false;
-        
-        // Check if user has any active restrictions
-        uint16 userCountry = identityRegistry.investorCountry(_user);
-        InvestorType userType = investorTypes[_user];
-        
-        // Additional compliance checks can be added here
         return true;
     }
     
-    /**
-     * @dev Get transfer restrictions for user pair
-     */
-    function getTransferRestrictions(address _from, address _to) 
-        external 
-        view 
-        override 
-        returns (string[] memory) 
-    {
-        string[] memory restrictions = new string[](5);
-        uint256 count = 0;
-        
-        if (!identityRegistry.isVerified(_from)) {
-            restrictions[count++] = "Sender not verified";
-        }
-        
-        if (!identityRegistry.isVerified(_to)) {
-            restrictions[count++] = "Recipient not verified";
-        }
-        
-        if (globalTransfersPaused) {
-            restrictions[count++] = "Global transfers paused";
-        }
-        
-        uint16 fromCountry = identityRegistry.investorCountry(_from);
-        uint16 toCountry = identityRegistry.investorCountry(_to);
-        bytes32 countryPairHash = keccak256(abi.encodePacked(fromCountry, toCountry));
-        
-        if (restrictedCountryPairs[countryPairHash]) {
-            restrictions[count++] = "Country pair restricted";
-        }
-        
-        if (!_checkHoldingPeriod(_from, 0)) {
-            restrictions[count++] = "Holding period not met";
-        }
-        
-        // Resize array to actual count
-        string[] memory result = new string[](count);
-        for (uint256 i = 0; i < count; i++) {
-            result[i] = restrictions[i];
-        }
-        
-        return result;
-    }
-    
-    // Administrative Functions
-    
-    /**
-     * @dev Set investor type
-     */
-    function setInvestorType(address _investor, InvestorType _type) 
-        external 
-        onlyComplianceOfficer 
-    {
-        investorTypes[_investor] = _type;
-        
-        _addAuditEntry(
-            _investor, 
-            "INVESTOR_TYPE_SET", 
-            bytes32(uint256(_type)), 
-            true, 
-            "Investor type updated"
-        );
-    }
-    
-    /**
-     * @dev Set country pair restriction
-     */
-    function setCountryRestriction(uint16 _fromCountry, uint16 _toCountry, bool _restricted) 
-        external 
-        onlyComplianceOfficer 
-    {
-        bytes32 countryPairHash = keccak256(abi.encodePacked(_fromCountry, _toCountry));
-        restrictedCountryPairs[countryPairHash] = _restricted;
-        
-        _addAuditEntry(
-            msg.sender, 
-            "COUNTRY_RESTRICTION_SET", 
-            countryPairHash, 
-            true, 
-            _restricted ? "Country pair restricted" : "Country pair unrestricted"
-        );
-    }
-    
-    /**
-     * @dev Update configuration
-     */
-    function updateConfiguration(
-        uint256 _defaultHoldingPeriod,
-        uint256 _maxTransferAmount,
-        uint256 _maxDailyTransfers
-    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        defaultHoldingPeriod = _defaultHoldingPeriod;
-        maxTransferAmount = _maxTransferAmount;
-        maxDailyTransfers = _maxDailyTransfers;
-        
-        _addAuditEntry(msg.sender, "CONFIG_UPDATED", bytes32(0), true, "Configuration updated");
-    }
-    
-    /**
-     * @dev Pause/unpause global transfers
-     */
-    function setGlobalTransfersPaused(bool _paused) 
-        external 
-        onlyComplianceOfficer 
-    {
-        globalTransfersPaused = _paused;
-        
-        _addAuditEntry(
-            msg.sender, 
-            "GLOBAL_TRANSFERS_PAUSED", 
-            bytes32(uint256(_paused ? 1 : 0)), 
-            true, 
-            _paused ? "Global transfers paused" : "Global transfers resumed"
-        );
-    }
-    
-    // Audit Functions
-    
-    /**
-     * @dev Get audit trail
-     */
-    function getAuditTrail(uint256 _start, uint256 _limit) 
-        external 
-        view 
-        onlyAuditor 
-        returns (AuditEntry[] memory) 
-    {
-        require(_start < auditTrail.length, "Compliance: invalid start index");
-        
-        uint256 end = _start + _limit;
-        if (end > auditTrail.length) {
-            end = auditTrail.length;
-        }
-        
-        AuditEntry[] memory entries = new AuditEntry[](end - _start);
-        for (uint256 i = _start; i < end; i++) {
-            entries[i - _start] = auditTrail[i];
-        }
-        
-        return entries;
-    }
-    
-    /**
-     * @dev Get user audit history
-     */
-    function getUserAuditHistory(address _user) 
-        external 
-        view 
-        onlyAuditor 
-        returns (AuditEntry[] memory) 
-    {
-        uint256[] memory indices = userAuditHistory[_user];
-        AuditEntry[] memory entries = new AuditEntry[](indices.length);
-        
-        for (uint256 i = 0; i < indices.length; i++) {
-            entries[i] = auditTrail[indices[i]];
-        }
-        
-        return entries;
-    }
-    
-    /**
-     * @dev Generate compliance report
-     */
-    function generateComplianceReport() 
-        external 
-        view 
-        onlyAuditor 
-        returns (
-            uint256 totalAuditEntries,
-            uint256 complianceViolations,
-            uint256 boundTokens,
-            uint256 activeRules,
-            bool globalPaused
-        ) 
-    {
-        uint256 violations = 0;
-        for (uint256 i = 0; i < auditTrail.length; i++) {
-            if (!auditTrail[i].isCompliant) violations++;
-        }
-        
-        uint256 totalRules = 0;
-        bytes32[6] memory ruleTypes = [
-            TRANSFER_LIMIT_RULE,
-            COUNTRY_RESTRICTION_RULE,
-            INVESTOR_TYPE_RULE,
-            TIME_LOCK_RULE,
-            KYC_REQUIREMENT_RULE,
-            HOLDING_PERIOD_RULE
-        ];
-        
-        for (uint256 i = 0; i < ruleTypes.length; i++) {
-            totalRules += _rules[ruleTypes[i]].length;
-        }
-        
-        return (
-            auditTrail.length,
-            violations,
-            0, // Would need to track this separately
-            totalRules,
-            globalTransfersPaused
-        );
-    }
-    
-    // Internal Functions
-    
-    /**
-     * @dev Execute all rule checks
-     */
-    function _executeRuleChecks(address _from, address _to, uint256 _amount) 
-        internal 
-        view 
-        returns (bool) 
-    {
-        // This would execute external rule contracts
-        // For now, return true (implement rule contract calling logic)
-        return true;
-    }
-    
-    /**
-     * @dev Check holding period compliance
-     */
-    function _checkHoldingPeriod(address _investor, uint256 _amount) 
-        internal 
-        view 
-        returns (bool) 
-    {
-        HoldingPeriod[] memory holdings = investorHoldings[_investor];
-        uint256 availableAmount = 0;
-        
-        for (uint256 i = 0; i < holdings.length; i++) {
-            if (!holdings[i].isLocked || 
-                block.timestamp >= holdings[i].acquisitionDate + holdings[i].minimumHoldPeriod) {
-                availableAmount += holdings[i].amount;
-            }
-        }
-        
-        return availableAmount >= _amount;
-    }
-    
-    /**
-     * @dev Update transfer counters for limits
-     */
-    function _updateTransferCounters(address _from, uint256 _amount) internal {
-        uint256 today = block.timestamp / 1 days;
-        
-        if (_lastTransferDate[_from][msg.sender] != today) {
-            _dailyTransfers[_from][msg.sender] = 0;
-            _lastTransferDate[_from][msg.sender] = today;
-        }
-        
-        _dailyTransfers[_from][msg.sender] += _amount;
-        
-        uint256 thisMonth = block.timestamp / 30 days;
-        _monthlyTransfers[_from][msg.sender] += _amount;
-    }
-    
-    /**
-     * @dev Update holding periods after transfer
-     */
-    function _updateHoldingPeriods(address _from, address _to, uint256 _amount) internal {
-        // Remove from sender's holdings (FIFO)
-        _removeHoldingPeriods(_from, _amount);
-        
-        // Add to recipient's holdings
-        investorHoldings[_to].push(HoldingPeriod({
-            investor: _to,
-            amount: _amount,
-            acquisitionDate: block.timestamp,
-            minimumHoldPeriod: defaultHoldingPeriod,
-            isLocked: true
-        }));
-    }
-    
-    /**
-     * @dev Remove holding periods (FIFO basis)
-     */
-    function _removeHoldingPeriods(address _investor, uint256 _amount) internal {
-        HoldingPeriod[] storage holdings = investorHoldings[_investor];
-        uint256 remainingAmount = _amount;
-        
-        for (uint256 i = 0; i < holdings.length && remainingAmount > 0; i++) {
-            if (holdings[i].amount <= remainingAmount) {
-                remainingAmount -= holdings[i].amount;
-                holdings[i] = holdings[holdings.length - 1];
-                holdings.pop();
-                i--; // Adjust index after removal
-            } else {
-                holdings[i].amount -= remainingAmount;
-                remainingAmount = 0;
-            }
-        }
-    }
-    
-    /**
-     * @dev Add audit trail entry
-     */
-    function _addAuditEntry(
-        address _user, 
-        string memory _action, 
-        bytes32 _dataHash, 
-        bool _isCompliant, 
-        string memory _details
-    ) internal {
-        auditTrail.push(AuditEntry({
-            timestamp: block.timestamp,
-            user: _user,
-            action: _action,
-            dataHash: _dataHash,
-            isCompliant: _isCompliant,
-            details: _details
-        }));
-        
-        userAuditHistory[_user].push(auditTrail.length - 1);
-    }
-    
-    // Utility functions
-    function _uint2str(uint256 _i) internal pure returns (string memory) {
-        if (_i == 0) return "0";
-        uint256 j = _i;
-        uint256 len;
-        while (j != 0) {
-            len++;
-            j /= 10;
-        }
-        bytes memory bstr = new bytes(len);
-        uint256 k = len;
-        while (_i != 0) {
-            k = k - 1;
-            uint8 temp = (48 + uint8(_i - _i / 10 * 10));
-            bytes1 b1 = bytes1(temp);
-            bstr[k] = b1;
-            _i /= 10;
-        }
-        return string(bstr);
-    }
-    
-    function _addressToString(address _addr) internal pure returns (string memory) {
-        bytes32 value = bytes32(uint256(uint160(_addr)));
-        bytes memory alphabet = "0123456789abcdef";
-        bytes memory str = new bytes(42);
-        str[0] = '0';
-        str[1] = 'x';
-        for (uint256 i = 0; i < 20; i++) {
-            str[2 + i * 2] = alphabet[uint8(value[i + 12] >> 4)];
-            str[3 + i * 2] = alphabet[uint8(value[i + 12] & 0x0f)];
-        }
-        return string(str);
-    }
+    // TODO: Add time-based restrictions (lock periods, vesting)
+    // TODO: Add integration with Integra's compliance APIs
+    // TODO: Add more sophisticated investor classification rules
 }

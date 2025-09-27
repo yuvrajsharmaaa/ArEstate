@@ -1,103 +1,130 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/IIdentityRegistry.sol";
 
 /**
  * @title IdentityRegistry
- * @dev Manages user identities and KYC/AML compliance status
- * Integrates with Integra's identity modules and Soulbound Tokens
+ * @dev Simple on-chain identity registry for KYC/AML compliance
+ * @notice Purpose: Track verified identities for ERC-3643 compliance
+ * 
+ * Expected edits for production:
+ * - Add more sophisticated KYC provider integration
+ * - Implement Soulbound Token support
+ * - Add batch operations for gas efficiency
+ * 
+ * Security notes:
+ * - Only owner can verify identities (admin role)
+ * - Public registration allows demo usage
+ * - Country codes use ISO 3166-1 numeric standard
  */
-contract IdentityRegistry is AccessControl, ReentrancyGuard, IIdentityRegistry {
+contract IdentityRegistry is Ownable, IIdentityRegistry {
     
-    // Roles
-    bytes32 public constant IDENTITY_REGISTRAR_ROLE = keccak256("IDENTITY_REGISTRAR_ROLE");
-    bytes32 public constant COMPLIANCE_OFFICER_ROLE = keccak256("COMPLIANCE_OFFICER_ROLE");
-    
-    // Identity storage structure
+    // Storage for identity data
     struct Identity {
-        address onchainID;          // Soulbound Token or identity contract address
-        uint16 country;             // ISO 3166-1 numeric country code
-        bool isVerified;            // KYC/AML verification status
-        uint256 verificationDate;   // Timestamp of verification
-        string kycProvider;         // KYC provider identifier
-        bytes32 documentHash;       // Hash of KYC documents
-        uint8 riskLevel;           // Risk assessment level (1-5, 1 = low risk)
-        bool isActive;             // Identity status
+        address onchainId;      // Identity contract address (or wallet for demo)
+        uint16 country;         // ISO 3166-1 country code
+        bool isVerified;        // KYC verification status
+        uint256 timestamp;      // Verification timestamp
     }
     
-    // Storage mappings
+    // Mapping from wallet address to identity
     mapping(address => Identity) private _identities;
-    mapping(address => address[]) private _boundRegistries; // For registry binding
-    mapping(address => bool) private _registryBound;
     
-    // Supported countries for compliance
-    mapping(uint16 => bool) public supportedCountries;
-    mapping(uint16 => bool) public restrictedCountries;
+    // Mapping to track registered identities (before verification)
+    mapping(address => bool) private _registered;
     
-    // KYC providers
-    mapping(string => bool) public approvedKYCProviders;
-    
-    // Events
-    event KYCProviderAdded(string provider);
-    event KYCProviderRemoved(string provider);
-    event CountrySupported(uint16 indexed country, bool supported);
-    event CountryRestricted(uint16 indexed country, bool restricted);
-    event RiskLevelUpdated(address indexed user, uint8 newRiskLevel);
-    
-    constructor() {
-        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _grantRole(IDENTITY_REGISTRAR_ROLE, msg.sender);
-        _grantRole(COMPLIANCE_OFFICER_ROLE, msg.sender);
-        
-        // Add initial supported countries (examples)
-        supportedCountries[840] = true; // USA
-        supportedCountries[826] = true; // UK  
-        supportedCountries[124] = true; // Canada
-        supportedCountries[276] = true; // Germany
-        supportedCountries[702] = true; // Singapore
-        
-        // Add approved KYC providers
-        approvedKYCProviders["jumio"] = true;
-        approvedKYCProviders["onfido"] = true;
-        approvedKYCProviders["sumsub"] = true;
-    }
-    
-    // Modifiers
-    modifier onlyRegistrar() {
-        require(hasRole(IDENTITY_REGISTRAR_ROLE, msg.sender), "IdentityRegistry: not a registrar");
-        _;
-    }
-    
-    modifier onlyComplianceOfficer() {
-        require(hasRole(COMPLIANCE_OFFICER_ROLE, msg.sender), "IdentityRegistry: not a compliance officer");
-        _;
-    }
-    
-    modifier validCountry(uint16 _country) {
-        require(supportedCountries[_country], "IdentityRegistry: country not supported");
-        require(!restrictedCountries[_country], "IdentityRegistry: country restricted");
-        _;
-    }
-    
-    // Core Identity Functions
+    constructor() Ownable(msg.sender) {}
     
     /**
-     * @dev Register a new identity with KYC verification
+     * @dev Register an identity (public for demo purposes)
+     * @param _onchainId The on-chain identity contract address
+     * @notice Anyone can register, but admin must verify for token operations
      */
-    function registerIdentity(
-        address _userAddress,
-        address _identity,
-        uint16 _country
-    ) external override onlyRegistrar validCountry(_country) nonReentrant {
-        require(_userAddress != address(0), "IdentityRegistry: invalid user address");
-        require(_identity != address(0), "IdentityRegistry: invalid identity address");
-        require(!_identities[_userAddress].isActive, "IdentityRegistry: identity already exists");
+    function registerIdentity(address _onchainId) external override {
+        require(_onchainId != address(0), "IdentityRegistry: invalid onchain ID");
+        require(!_registered[msg.sender], "IdentityRegistry: already registered");
         
-        _identities[_userAddress] = Identity({
-            onchainID: _identity,
+        _registered[msg.sender] = true;
+        _identities[msg.sender].onchainId = _onchainId;
+        
+        emit IdentityRegistered(msg.sender, _onchainId);
+    }
+    
+    /**
+     * @dev Admin verifies an identity after KYC process
+     * @param _wallet The wallet address to verify
+     * @param _onchainId The on-chain identity contract
+     * @param _country ISO 3166-1 country code
+     * @notice Only owner can verify - simulates admin KYC approval
+     */
+    function adminVerify(address _wallet, address _onchainId, uint16 _country) 
+        external 
+        override 
+        onlyOwner 
+    {
+        require(_wallet != address(0), "IdentityRegistry: invalid wallet");
+        require(_onchainId != address(0), "IdentityRegistry: invalid onchain ID");
+        require(_registered[_wallet], "IdentityRegistry: not registered");
+        
+        // Update identity with verification
+        _identities[_wallet] = Identity({
+            onchainId: _onchainId,
+            country: _country,
+            isVerified: true,
+            timestamp: block.timestamp
+        });
+        
+        emit IdentityVerified(_wallet, _onchainId, _country);
+    }
+    
+    /**
+     * @dev Check if a wallet is verified
+     * @param _wallet The wallet address to check
+     * @return bool True if wallet is KYC verified
+     * @notice Used by RealEstateToken before transfers
+     */
+    function isVerified(address _wallet) external view override returns (bool) {
+        return _identities[_wallet].isVerified;
+    }
+    
+    /**
+     * @dev Get the country of a verified wallet
+     * @param _wallet The wallet address
+     * @return uint16 The country code (0 if not verified)
+     */
+    function getCountry(address _wallet) external view override returns (uint16) {
+        return _identities[_wallet].country;
+    }
+    
+    /**
+     * @dev Get full identity data (view function for frontend)
+     * @param _wallet The wallet address
+     * @return Identity struct data
+     */
+    function getIdentity(address _wallet) 
+        external 
+        view 
+        returns (address onchainId, uint16 country, bool isVerified, uint256 timestamp) 
+    {
+        Identity memory identity = _identities[_wallet];
+        return (identity.onchainId, identity.country, identity.isVerified, identity.timestamp);
+    }
+    
+    /**
+     * @dev Check if wallet is registered (but not necessarily verified)
+     * @param _wallet The wallet address
+     * @return bool True if registered
+     */
+    function isRegistered(address _wallet) external view returns (bool) {
+        return _registered[_wallet];
+    }
+    
+    // TODO: Add integration with Integra's Soulbound Token system
+    // TODO: Add batch verification for multiple identities
+    // TODO: Add revocation/suspension functionality for compliance
+}
             country: _country,
             isVerified: false, // Will be set to true after KYC completion
             verificationDate: 0,
