@@ -1,180 +1,219 @@
-const { ethers, upgrades } = require("hardhat");
+const hre = require("hardhat");
+const { ethers } = require("hardhat");
 
 async function main() {
-    console.log("🚀 Starting KrayState Platform Deployment on Integra Chain...");
-    
-    const [deployer] = await ethers.getSigners();
-    console.log("Deploying contracts with account:", deployer.address);
-    console.log("Account balance:", (await deployer.getBalance()).toString());
+  console.log("🚀 Starting Hackathon Platform Deployment...");
+  console.log("=".repeat(50));
 
-    // Contract factories
-    const IdentityRegistry = await ethers.getContractFactory("IdentityRegistry");
-    const Compliance = await ethers.getContractFactory("Compliance");
-    const PropertyToken = await ethers.getContractFactory("PropertyToken");
-    const LeaseAgreement = await ethers.getContractFactory("LeaseAgreement");
-    const EscrowPayment = await ethers.getContractFactory("EscrowPayment");
+  // Get deployment account
+  const [deployer] = await ethers.getSigners();
+  console.log("📋 Deploying with account:", deployer.address);
+  console.log(
+    "💰 Account balance:",
+    ethers.utils.formatEther(await deployer.getBalance())
+  );
 
-    console.log("\n📋 Step 1: Deploying IdentityRegistry...");
-    const identityRegistry = await IdentityRegistry.deploy();
-    await identityRegistry.deployed();
-    console.log("✅ IdentityRegistry deployed to:", identityRegistry.address);
+  // Property metadata for the demo property
+  const propertyData = {
+    name: "Integra Downtown Office",
+    symbol: "IDO001",
+    propertyId: "INTEGRA-PROP-001",
+    location: "456 Blockchain Ave, Crypto City",
+    propertyType: "Commercial",
+    area: 5000,
+    totalValue: ethers.utils.parseEther("2000000"), // $2M property
+    country: 840, // US country code
+  };
 
-    console.log("\n📋 Step 2: Deploying Compliance module...");
-    const compliance = await Compliance.deploy(identityRegistry.address);
-    await compliance.deployed();
-    console.log("✅ Compliance deployed to:", compliance.address);
+  console.log("\n🏗️  Step 1: Deploying Core Infrastructure...");
 
-    console.log("\n📋 Step 3: Deploying PropertyToken...");
-    // Sample property metadata for initial deployment
-    const propertyMetadata = {
-        assetPassportId: "INTEGRA-RWA-001",
-        propertyAddress: "123 Blockchain Avenue, Crypto City, CC 12345",
-        totalValue: ethers.utils.parseEther("1000000"), // $1M property
-        tokenizedPercentage: 10000, // 100% tokenized
-        jurisdiction: "US-NY",
-        documentHash: ethers.utils.keccak256(ethers.utils.toUtf8Bytes("property_docs_hash")),
-        isActive: true
-    };
+  // Deploy IdentityRegistry
+  console.log("   Deploying IdentityRegistry...");
+  const IdentityRegistry = await ethers.getContractFactory("IdentityRegistry");
+  const identityRegistry = await IdentityRegistry.deploy();
+  await identityRegistry.deployed();
+  console.log("   ✅ IdentityRegistry deployed to:", identityRegistry.address);
 
-    const propertyToken = await PropertyToken.deploy(
-        "KrayState Property Token", // name
-        "KPT", // symbol
-        18, // decimals
-        identityRegistry.address,
-        compliance.address,
-        propertyMetadata
-    );
-    await propertyToken.deployed();
-    console.log("✅ PropertyToken deployed to:", propertyToken.address);
+  // Deploy Compliance
+  console.log("   Deploying Compliance...");
+  const Compliance = await ethers.getContractFactory("Compliance");
+  const compliance = await Compliance.deploy(identityRegistry.address);
+  await compliance.deployed();
+  console.log("   ✅ Compliance deployed to:", compliance.address);
 
-    console.log("\n📋 Step 4: Deploying LeaseAgreement...");
-    const leaseAgreement = await LeaseAgreement.deploy(
-        identityRegistry.address,
-        ethers.constants.AddressZero // Will set escrow contract address later
-    );
-    await leaseAgreement.deployed();
-    console.log("✅ LeaseAgreement deployed to:", leaseAgreement.address);
+  console.log("\n🏠 Step 2: Deploying Property Token...");
+  const RealEstateToken = await ethers.getContractFactory("RealEstateToken");
+  const realEstateToken = await RealEstateToken.deploy(
+    propertyData.name,
+    propertyData.symbol,
+    identityRegistry.address,
+    compliance.address,
+    propertyData
+  );
+  await realEstateToken.deployed();
+  console.log("   ✅ RealEstateToken deployed to:", realEstateToken.address);
 
-    console.log("\n📋 Step 5: Deploying EscrowPayment...");
-    const escrowPayment = await EscrowPayment.deploy(
-        identityRegistry.address,
-        leaseAgreement.address
-    );
-    await escrowPayment.deployed();
-    console.log("✅ EscrowPayment deployed to:", escrowPayment.address);
+  console.log("\n� Step 3: Deploying Payment Infrastructure...");
 
-    console.log("\n🔗 Step 6: Linking contracts together...");
-    
-    // Bind compliance to property token
-    await compliance.bindToken(propertyToken.address);
-    console.log("✅ Compliance bound to PropertyToken");
+  // Deploy MockUSDC
+  console.log("   Deploying MockUSDC...");
+  const MockUSDC = await ethers.getContractFactory("MockUSDC");
+  const mockUSDC = await MockUSDC.deploy();
+  await mockUSDC.deployed();
+  console.log("   ✅ MockUSDC deployed to:", mockUSDC.address);
 
-    // Update LeaseAgreement with EscrowPayment address
-    await leaseAgreement.setEscrowContract(escrowPayment.address);
-    console.log("✅ LeaseAgreement linked to EscrowPayment");
+  // Deploy LeaseManager
+  console.log("   Deploying LeaseManager...");
+  const LeaseManager = await ethers.getContractFactory("LeaseManager");
+  const leaseManager = await LeaseManager.deploy(identityRegistry.address);
+  await leaseManager.deployed();
+  console.log("   ✅ LeaseManager deployed to:", leaseManager.address);
 
-    // Set up some initial approved payment tokens (placeholder addresses)
-    // In production, these would be actual stablecoin/IRL token addresses on Integra
-    const MOCK_USDC = "0x1234567890123456789012345678901234567890";
-    const MOCK_IRL = "0x0987654321098765432109876543210987654321";
-    
-    await leaseAgreement.setApprovedPaymentToken(MOCK_USDC, true);
-    await leaseAgreement.setApprovedPaymentToken(MOCK_IRL, true);
-    await escrowPayment.setApprovedToken(MOCK_USDC, true);
-    await escrowPayment.setApprovedToken(MOCK_IRL, true);
-    
-    console.log("✅ Payment tokens approved");
+  console.log("\n⚙️  Step 4: Contract Configuration...");
 
-    console.log("\n📊 Step 7: Setting up initial roles and permissions...");
-    
-    // Grant roles to deployer for testing
-    const TOKEN_AGENT_ROLE = await propertyToken.TOKEN_AGENT_ROLE();
-    const COMPLIANCE_ROLE = await propertyToken.COMPLIANCE_ROLE();
-    const LEASE_MANAGER_ROLE = await leaseAgreement.LEASE_MANAGER_ROLE();
-    const ESCROW_AGENT_ROLE = await escrowPayment.ESCROW_AGENT_ROLE();
-    const PAYMENT_PROCESSOR_ROLE = await escrowPayment.PAYMENT_PROCESSOR_ROLE();
+  // Setup roles and permissions
+  const MINTER_ROLE = ethers.utils.keccak256(
+    ethers.utils.toUtf8Bytes("MINTER_ROLE")
+  );
+  const AGENT_ROLE = ethers.utils.keccak256(
+    ethers.utils.toUtf8Bytes("AGENT_ROLE")
+  );
 
-    await propertyToken.grantRole(TOKEN_AGENT_ROLE, deployer.address);
-    await propertyToken.grantRole(COMPLIANCE_ROLE, deployer.address);
-    await leaseAgreement.grantRole(LEASE_MANAGER_ROLE, deployer.address);
-    await escrowPayment.grantRole(ESCROW_AGENT_ROLE, deployer.address);
-    await escrowPayment.grantRole(PAYMENT_PROCESSOR_ROLE, deployer.address);
+  console.log("   Setting up RealEstateToken roles...");
+  await realEstateToken.grantRole(MINTER_ROLE, deployer.address);
+  await realEstateToken.grantRole(AGENT_ROLE, deployer.address);
+  console.log("   ✅ Granted MINTER_ROLE and AGENT_ROLE to deployer");
 
-    console.log("✅ Initial roles configured");
+  console.log("   Binding compliance to token...");
+  await compliance.bindToken(realEstateToken.address);
+  console.log("   ✅ Compliance bound to RealEstateToken");
 
-    console.log("\n🎯 Step 8: Deployment Summary");
-    console.log("================================");
-    console.log("🏢 IdentityRegistry:  ", identityRegistry.address);
-    console.log("📋 Compliance:        ", compliance.address);
-    console.log("🏠 PropertyToken:     ", propertyToken.address);
-    console.log("📝 LeaseAgreement:    ", leaseAgreement.address);
-    console.log("💰 EscrowPayment:     ", escrowPayment.address);
-    console.log("================================");
+  console.log("   Approving MockUSDC for lease payments...");
+  await leaseManager.addApprovedToken(mockUSDC.address);
+  console.log("   ✅ MockUSDC approved for lease payments");
 
-    // Save deployment addresses
-    const deploymentInfo = {
-        network: await ethers.provider.getNetwork(),
-        deployer: deployer.address,
-        timestamp: new Date().toISOString(),
-        contracts: {
-            IdentityRegistry: identityRegistry.address,
-            Compliance: compliance.address,
-            PropertyToken: propertyToken.address,
-            LeaseAgreement: leaseAgreement.address,
-            EscrowPayment: escrowPayment.address
-        },
-        configuration: {
-            propertyToken: {
-                name: "KrayState Property Token",
-                symbol: "KPT",
-                decimals: 18
-            },
-            propertyMetadata: propertyMetadata,
-            approvedTokens: {
-                MOCK_USDC: MOCK_USDC,
-                MOCK_IRL: MOCK_IRL
-            }
-        }
-    };
+  console.log("\n🎯 Step 5: Demo Setup...");
 
-    console.log("\n💾 Saving deployment info to deployments.json...");
-    const fs = require('fs');
-    const path = require('path');
-    
-    const deploymentsDir = path.join(__dirname, '..', 'deployments');
-    if (!fs.existsSync(deploymentsDir)) {
-        fs.mkdirSync(deploymentsDir);
-    }
-    
-    fs.writeFileSync(
-        path.join(deploymentsDir, `kraystate-deployment-${Date.now()}.json`),
-        JSON.stringify(deploymentInfo, null, 2)
+  // Create some demo accounts for testing
+  const demoAccounts = await ethers.getSigners();
+  const landlord = demoAccounts[1] || deployer;
+  const tenant = demoAccounts[2] || deployer;
+
+  console.log("   Setting up demo landlord:", landlord.address);
+  console.log("   Setting up demo tenant:", tenant.address);
+
+  // Setup demo identities (if we have multiple accounts)
+  if (demoAccounts.length > 2) {
+    console.log("   Registering demo identities...");
+
+    // Register landlord
+    await identityRegistry.connect(landlord).registerIdentity(landlord.address);
+    await identityRegistry.adminVerify(landlord.address, landlord.address, 840);
+
+    // Register tenant
+    await identityRegistry.connect(tenant).registerIdentity(tenant.address);
+    await identityRegistry.adminVerify(tenant.address, tenant.address, 840);
+
+    console.log("   ✅ Demo identities registered and verified");
+
+    // Mint some property tokens to landlord
+    const propertyTokenAmount = ethers.utils.parseEther("1000");
+    await realEstateToken.mint(landlord.address, propertyTokenAmount);
+    console.log(
+      `   ✅ Minted ${ethers.utils.formatEther(propertyTokenAmount)} property tokens to landlord`
     );
 
-    console.log("\n🎉 KrayState Platform Successfully Deployed!");
-    console.log("\n📋 Next Steps:");
-    console.log("1. Verify contracts on block explorer");
-    console.log("2. Set up KYC/AML providers in IdentityRegistry");
-    console.log("3. Configure compliance rules in Compliance contract");
-    console.log("4. Mint initial property tokens for testing");
-    console.log("5. Create test lease agreements");
-    console.log("6. Test escrow and payment functionality");
-    console.log("\n🔗 Integration with Integra Chain:");
-    console.log("- Connect to Integra RWA Asset Passport API");
-    console.log("- Integrate with Integra Global Orderbook");
-    console.log("- Set up fiat payment bridge integration");
-    console.log("- Configure $IRL token addresses");
-    
-    return deploymentInfo;
+    // Give tenant some MockUSDC for testing
+    const usdcAmount = ethers.utils.parseUnits("10000", 6); // $10K USDC
+    await mockUSDC.mint(tenant.address, usdcAmount);
+    console.log(
+      `   ✅ Minted $${ethers.utils.formatUnits(usdcAmount, 6)} MockUSDC to tenant`
+    );
+  }
+
+  console.log("\n� Step 6: Deployment Summary");
+  console.log("=".repeat(50));
+
+  const deploymentSummary = {
+    network: hre.network.name,
+    deployer: deployer.address,
+    contracts: {
+      IdentityRegistry: identityRegistry.address,
+      Compliance: compliance.address,
+      RealEstateToken: realEstateToken.address,
+      MockUSDC: mockUSDC.address,
+      LeaseManager: leaseManager.address,
+    },
+    propertyData: {
+      name: propertyData.name,
+      symbol: propertyData.symbol,
+      propertyId: propertyData.propertyId,
+      location: propertyData.location,
+      totalValue: `$${ethers.utils.formatEther(propertyData.totalValue)}`,
+    },
+  };
+
+  console.log(JSON.stringify(deploymentSummary, null, 2));
+
+  // Save deployment info to file
+  const fs = require("fs");
+  const path = require("path");
+
+  const deploymentsDir = path.join(__dirname, "..", "deployments");
+  if (!fs.existsSync(deploymentsDir)) {
+    fs.mkdirSync(deploymentsDir, { recursive: true });
+  }
+
+  const deploymentFile = path.join(deploymentsDir, `${hre.network.name}.json`);
+  fs.writeFileSync(deploymentFile, JSON.stringify(deploymentSummary, null, 2));
+
+  console.log(`\n💾 Deployment info saved to: ${deploymentFile}`);
+
+  // Verification instructions
+  console.log("\n� Contract Verification:");
+  console.log("To verify contracts on Etherscan, run:");
+  console.log(
+    `npx hardhat verify --network ${hre.network.name} ${identityRegistry.address}`
+  );
+  console.log(
+    `npx hardhat verify --network ${hre.network.name} ${compliance.address} ${identityRegistry.address}`
+  );
+  console.log(
+    `npx hardhat verify --network ${hre.network.name} ${realEstateToken.address} "${propertyData.name}" "${propertyData.symbol}" ${identityRegistry.address} ${compliance.address} '${JSON.stringify(propertyData)}'`
+  );
+  console.log(
+    `npx hardhat verify --network ${hre.network.name} ${mockUSDC.address}`
+  );
+  console.log(
+    `npx hardhat verify --network ${hre.network.name} ${leaseManager.address} ${identityRegistry.address}`
+  );
+
+  console.log("\n🎉 Deployment Complete!");
+  console.log("=".repeat(50));
+  console.log("\n📋 Next Steps:");
+  console.log("1. Update frontend with deployed contract addresses");
+  console.log("2. Test the platform with the demo accounts");
+  console.log("3. Create property listings and lease agreements");
+  console.log("4. Demonstrate compliance and forced transfer features");
+  console.log("\n🔗 Integration with Integra Chain:");
+  console.log(
+    "- Property tokens are ERC-3643 compliant for RWA Asset Passport"
+  );
+  console.log("- Ready for Global Orderbook integration");
+  console.log("- MockUSDC simulates fiat rails for real USDC");
+  console.log("- Compliance engine enforces KYC/AML requirements");
+
+  return deploymentSummary;
 }
 
-// Handle deployment
+// Error handling wrapper
 main()
-    .then((deploymentInfo) => {
-        console.log("\n✅ Deployment completed successfully!");
-        process.exit(0);
-    })
-    .catch((error) => {
-        console.error("\n❌ Deployment failed:", error);
-        process.exit(1);
-    });
+  .then((summary) => {
+    console.log("\n✅ Deployment script completed successfully");
+    process.exit(0);
+  })
+  .catch((error) => {
+    console.error("\n❌ Deployment failed:");
+    console.error(error);
+    process.exit(1);
+  });

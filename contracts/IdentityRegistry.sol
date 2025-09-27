@@ -2,449 +2,234 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./interfaces/IIdentityRegistry.sol";
 
-/**
- * @title IdentityRegistry
- * @dev Simple on-chain identity registry for KYC/AML compliance
- * @notice Purpose: Track verified identities for ERC-3643 compliance
- * 
- * Expected edits for production:
- * - Add more sophisticated KYC provider integration
- * - Implement Soulbound Token support
- * - Add batch operations for gas efficiency
- * 
- * Security notes:
- * - Only owner can verify identities (admin role)
- * - Public registration allows demo usage
- * - Country codes use ISO 3166-1 numeric standard
- */
-contract IdentityRegistry is Ownable, IIdentityRegistry {
+contract IdentityRegistry is Ownable {
     
-    // Storage for identity data
     struct Identity {
-        address onchainId;      // Identity contract address (or wallet for demo)
-        uint16 country;         // ISO 3166-1 country code
-        bool isVerified;        // KYC verification status
-        uint256 timestamp;      // Verification timestamp
+        address onchainId;
+        uint16 country;
+        bool isVerified;
+        uint256 timestamp;
     }
     
-    // Mapping from wallet address to identity
     mapping(address => Identity) private _identities;
-    
-    // Mapping to track registered identities (before verification)
     mapping(address => bool) private _registered;
+    
+    event IdentityRegistered(address indexed user, address indexed onchainId, uint16 country);
+    event IdentityVerified(address indexed user, address indexed verifier);
     
     constructor() Ownable(msg.sender) {}
     
-    /**
-     * @dev Register an identity (public for demo purposes)
-     * @param _onchainId The on-chain identity contract address
-     * @notice Anyone can register, but admin must verify for token operations
-     */
-    function registerIdentity(address _onchainId) external override {
-        require(_onchainId != address(0), "IdentityRegistry: invalid onchain ID");
-        require(!_registered[msg.sender], "IdentityRegistry: already registered");
+    function registerIdentity(address _onchainId) external {
+        require(!_registered[msg.sender], "Already registered");
+        require(_onchainId != address(0), "Invalid identity");
         
-        _registered[msg.sender] = true;
-        _identities[msg.sender].onchainId = _onchainId;
-        
-        emit IdentityRegistered(msg.sender, _onchainId);
-    }
-    
-    /**
-     * @dev Admin verifies an identity after KYC process
-     * @param _wallet The wallet address to verify
-     * @param _onchainId The on-chain identity contract
-     * @param _country ISO 3166-1 country code
-     * @notice Only owner can verify - simulates admin KYC approval
-     */
-    function adminVerify(address _wallet, address _onchainId, uint16 _country) 
-        external 
-        override 
-        onlyOwner 
-    {
-        require(_wallet != address(0), "IdentityRegistry: invalid wallet");
-        require(_onchainId != address(0), "IdentityRegistry: invalid onchain ID");
-        require(_registered[_wallet], "IdentityRegistry: not registered");
-        
-        // Update identity with verification
-        _identities[_wallet] = Identity({
+        _identities[msg.sender] = Identity({
             onchainId: _onchainId,
-            country: _country,
-            isVerified: true,
+            country: 0,
+            isVerified: false,
             timestamp: block.timestamp
         });
         
-        emit IdentityVerified(_wallet, _onchainId, _country);
+        _registered[msg.sender] = true;
+        emit IdentityRegistered(msg.sender, _onchainId, 0);
     }
     
-    /**
-     * @dev Check if a wallet is verified
-     * @param _wallet The wallet address to check
-     * @return bool True if wallet is KYC verified
-     * @notice Used by RealEstateToken before transfers
-     */
-    function isVerified(address _wallet) external view override returns (bool) {
-        return _identities[_wallet].isVerified;
+    function adminVerify(address _user, address _onchainId, uint16 _country) external onlyOwner {
+        require(_registered[_user], "User not registered");
+        require(_country > 0, "Invalid country");
+        
+        _identities[_user].onchainId = _onchainId;
+        _identities[_user].country = _country;
+        _identities[_user].isVerified = true;
+        
+        emit IdentityVerified(_user, msg.sender);
     }
     
-    /**
-     * @dev Get the country of a verified wallet
-     * @param _wallet The wallet address
-     * @return uint16 The country code (0 if not verified)
-     */
-    function getCountry(address _wallet) external view override returns (uint16) {
-        return _identities[_wallet].country;
+    function isVerified(address _user) external view returns (bool) {
+        return _identities[_user].isVerified;
     }
     
-    /**
-     * @dev Get full identity data (view function for frontend)
-     * @param _wallet The wallet address
-     * @return Identity struct data
-     */
-    function getIdentity(address _wallet) 
-        external 
-        view 
-        returns (address onchainId, uint16 country, bool isVerified, uint256 timestamp) 
-    {
-        Identity memory identity = _identities[_wallet];
+    function investorCountry(address _user) external view returns (uint16) {
+        return _identities[_user].country;
+    }
+    
+    function getIdentityDetails(address _user) external view returns (address, uint16, bool, uint256) {
+        Identity memory identity = _identities[_user];
         return (identity.onchainId, identity.country, identity.isVerified, identity.timestamp);
     }
     
-    /**
-     * @dev Check if wallet is registered (but not necessarily verified)
-     * @param _wallet The wallet address
-     * @return bool True if registered
-     */
-    function isRegistered(address _wallet) external view returns (bool) {
-        return _registered[_wallet];
+    function isRegistered(address _user) external view returns (bool) {
+        return _registered[_user];
     }
-    
-    // TODO: Add integration with Integra's Soulbound Token system
-    // TODO: Add batch verification for multiple identities
-    // TODO: Add revocation/suspension functionality for compliance
-}
-            country: _country,
-            isVerified: false, // Will be set to true after KYC completion
-            verificationDate: 0,
-            kycProvider: "",
-            documentHash: bytes32(0),
-            riskLevel: 3, // Default medium risk
-            isActive: true
-        });
-        
-        emit IdentityStored(_userAddress, _identity);
-    }
-    
-    /**
-     * @dev Complete KYC verification for a user
+}  
+     * @param _amount The transfer amount
+     * @return bool True if transfer is allowed
+     * @notice This is called by RealEstateToken before every transfer
      */
-    function completeKYCVerification(
-        address _userAddress,
-        string calldata _kycProvider,
-        bytes32 _documentHash,
-        uint8 _riskLevel
-    ) external onlyComplianceOfficer {
-        require(_identities[_userAddress].isActive, "IdentityRegistry: identity not found");
-        require(approvedKYCProviders[_kycProvider], "IdentityRegistry: KYC provider not approved");
-        require(_riskLevel >= 1 && _riskLevel <= 5, "IdentityRegistry: invalid risk level");
-        
-        _identities[_userAddress].isVerified = true;
-        _identities[_userAddress].verificationDate = block.timestamp;
-        _identities[_userAddress].kycProvider = _kycProvider;
-        _identities[_userAddress].documentHash = _documentHash;
-        _identities[_userAddress].riskLevel = _riskLevel;
-        
-        emit IdentityModified(_identities[_userAddress].onchainID, _identities[_userAddress].onchainID);
-    }
-    
-    /**
-     * @dev Delete an identity
-     */
-    function deleteIdentity(address _userAddress) 
-        external 
-        override 
-        onlyRegistrar 
-        nonReentrant 
-    {
-        require(_identities[_userAddress].isActive, "IdentityRegistry: identity not found");
-        
-        address oldIdentity = _identities[_userAddress].onchainID;
-        delete _identities[_userAddress];
-        
-        emit IdentityUnstored(_userAddress, oldIdentity);
-    }
-    
-    /**
-     * @dev Update identity address (for recovery or migration)
-     */
-    function updateIdentity(address _userAddress, address _identity) 
-        external 
-        override 
-        onlyRegistrar 
-    {
-        require(_identities[_userAddress].isActive, "IdentityRegistry: identity not found");
-        require(_identity != address(0), "IdentityRegistry: invalid identity address");
-        
-        address oldIdentity = _identities[_userAddress].onchainID;
-        _identities[_userAddress].onchainID = _identity;
-        
-        emit IdentityModified(oldIdentity, _identity);
-    }
-    
-    /**
-     * @dev Update user's country
-     */
-    function updateCountry(address _userAddress, uint16 _country) 
-        external 
-        override 
-        onlyComplianceOfficer 
-        validCountry(_country) 
-    {
-        require(_identities[_userAddress].isActive, "IdentityRegistry: identity not found");
-        
-        _identities[_userAddress].country = _country;
-        emit CountryModified(_userAddress, _country);
-    }
-    
-    /**
-     * @dev Update user's risk level
-     */
-    function updateRiskLevel(address _userAddress, uint8 _riskLevel) 
-        external 
-        onlyComplianceOfficer 
-    {
-        require(_identities[_userAddress].isActive, "IdentityRegistry: identity not found");
-        require(_riskLevel >= 1 && _riskLevel <= 5, "IdentityRegistry: invalid risk level");
-        
-        _identities[_userAddress].riskLevel = _riskLevel;
-        emit RiskLevelUpdated(_userAddress, _riskLevel);
-    }
-    
-    // Getter Functions
-    
-    /**
-     * @dev Get identity address for a user
-     */
-    function identity(address _userAddress) 
-        external 
-        view 
-        override 
-        returns (address) 
-    {
-        return _identities[_userAddress].onchainID;
-    }
-    
-    /**
-     * @dev Get investor country
-     */
-    function investorCountry(address _userAddress) 
-        external 
-        view 
-        override 
-        returns (uint16) 
-    {
-        return _identities[_userAddress].country;
-    }
-    
-    /**
-     * @dev Check if user is verified
-     */
-    function isVerified(address _userAddress) 
+    function canTransfer(address _from, address _to, uint256 _amount) 
         external 
         view 
         override 
         returns (bool) 
     {
-        return _identities[_userAddress].isVerified && _identities[_userAddress].isActive;
-    }
-    
-    /**
-     * @dev Check if identity exists
-     */
-    function contains(address _userAddress) 
-        external 
-        view 
-        override 
-        returns (bool) 
-    {
-        return _identities[_userAddress].isActive;
-    }
-    
-    /**
-     * @dev Get complete identity information
-     */
-    function getIdentityDetails(address _userAddress) 
-        external 
-        view 
-        returns (
-            address onchainID,
-            uint16 country,
-            bool isVerified,
-            uint256 verificationDate,
-            string memory kycProvider,
-            uint8 riskLevel,
-            bool isActive
-        ) 
-    {
-        Identity memory userIdentity = _identities[_userAddress];
-        return (
-            userIdentity.onchainID,
-            userIdentity.country,
-            userIdentity.isVerified,
-            userIdentity.verificationDate,
-            userIdentity.kycProvider,
-            userIdentity.riskLevel,
-            userIdentity.isActive
-        );
-    }
-    
-    /**
-     * @dev Get user's risk level
-     */
-    function getRiskLevel(address _userAddress) external view returns (uint8) {
-        return _identities[_userAddress].riskLevel;
-    }
-    
-    // Batch Operations
-    
-    /**
-     * @dev Register multiple identities at once
-     */
-    function batchRegisterIdentity(
-        address[] calldata _userAddresses,
-        address[] calldata _identities,
-        uint16[] calldata _countries
-    ) external override onlyRegistrar nonReentrant {
-        require(
-            _userAddresses.length == _identities.length && 
-            _identities.length == _countries.length,
-            "IdentityRegistry: arrays length mismatch"
-        );
-        
-        for (uint256 i = 0; i < _userAddresses.length; i++) {
-            if (supportedCountries[_countries[i]] && !restrictedCountries[_countries[i]]) {
-                registerIdentity(_userAddresses[i], _identities[i], _countries[i]);
-            }
+        // Skip checks for minting (from zero address)
+        if (_from == address(0)) {
+            return _canReceive(_to, _amount);
         }
-    }
-    
-    // Registry Binding (for integration with other contracts)
-    
-    /**
-     * @dev Bind to another identity registry
-     */
-    function bindIdentityRegistry(address _identityRegistry) 
-        external 
-        override 
-        onlyRole(DEFAULT_ADMIN_ROLE) 
-    {
-        require(_identityRegistry != address(0), "IdentityRegistry: invalid registry address");
-        require(!_registryBound[_identityRegistry], "IdentityRegistry: registry already bound");
         
-        _boundRegistries[msg.sender].push(_identityRegistry);
-        _registryBound[_identityRegistry] = true;
+        // Skip checks for burning (to zero address)
+        if (_to == address(0)) {
+            return !_blacklisted[_from];
+        }
         
-        emit IdentityRegistryBound(_identityRegistry);
+        // Check sender can send
+        if (_blacklisted[_from]) return false;
+        
+        // Check recipient can receive
+        return _canReceive(_to, _amount);
     }
     
     /**
-     * @dev Unbind from another identity registry
+     * @dev Hook called after token transfer to update holder counts
+     * @param _from The sender address
+     * @param _to The recipient address
+     * @param _amount The transfer amount
+     * @notice Updates holder statistics for regulatory reporting
      */
-    function unbindIdentityRegistry(address _identityRegistry) 
-        external 
-        override 
-        onlyRole(DEFAULT_ADMIN_ROLE) 
-    {
-        require(_registryBound[_identityRegistry], "IdentityRegistry: registry not bound");
+    function transferred(address _from, address _to, uint256 _amount) external override {
+        require(msg.sender == boundToken, "Compliance: only bound token");
         
-        _registryBound[_identityRegistry] = false;
-        
-        // Remove from array
-        address[] storage registries = _boundRegistries[msg.sender];
-        for (uint256 i = 0; i < registries.length; i++) {
-            if (registries[i] == _identityRegistry) {
-                registries[i] = registries[registries.length - 1];
-                registries.pop();
-                break;
+        // Update holder balances for tracking
+        if (_from != address(0)) {
+            _holderBalances[_from] -= _amount;
+            if (_holderBalances[_from] == 0) {
+                _totalHolders--;
             }
         }
         
-        emit IdentityRegistryUnbound(_identityRegistry);
-    }
-    
-    // Admin Functions
-    
-    /**
-     * @dev Add supported country
-     */
-    function setSupportedCountry(uint16 _country, bool _supported) 
-        external 
-        onlyRole(DEFAULT_ADMIN_ROLE) 
-    {
-        supportedCountries[_country] = _supported;
-        emit CountrySupported(_country, _supported);
+        if (_to != address(0)) {
+            if (_holderBalances[_to] == 0) {
+                _totalHolders++;
+            }
+            _holderBalances[_to] += _amount;
+        }
     }
     
     /**
-     * @dev Set country restriction
+     * @dev Add address to blacklist
+     * @param _address The address to blacklist
+     * @notice Blacklisted addresses cannot send or receive tokens
      */
-    function setRestrictedCountry(uint16 _country, bool _restricted) 
-        external 
-        onlyRole(DEFAULT_ADMIN_ROLE) 
-    {
-        restrictedCountries[_country] = _restricted;
-        emit CountryRestricted(_country, _restricted);
-    }
-    
-    /**
-     * @dev Add approved KYC provider
-     */
-    function addKYCProvider(string calldata _provider) 
-        external 
-        onlyRole(DEFAULT_ADMIN_ROLE) 
-    {
-        approvedKYCProviders[_provider] = true;
-        emit KYCProviderAdded(_provider);
-    }
-    
-    /**
-     * @dev Remove KYC provider
-     */
-    function removeKYCProvider(string calldata _provider) 
-        external 
-        onlyRole(DEFAULT_ADMIN_ROLE) 
-    {
-        approvedKYCProviders[_provider] = false;
-        emit KYCProviderRemoved(_provider);
-    }
-    
-    /**
-     * @dev Emergency suspend identity
-     */
-    function suspendIdentity(address _userAddress) 
-        external 
-        onlyComplianceOfficer 
-    {
-        require(_identities[_userAddress].isActive, "IdentityRegistry: identity not found");
-        _identities[_userAddress].isVerified = false;
+    function addToBlacklist(address _address) external override onlyOwner {
+        require(_address != address(0), "Compliance: invalid address");
+        _blacklisted[_address] = true;
         
-        emit IdentityModified(_identities[_userAddress].onchainID, address(0));
+        emit ComplianceRuleAdded("BLACKLIST_ADD", _address);
     }
     
     /**
-     * @dev Reactivate suspended identity
+     * @dev Remove address from blacklist  
+     * @param _address The address to remove from blacklist
      */
-    function reactivateIdentity(address _userAddress) 
-        external 
-        onlyComplianceOfficer 
-    {
-        require(_identities[_userAddress].isActive, "IdentityRegistry: identity not found");
-        require(_identities[_userAddress].verificationDate > 0, "IdentityRegistry: never verified");
+    function removeFromBlacklist(address _address) external override onlyOwner {
+        _blacklisted[_address] = false;
         
-        _identities[_userAddress].isVerified = true;
-        
-        emit IdentityModified(address(0), _identities[_userAddress].onchainID);
+        emit ComplianceRuleAdded("BLACKLIST_REMOVE", _address);
     }
+    
+    /**
+     * @dev Check if address is blacklisted
+     * @param _address The address to check
+     * @return bool True if blacklisted
+     */
+    function isBlacklisted(address _address) external view override returns (bool) {
+        return _blacklisted[_address];
+    }
+    
+    /**
+     * @dev Add country to restricted list
+     * @param _country ISO 3166-1 country code
+     * @notice Addresses from restricted countries cannot participate
+     */
+    function addRestrictedCountry(uint16 _country) external onlyOwner {
+        _restrictedCountries[_country] = true;
+        
+        emit ComplianceRuleAdded("COUNTRY_RESTRICT", address(uint160(_country)));
+    }
+    
+    /**
+     * @dev Remove country from restricted list
+     * @param _country ISO 3166-1 country code
+     */
+    function removeRestrictedCountry(uint16 _country) external onlyOwner {
+        _restrictedCountries[_country] = false;
+        
+        emit ComplianceRuleAdded("COUNTRY_UNRESTRICT", address(uint160(_country)));
+    }
+    
+    /**
+     * @dev Check if country is restricted
+     * @param _country ISO 3166-1 country code
+     * @return bool True if restricted
+     */
+    function isCountryRestricted(uint16 _country) external view returns (bool) {
+        return _restrictedCountries[_country];
+    }
+    
+    /**
+     * @dev Set maximum balance per investor
+     * @param _maxBalance The maximum balance allowed per investor
+     * @notice Used for regulatory compliance (accredited investor limits)
+     */
+    function setMaxBalancePerInvestor(uint256 _maxBalance) external onlyOwner {
+        maxBalancePerInvestor = _maxBalance;
+        
+        emit ComplianceRuleAdded("MAX_BALANCE_SET", address(uint160(_maxBalance)));
+    }
+    
+    /**
+     * @dev Get total number of token holders
+     * @return uint256 Number of addresses with non-zero balance
+     */
+    function getTotalHolders() external view returns (uint256) {
+        return _totalHolders;
+    }
+    
+    /**
+     * @dev Get holder balance (for tracking purposes)
+     * @param _holder The holder address
+     * @return uint256 The tracked balance
+     */
+    function getHolderBalance(address _holder) external view returns (uint256) {
+        return _holderBalances[_holder];
+    }
+    
+    /**
+     * @dev Internal function to check if address can receive tokens
+     * @param _to The recipient address
+     * @param _amount The amount to receive
+     * @return bool True if can receive
+     */
+    function _canReceive(address _to, uint256 _amount) internal view returns (bool) {
+        // Cannot send to blacklisted address
+        if (_blacklisted[_to]) return false;
+        
+        // Must be verified by identity registry
+        if (!identityRegistry.isVerified(_to)) return false;
+        
+        // Check country restrictions
+        uint16 country = identityRegistry.getCountry(_to);
+        if (_restrictedCountries[country]) return false;
+        
+        // Check maximum balance limit
+        uint256 newBalance = _holderBalances[_to] + _amount;
+        if (newBalance > maxBalancePerInvestor) return false;
+        
+        return true;
+    }
+    
+    // TODO: Add time-based restrictions (lock periods, vesting)
+    // TODO: Add integration with Integra's compliance APIs
+    // TODO: Add more sophisticated investor classification rules
 }

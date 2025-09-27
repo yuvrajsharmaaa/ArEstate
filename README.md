@@ -1,6 +1,9 @@
 <<<<<<< HEAD
+
 # ArEstate
+
 =======
+
 # KrayState - Blockchain-Based Tenant-Landlord Platform
 
 [![Solidity](https://img.shields.io/badge/Solidity-^0.8.20-blue)](https://soliditylang.org/)
@@ -23,13 +26,13 @@ KrayState is a full-stack blockchain platform that enables:
 
 ### Core Smart Contracts
 
-| Contract | Description | Features |
-|----------|-------------|----------|
-| **PropertyToken.sol** | ERC-3643 compliant security token | Property tokenization, compliance checks, transfer restrictions |
-| **IdentityRegistry.sol** | KYC/AML identity management | Soulbound tokens, identity verification, risk assessment |
-| **LeaseAgreement.sol** | Lease lifecycle management | Lease terms, rent tracking, dispute resolution |
-| **EscrowPayment.sol** | Payment & deposit automation | Security deposits, automated payments, fiat bridge |
-| **Compliance.sol** | Regulatory compliance engine | Jurisdictional rules, audit trails, transfer restrictions |
+| Contract                 | Description                       | Features                                                        |
+| ------------------------ | --------------------------------- | --------------------------------------------------------------- |
+| **PropertyToken.sol**    | ERC-3643 compliant security token | Property tokenization, compliance checks, transfer restrictions |
+| **IdentityRegistry.sol** | KYC/AML identity management       | Soulbound tokens, identity verification, risk assessment        |
+| **LeaseAgreement.sol**   | Lease lifecycle management        | Lease terms, rent tracking, dispute resolution                  |
+| **EscrowPayment.sol**    | Payment & deposit automation      | Security deposits, automated payments, fiat bridge              |
+| **Compliance.sol**       | Regulatory compliance engine      | Jurisdictional rules, audit trails, transfer restrictions       |
 
 ## 🚀 Quick Start
 
@@ -46,11 +49,13 @@ npm install
 ### Environment Setup
 
 1. **Copy environment template:**
+
 ```bash
 cp .env.example .env
 ```
 
 2. **Configure environment variables:**
+
 ```bash
 # .env
 PRIVATE_KEY=your_private_key_here
@@ -79,16 +84,19 @@ REPORT_GAS=true npm run test
 ### Deployment
 
 #### Deploy to Integra Testnet
+
 ```bash
 npm run deploy:testnet
 ```
 
 #### Deploy to Integra Mainnet
+
 ```bash
 npm run deploy:mainnet
 ```
 
 #### Deploy to Local Network
+
 ```bash
 # Terminal 1: Start Hardhat node
 npx hardhat node
@@ -102,6 +110,7 @@ npx hardhat run scripts/deploy.js --network localhost
 ### PropertyToken (ERC-3643)
 
 **Features:**
+
 - ✅ ERC-20 compatible with compliance extensions
 - ✅ Identity registry integration
 - ✅ Transfer restrictions and freezing
@@ -110,6 +119,7 @@ npx hardhat run scripts/deploy.js --network localhost
 - ✅ Batch operations support
 
 **Key Functions:**
+
 ```solidity
 function canTransfer(address from, address to, uint256 amount) external view returns (bool);
 function forcedTransfer(address from, address to, uint256 amount) external returns (bool);
@@ -121,12 +131,14 @@ function burn(address user, uint256 amount) external;
 ### LeaseAgreement
 
 **Lease Lifecycle:**
+
 - `DRAFT` → `ACTIVE` → `TERMINATED`/`EXPIRED`
 - Dispute resolution workflow
 - Automated rent tracking
 - Payment history management
 
 **Key Functions:**
+
 ```solidity
 function createLease(...) external returns (uint256 leaseId);
 function activateLease(uint256 leaseId) external;
@@ -137,11 +149,13 @@ function raiseDispute(uint256 leaseId, string calldata details) external;
 ### EscrowPayment
 
 **Payment Methods:**
+
 - `CRYPTO` - Direct cryptocurrency payments
 - `FIAT_BRIDGE` - Fiat payments via Integra bridge
 - `HYBRID` - Mixed payment methods
 
 **Key Functions:**
+
 ```solidity
 function createSecurityDepositEscrow(...) external returns (uint256);
 function fundSecurityDeposit(uint256 escrowId) external;
@@ -152,6 +166,7 @@ function executeAutomatedPayment(uint256 subscriptionId) external returns (uint2
 ## 🔗 Integra Chain Integration
 
 ### RWA Asset Passport
+
 ```solidity
 struct PropertyMetadata {
     string assetPassportId;     // Integra RWA Asset Passport ID
@@ -165,11 +180,13 @@ struct PropertyMetadata {
 ```
 
 ### Global Orderbook Integration
+
 - Secondary market trading compatibility
 - Jurisdiction-aware compliance
 - Automated commission handling
 
 ### Fiat Payment Rails
+
 - On-chain proof-of-payment
 - Automated settlement
 - Multi-currency support
@@ -177,17 +194,21 @@ struct PropertyMetadata {
 ## 🧪 Testing
 
 ### Run Complete Test Suite
+
 ```bash
 npm test
 ```
 
 ### Test Coverage
+
 ```bash
 npm run coverage
 ```
 
 ### Integration Tests
+
 The platform includes comprehensive integration tests covering:
+
 - Identity registration and KYC verification
 - Property token minting and transfers
 - Lease agreement creation and lifecycle
@@ -195,6 +216,7 @@ The platform includes comprehensive integration tests covering:
 - Compliance rule enforcement
 
 ### Sample Test Workflow
+
 ```javascript
 // 1. Register identities
 await identityRegistry.registerIdentity(landlord.address, identityContract, 840);
@@ -215,11 +237,13 @@ const subscriptionId = await escrowPayment.createPaymentSubscription(...);
 ## 🛡️ Security & Compliance
 
 ### Access Control
+
 - **Role-based permissions** using OpenZeppelin AccessControl
 - **Multi-signature capabilities** for critical operations
 - **Emergency pause mechanisms** for all contracts
 
 ### Compliance Features
+
 - **ERC-3643** T-REX standard compliance
 - **Identity verification** with KYC/AML integration
 - **Transfer restrictions** by jurisdiction and investor type
@@ -227,6 +251,7 @@ const subscriptionId = await escrowPayment.createPaymentSubscription(...);
 - **Holding period enforcement** for securities regulations
 
 ### Security Best Practices
+
 - **ReentrancyGuard** on all state-changing functions
 - **SafeERC20** for token transfers
 - **Input validation** and overflow protection
@@ -235,6 +260,7 @@ const subscriptionId = await escrowPayment.createPaymentSubscription(...);
 ## 📊 Gas Optimization
 
 Contracts are optimized for gas efficiency:
+
 - **Batch operations** for multiple transfers/actions
 - **Efficient storage patterns** to minimize gas costs
 - **View functions** for off-chain calculations
@@ -243,6 +269,7 @@ Contracts are optimized for gas efficiency:
 ## 🔧 Development & Deployment
 
 ### Project Structure
+
 ```
 contracts/
 ├── PropertyToken.sol          # ERC-3643 property tokenization
@@ -259,12 +286,15 @@ contracts/
 ```
 
 ### Configuration Files
+
 - `hardhat.config.js` - Hardhat configuration with Integra networks
 - `package.json` - Dependencies and scripts
 - `.env.example` - Environment template
 
 ### Deployment Artifacts
+
 Deployment creates:
+
 - Contract addresses and ABIs
 - Network configuration
 - Role assignments
@@ -273,18 +303,20 @@ Deployment creates:
 ## 🌐 Frontend Integration
 
 ### Contract ABIs
+
 After compilation, ABIs are available in `artifacts/contracts/`
 
 ### Web3 Integration
+
 ```javascript
 // Example: Connect to PropertyToken
-import { ethers } from 'ethers';
-import PropertyTokenABI from './artifacts/contracts/PropertyToken.sol/PropertyToken.json';
+import { ethers } from "ethers";
+import PropertyTokenABI from "./artifacts/contracts/PropertyToken.sol/PropertyToken.json";
 
 const propertyToken = new ethers.Contract(
-    PROPERTY_TOKEN_ADDRESS,
-    PropertyTokenABI.abi,
-    signer
+  PROPERTY_TOKEN_ADDRESS,
+  PropertyTokenABI.abi,
+  signer
 );
 
 // Check if user can transfer tokens
@@ -292,27 +324,31 @@ const canTransfer = await propertyToken.canTransfer(from, to, amount);
 ```
 
 ### MetaMask Integration
+
 ```javascript
 // Add Integra Chain to MetaMask
 await window.ethereum.request({
-    method: 'wallet_addEthereumChain',
-    params: [{
-        chainId: '0x462', // 1122 in hex (Integra testnet)
-        chainName: 'Integra Testnet',
-        nativeCurrency: {
-            name: 'IRL',
-            symbol: 'IRL',
-            decimals: 18,
-        },
-        rpcUrls: ['https://testnet-rpc.integra.com'],
-        blockExplorerUrls: ['https://testnet-explorer.integra.com'],
-    }],
+  method: "wallet_addEthereumChain",
+  params: [
+    {
+      chainId: "0x462", // 1122 in hex (Integra testnet)
+      chainName: "Integra Testnet",
+      nativeCurrency: {
+        name: "IRL",
+        symbol: "IRL",
+        decimals: 18,
+      },
+      rpcUrls: ["https://testnet-rpc.integra.com"],
+      blockExplorerUrls: ["https://testnet-explorer.integra.com"],
+    },
+  ],
 });
 ```
 
 ## 📝 Roadmap
 
 ### Phase 1: Core Infrastructure ✅
+
 - [x] ERC-3643 compliant PropertyToken
 - [x] Identity Registry with KYC/AML
 - [x] Basic lease agreement management
@@ -320,6 +356,7 @@ await window.ethereum.request({
 - [x] Compliance engine
 
 ### Phase 2: Advanced Features 🚧
+
 - [ ] Integration with Integra Global Orderbook
 - [ ] Fiat payment bridge implementation
 - [ ] Advanced dispute resolution mechanisms
@@ -327,6 +364,7 @@ await window.ethereum.request({
 - [ ] Yield distribution automation
 
 ### Phase 3: Ecosystem Integration 📅
+
 - [ ] Third-party KYC provider integrations
 - [ ] Property valuation oracle integration
 - [ ] Insurance protocol integration
@@ -334,6 +372,7 @@ await window.ethereum.request({
 - [ ] DeFi yield farming for deposits
 
 ### Phase 4: Governance & DAO 🔮
+
 - [ ] Governance token for platform decisions
 - [ ] DAO structure for protocol upgrades
 - [ ] Community-driven compliance rules
@@ -348,6 +387,7 @@ await window.ethereum.request({
 5. **Open pull request**
 
 ### Development Guidelines
+
 - Follow Solidity style guide
 - Add comprehensive tests for new features
 - Update documentation
@@ -393,4 +433,5 @@ REPORT_GAS=true npm test # Generate gas report
 **Built with ❤️ for Integra Chain ecosystem**
 
 Transform real estate with blockchain technology - transparent, efficient, and compliant property tokenization for the future of real estate investment.
->>>>>>> master
+
+> > > > > > > master

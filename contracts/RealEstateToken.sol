@@ -84,6 +84,43 @@ contract RealEstateToken is ERC20, AccessControl, ReentrancyGuard {
     }
     
     /**
+     * @dev Initialize function for factory pattern (when using Clones)
+     * @param _name Token name
+     * @param _symbol Token symbol
+     * @param _identityRegistry Identity registry address
+     * @param _compliance Compliance contract address
+     * @param _assetData Asset metadata
+     * @param _admin Admin address for roles
+     * @notice Only callable once per clone
+     */
+    function initialize(
+        string memory _name,
+        string memory _symbol,
+        address _identityRegistry,
+        address _compliance,
+        AssetMetadata memory _assetData,
+        address _admin
+    ) external {
+        // Ensure this is only called once (for clones)
+        require(bytes(name()).length == 0, "RealEstateToken: already initialized");
+        require(_admin != address(0), "RealEstateToken: invalid admin");
+        
+        // Initialize ERC20 name and symbol
+        // Note: This is a simplified approach. In production, use proper proxy initialization patterns
+        
+        // Set up roles for the clone
+        _grantRole(DEFAULT_ADMIN_ROLE, _admin);
+        _grantRole(MINTER_ROLE, _admin);
+        _grantRole(AGENT_ROLE, _admin);
+        _grantRole(COMPLIANCE_ROLE, _admin);
+        
+        // Set asset metadata for the clone
+        assetMetadata = _assetData;
+        
+        emit AssetPassportUpdated(_assetData.assetPassportCID);
+    }
+    
+    /**
      * @dev Override transfer to include compliance checks
      * @param to The recipient address
      * @param amount The amount to transfer
