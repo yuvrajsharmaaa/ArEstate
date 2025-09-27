@@ -525,5 +525,3 @@ REPORT_GAS=true npm test # Generate gas report
 **Built with ❤️ for Integra Chain ecosystem**
 
 Transform real estate with blockchain technology - transparent, efficient, and compliant property tokenization for the future of real estate investment.
-
-> > > > > > > master
