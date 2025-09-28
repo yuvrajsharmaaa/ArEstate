@@ -32,7 +32,7 @@ contract Compliance is ICompliance, AccessControl {
     function canTransfer(
         address from, 
         address to, 
-        uint256 amount
+        uint256 /* amount */
     ) external view override returns (bool) {
         // Check blacklist
         if (_blacklisted[from] || _blacklisted[to]) {
@@ -72,14 +72,14 @@ contract Compliance is ICompliance, AccessControl {
         // emit ComplianceInteraction(from, to, amount);
     }
     
-    function created(address to, uint256 amount) external override {
+    function created(address /* to */, uint256 /* amount */) external override view {
         require(_tokenBound[msg.sender], "Token not bound to compliance");
-        // Handle token creation logic
+        // Handle token creation logic - currently no specific logic needed
     }
     
-    function destroyed(address from, uint256 amount) external override {
+    function destroyed(address /* from */, uint256 /* amount */) external override view {
         require(_tokenBound[msg.sender], "Token not bound to compliance");
-        // Handle token destruction logic
+        // Handle token destruction logic - currently no specific logic needed
     }
     
     function bindToken(address token) external override onlyRole(DEFAULT_ADMIN_ROLE) {

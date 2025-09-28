@@ -262,7 +262,7 @@ contract RealEstateToken is ERC20, AccessControl, ReentrancyGuard {
      * @dev Get token holder count (placeholder)
      * @return uint256 Number of token holders
      */
-    function getHolderCount() external view returns (uint256) {
+    function getHolderCount() external pure returns (uint256) {
         // Placeholder implementation - would need to track holders separately
         return 0;
     }
