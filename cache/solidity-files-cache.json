@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "C:\\Users\\YUVRAJ\\OneDrive\\Desktop\\Kraystate\\contracts\\Compliance.sol": {
-      "lastModificationDate": 1759017423748,
-      "contentHash": "d3c1fc52b0490c01fa55dc7ff0bb0521",
+      "lastModificationDate": 1759018549877,
+      "contentHash": "965a561d8f155ee4711a68b5449d5ba3",
       "sourceName": "contracts/Compliance.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -798,8 +798,8 @@
       ]
     },
     "C:\\Users\\YUVRAJ\\OneDrive\\Desktop\\Kraystate\\contracts\\RealEstateToken.sol": {
-      "lastModificationDate": 1759017423750,
-      "contentHash": "99a99e07129d6aebf34fc6638bad8952",
+      "lastModificationDate": 1759018549875,
+      "contentHash": "5179541725b1ea114c6516aa2d044942",
       "sourceName": "contracts/RealEstateToken.sol",
       "solcConfig": {
         "version": "0.8.20",
