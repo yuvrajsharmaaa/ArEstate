@@ -17,48 +17,48 @@ export default function ContactPage() {
   const contactMethods = [
     {
       icon: Phone,
-      title: "Call Us",
-      description: "Speak directly with our experts",
+      title: "Technical Support",
+      description: "Blockchain & smart contract assistance",
       contact: "+1 (555) 123-4567",
-      availability: "Mon-Fri 9AM-6PM",
+      availability: "24/7 - Enterprise Support",
       color: "blue"
     },
     {
       icon: Mail,
-      title: "Email Us",
-      description: "Send us a detailed message",
-      contact: "info@realestate.com",
-      availability: "24/7 - We respond within 24hrs",
+      title: "Partnership Inquiries",
+      description: "Integration & collaboration opportunities",
+      contact: "partners@kraystate.com",
+      availability: "48hr response time",
       color: "purple"
     },
     {
       icon: MessageCircle,
-      title: "Live Chat",
-      description: "Get instant help online",
-      contact: "Start Chat",
-      availability: "Available 9AM-9PM",
+      title: "Developer Support",
+      description: "API documentation & SDK help",
+      contact: "Discord Community",
+      availability: "Active developer community",
       color: "green"
     }
   ]
 
   const officeLocations = [
     {
-      city: "New York",
-      address: "123 Real Estate Ave, Suite 100",
-      phone: "+1 (555) 123-4567",
-      hours: "Mon-Fri 9AM-6PM"
+      city: "Blockchain Hub - Singapore",
+      address: "One Raffles Quay, Fintech District",
+      phone: "+65 6789-1234",
+      hours: "24/7 - Global Operations"
     },
     {
-      city: "Los Angeles", 
-      address: "456 Property Blvd, Floor 5",
-      phone: "+1 (555) 987-6543",
-      hours: "Mon-Fri 8AM-5PM"
+      city: "Development Center - San Francisco", 
+      address: "123 Blockchain Ave, SOMA District",
+      phone: "+1 (415) 555-0123",
+      hours: "Mon-Fri 9AM-6PM PST"
     },
     {
-      city: "Chicago",
-      address: "789 Realty Street, Building C",
-      phone: "+1 (555) 456-7890", 
-      hours: "Mon-Fri 9AM-6PM"
+      city: "Compliance Office - New York",
+      address: "Wall Street Financial District",
+      phone: "+1 (212) 555-0789", 
+      hours: "Mon-Fri 8AM-7PM EST"
     }
   ]
 
@@ -106,13 +106,13 @@ export default function ContactPage() {
           <div className="text-center">
             <div className="animate-fade-in-up">
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-100 mb-6 tracking-tight">
-                Let&apos;s 
+                Join the 
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
-                  {" "}Connect
+                  {" "}Revolution
                 </span>
               </h1>
-              <p className="text-xl sm:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
-                Ready to find your dream property? Our expert team is here to guide you through every step of your real estate journey
+              <p className="text-xl sm:text-2xl text-gray-300 mb-8 max-w-4xl mx-auto leading-relaxed">
+                Ready to tokenize your property or invest in fractional real estate? Get started with KrayState ArEstate&apos;s blockchain-powered platform
               </p>
             </div>
           </div>
@@ -123,8 +123,8 @@ export default function ContactPage() {
       <section className="py-16 bg-gray-800/50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-100 mb-4">Get In Touch</h2>
-            <p className="text-xl text-gray-300">Choose your preferred way to reach us</p>
+            <h2 className="text-4xl font-bold text-gray-100 mb-4">Connect With Our Team</h2>
+            <p className="text-xl text-gray-300">Expert support for blockchain real estate tokenization</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8 mb-16">
             {contactMethods.map((method, index) => (
@@ -187,7 +187,7 @@ export default function ContactPage() {
           <div className="animate-fade-in-up animation-delay-200">
             <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-gray-700/50">
               <h2 className="text-4xl font-bold text-gray-100 mb-8">
-                Send us a Message
+                Get Started Today
               </h2>
 
               {error && (
@@ -259,7 +259,7 @@ export default function ContactPage() {
                     rows={6}
                     required
                     className="w-full px-6 py-4 border border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700/50 text-gray-100 placeholder-gray-400 transition-all duration-300 resize-none"
-                    placeholder="Tell us how we can help you find your perfect property..."
+                    placeholder="Tell us about your tokenization needs, investment goals, or technical integration requirements..."
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   />
@@ -294,20 +294,20 @@ export default function ContactPage() {
           <div className="max-w-4xl mx-auto space-y-6">
             {[
               {
-                question: "How long does it take to buy a property?",
-                answer: "The typical home buying process takes 30-45 days from offer acceptance to closing, though it can vary based on financing and inspection results."
+                question: "How does property tokenization work?",
+                answer: "Properties are converted into ERC-3643 compliant security tokens, enabling fractional ownership. Each token represents a share of the property with automated compliance and regulatory features built-in."
               },
               {
-                question: "What documents do I need to sell my property?",
-                answer: "You'll need the deed, tax records, recent mortgage statements, property disclosures, and any HOA documents. We'll guide you through the complete list."
+                question: "What is required for KYC/AML verification?",
+                answer: "Users need to complete identity verification through our integrated system, including government ID, proof of address, and accredited investor status where required by regulations."
               },
               {
-                question: "Do you charge any upfront fees?", 
-                answer: "No, we don't charge any upfront fees to buyers. Our commission is paid at closing by the seller, as is standard in real estate transactions."
+                question: "Are there any transaction fees?", 
+                answer: "Gas fees apply for blockchain transactions, typically $5-20 per transaction. Platform fees are competitive at 0.5-1% depending on transaction type and volume."
               },
               {
-                question: "How do you determine property values?",
-                answer: "We use comparative market analysis (CMA) looking at recently sold similar properties, current market conditions, and unique property features."
+                question: "Which blockchains do you support?",
+                answer: "KrayState ArEstate is built on Integra Chain with cross-chain compatibility planned. We leverage Integra's RWA Asset Passport and Global Orderbook for seamless operations."
               }
             ].map((faq, index) => (
               <div
