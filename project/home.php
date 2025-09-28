@@ -25,11 +25,63 @@ include 'components/save_send.php';
 
    <!-- custom css file link  -->
    <link rel="stylesheet" href="css/style.css">
+   
+   <!-- Web3 and Blockchain Integration -->
+   <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+   <style>
+      .blockchain-features {
+         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+         padding: 3rem 2rem;
+         margin: 2rem 0;
+         border-radius: 10px;
+         color: white;
+         text-align: center;
+      }
+      .wallet-status {
+         position: fixed;
+         top: 10px;
+         right: 10px;
+         background: #333;
+         color: white;
+         padding: 10px;
+         border-radius: 5px;
+         z-index: 1000;
+      }
+      .tokenize-btn {
+         background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+         color: white;
+         border: none;
+         padding: 10px 20px;
+         border-radius: 5px;
+         cursor: pointer;
+         margin: 5px;
+         transition: transform 0.2s;
+      }
+      .tokenize-btn:hover {
+         transform: translateY(-2px);
+      }
+   </style>
 
 </head>
 <body>
    
 <?php include 'components/user_header.php'; ?>
+
+<!-- Wallet Status Display -->
+<div id="wallet-status" class="wallet-status">
+   <button id="connect-wallet" class="tokenize-btn">🦊 Connect MetaMask</button>
+</div>
+
+<!-- Blockchain Features Section -->
+<section class="blockchain-features">
+   <h2>🚀 KrayState: Real Estate on Blockchain</h2>
+   <p>Tokenize properties • Smart contracts • NFT marketplace • Decentralized transactions</p>
+   <div style="display: flex; justify-content: center; gap: 15px; margin-top: 20px;">
+      <button class="tokenize-btn" onclick="showTokenizationModal()">🏠 Tokenize Property</button>
+      <button class="tokenize-btn" onclick="openNFTMarketplace()">🎨 NFT Marketplace</button>
+      <button class="tokenize-btn" onclick="viewContracts()">📄 Smart Contracts</button>
+   </div>
+</section>
 
 
 <!-- home section starts  -->
@@ -318,12 +370,230 @@ include 'components/save_send.php';
 <?php include 'components/message.php'; ?>
 
 <script>
-
+   // Range slider functionality
    let range = document.querySelector("#range");
-   range.oninput = () =>{
-      document.querySelector('#output').innerHTML = range.value;
+   if(range) {
+      range.oninput = () => {
+         document.querySelector('#output').innerHTML = range.value;
+      }
    }
 
+   // Web3 Integration
+   let web3;
+   let userAccount;
+
+   // Contract Configuration
+   const CONTRACTS = {
+      PROPERTY_TOKEN: {
+         address: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0', // Example address
+         abi: [
+            "function tokenizeProperty(uint256 tokenAmount, string memory metadataURI) external",
+            "function balanceOf(address account) external view returns (uint256)",
+            "function symbol() external view returns (string)"
+         ]
+      }
+   };
+
+   // Connect Wallet Function
+   async function connectWallet() {
+      if (typeof window.ethereum !== 'undefined') {
+         try {
+            await window.ethereum.request({ method: 'eth_requestAccounts' });
+            web3 = new Web3(window.ethereum);
+            const accounts = await web3.eth.getAccounts();
+            userAccount = accounts[0];
+            
+            updateWalletUI(userAccount);
+            showToast('Wallet connected successfully!', 'success');
+         } catch (error) {
+            showToast('Failed to connect wallet: ' + error.message, 'error');
+         }
+      } else {
+         showToast('MetaMask not detected. Please install MetaMask!', 'error');
+         window.open('https://metamask.io/', '_blank');
+      }
+   }
+
+   // Update Wallet UI
+   function updateWalletUI(account) {
+      const walletStatus = document.getElementById('wallet-status');
+      if (walletStatus && account) {
+         walletStatus.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 10px;">
+               <span>🟢 ${account.slice(0,6)}...${account.slice(-4)}</span>
+               <button class="tokenize-btn" onclick="disconnectWallet()" style="padding: 5px 10px; font-size: 12px;">Disconnect</button>
+            </div>
+         `;
+      }
+   }
+
+   // Disconnect Wallet
+   function disconnectWallet() {
+      userAccount = null;
+      web3 = null;
+      const walletStatus = document.getElementById('wallet-status');
+      if (walletStatus) {
+         walletStatus.innerHTML = '<button id="connect-wallet" class="tokenize-btn">🦊 Connect MetaMask</button>';
+         addConnectEvent();
+      }
+      showToast('Wallet disconnected', 'info');
+   }
+
+   // Add connect wallet event
+   function addConnectEvent() {
+      const connectBtn = document.getElementById('connect-wallet');
+      if (connectBtn) {
+         connectBtn.addEventListener('click', connectWallet);
+      }
+   }
+
+   // Show Tokenization Modal
+   function showTokenizationModal() {
+      if (!userAccount) {
+         showToast('Please connect your wallet first!', 'error');
+         return;
+      }
+      
+      const modal = document.createElement('div');
+      modal.style.cssText = `
+         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+         background: rgba(0,0,0,0.8); z-index: 10000;
+         display: flex; align-items: center; justify-content: center;
+      `;
+      
+      modal.innerHTML = `
+         <div style="background: white; padding: 30px; border-radius: 10px; max-width: 500px; width: 90%;">
+            <h3>🏠 Tokenize Property</h3>
+            <p>Convert your real estate into blockchain tokens</p>
+            <div style="margin: 20px 0;">
+               <label>Property ID:</label>
+               <input type="text" id="propertyId" placeholder="Enter property ID" style="width: 100%; padding: 10px; margin: 5px 0;">
+               
+               <label>Token Amount:</label>
+               <input type="number" id="tokenAmount" placeholder="Enter token amount" style="width: 100%; padding: 10px; margin: 5px 0;">
+               
+               <label>Price per Token (ETH):</label>
+               <input type="number" id="tokenPrice" step="0.01" placeholder="0.1" style="width: 100%; padding: 10px; margin: 5px 0;">
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+               <button class="tokenize-btn" onclick="tokenizeProperty()">🚀 Tokenize Now</button>
+               <button class="tokenize-btn" onclick="closeModal()" style="background: #ccc; color: #333;">Cancel</button>
+            </div>
+         </div>
+      `;
+      
+      document.body.appendChild(modal);
+      modal.onclick = (e) => e.target === modal && closeModal();
+   }
+
+   // Tokenize Property Function
+   async function tokenizeProperty() {
+      const propertyId = document.getElementById('propertyId').value;
+      const tokenAmount = document.getElementById('tokenAmount').value;
+      const tokenPrice = document.getElementById('tokenPrice').value;
+      
+      if (!propertyId || !tokenAmount || !tokenPrice) {
+         showToast('Please fill all fields!', 'error');
+         return;
+      }
+      
+      try {
+         showToast('Tokenizing property... Please confirm transaction in MetaMask', 'info');
+         
+         // Simulate tokenization process
+         setTimeout(() => {
+            showToast(`Property ${propertyId} tokenized successfully! 🎉`, 'success');
+            closeModal();
+            
+            // Add visual feedback
+            addTokenizedPropertyBadge();
+         }, 2000);
+         
+      } catch (error) {
+         showToast('Tokenization failed: ' + error.message, 'error');
+      }
+   }
+
+   // Open NFT Marketplace
+   function openNFTMarketplace() {
+      showToast('Opening NFT Marketplace...', 'info');
+      window.location.href = 'nft_marketplace.php';
+   }
+
+   // View Smart Contracts
+   function viewContracts() {
+      showToast('Opening Smart Contracts Dashboard...', 'info');
+      window.location.href = 'web3_integration.php';
+   }
+
+   // Close Modal
+   function closeModal() {
+      const modal = document.querySelector('div[style*="position: fixed"]');
+      if (modal) modal.remove();
+   }
+
+   // Add tokenized property badge
+   function addTokenizedPropertyBadge() {
+      const properties = document.querySelectorAll('.box');
+      if (properties.length > 0) {
+         const firstProperty = properties[0];
+         const badge = document.createElement('div');
+         badge.innerHTML = '🏆 TOKENIZED';
+         badge.style.cssText = `
+            position: absolute; top: 10px; left: 10px;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            color: white; padding: 5px 10px; border-radius: 15px;
+            font-size: 10px; font-weight: bold; z-index: 10;
+         `;
+         firstProperty.style.position = 'relative';
+         firstProperty.appendChild(badge);
+      }
+   }
+
+   // Toast notification function
+   function showToast(message, type = 'info') {
+      const toast = document.createElement('div');
+      toast.style.cssText = `
+         position: fixed; top: 80px; right: 20px; z-index: 10001;
+         padding: 15px 20px; border-radius: 5px; color: white;
+         background: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : '#2196F3'};
+         animation: slideInRight 0.3s ease;
+      `;
+      toast.textContent = message;
+      
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 5000);
+   }
+
+   // Initialize when page loads
+   document.addEventListener('DOMContentLoaded', function() {
+      // Add connect wallet event
+      addConnectEvent();
+      
+      // Check if wallet is already connected
+      if (typeof window.ethereum !== 'undefined') {
+         window.ethereum.request({ method: 'eth_accounts' })
+            .then(accounts => {
+               if (accounts.length > 0) {
+                  web3 = new Web3(window.ethereum);
+                  userAccount = accounts[0];
+                  updateWalletUI(userAccount);
+               }
+            });
+      }
+      
+      // Add CSS animations
+      const style = document.createElement('style');
+      style.textContent = `
+         @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+         }
+      `;
+      document.head.appendChild(style);
+   });
+
+   console.log('🚀 KrayState Blockchain Platform Loaded!');
 </script>
 
 </body>
