@@ -1,1 +1,2 @@
+.help
 const identity = await ethers.getContractAt("IdentityRegistry", "0xD4b19AB3f4e22557b32aD8d88E0C0737c5f8B933");
