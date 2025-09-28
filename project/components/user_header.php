@@ -29,6 +29,7 @@
                   <ul>
                      <li><a href="search.php">filter search</a></li>
                      <li><a href="listings.php">all listings</a></li>
+                     <li><a href="nft_marketplace.php">tokenized properties <i class="fas fa-coins"></i></a></li>
                   </ul>
                </li>
                <li><a href="#">help<i class="fas fa-angle-down"></i></a>

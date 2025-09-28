@@ -47,6 +47,7 @@ Before running the project, ensure you have:
 ### **Step 1: Download and Setup**
 
 1. **Clone or download** the project files to your web server directory:
+
    ```bash
    # If using XAMPP, place in: C:\xampp\htdocs\kraystate
    # If using built-in server, any directory works
@@ -84,6 +85,7 @@ define('CONTRACTS', [
 ```
 
 **No additional configuration needed!** The project will automatically:
+
 - Create JSON data files
 - Initialize demo NFT data
 - Set up Web3 connections to Sepolia testnet
@@ -124,29 +126,34 @@ define('CONTRACTS', [
 ## 🎯 **How to Test the Marketplace**
 
 ### **1. Browse Properties**
+
 - Visit the main marketplace page
 - View tokenized real estate properties
 - Use filters to search by price, location, property type
 - Click on properties to see details
 
 ### **2. Connect Web3 Wallet**
+
 - Click "Connect Wallet" button
 - Approve MetaMask connection
 - Ensure you're on Sepolia testnet
 - Your wallet address will appear in the top-right
 
 ### **3. Purchase NFTs (Demo)**
+
 - Click "Buy Now" on any listed property
 - Confirm the transaction (simulated for demo)
 - The property ownership will update
 - Transaction will be recorded in the system
 
 ### **4. Make Offers**
+
 - Click "Make Offer" on unlisted properties
 - Enter your offer amount in ETH
 - Offer will be submitted (demo functionality)
 
 ### **5. View Contract Information**
+
 - Open browser developer tools (F12)
 - Check console for smart contract addresses
 - Verify connection to Sepolia testnet
@@ -157,22 +164,24 @@ define('CONTRACTS', [
 
 Your deployed contracts are already live and integrated:
 
-| Contract | Address | Purpose |
-|----------|---------|---------|
-| **PropertyToken** | `0xc601F6352300Af039FA9E4F63545cC52c33D44D8` | ERC-721 NFT tokens for properties |
-| **IdentityRegistry** | `0xD4b19AB3f4e22557b32aD8d88E0C0737c5f8B933` | KYC/AML user verification |
-| **LeaseAgreement** | `0x987C8053eb163bb63bb4EEB85cAaDF3041d2D922` | Property lease management |
-| **EscrowPayment** | `0x4722813a0d172B8e13fB092f032dd84341aE8515` | Payment escrow system |
+| Contract             | Address                                      | Purpose                           |
+| -------------------- | -------------------------------------------- | --------------------------------- |
+| **PropertyToken**    | `0xc601F6352300Af039FA9E4F63545cC52c33D44D8` | ERC-721 NFT tokens for properties |
+| **IdentityRegistry** | `0xD4b19AB3f4e22557b32aD8d88E0C0737c5f8B933` | KYC/AML user verification         |
+| **LeaseAgreement**   | `0x987C8053eb163bb63bb4EEB85cAaDF3041d2D922` | Property lease management         |
+| **EscrowPayment**    | `0x4722813a0d172B8e13fB092f032dd84341aE8515` | Payment escrow system             |
 
 ### **Blockchain Verification**
 
 You can verify these contracts on Etherscan:
+
 - [PropertyToken on Sepolia](https://sepolia.etherscan.io/address/0xc601F6352300Af039FA9E4F63545cC52c33D44D8)
 - [IdentityRegistry on Sepolia](https://sepolia.etherscan.io/address/0xD4b19AB3f4e22557b32aD8d88E0C0737c5f8B933)
 
 ### **Web3 Integration Features**
 
 The platform includes:
+
 - **Real-time contract calls** to verify token ownership
 - **Balance checking** for connected wallets
 - **Network validation** (ensures Sepolia testnet)
@@ -211,9 +220,9 @@ data/
   "property_type": "residential",
   "is_listed": true,
   "attributes": [
-    {"trait_type": "Location", "value": "Downtown Manhattan"},
-    {"trait_type": "Bedrooms", "value": "2"},
-    {"trait_type": "Rental Yield", "value": "8.5%"}
+    { "trait_type": "Location", "value": "Downtown Manhattan" },
+    { "trait_type": "Bedrooms", "value": "2" },
+    { "trait_type": "Rental Yield", "value": "8.5%" }
   ],
   "created_at": "2024-01-15 10:30:00"
 }
@@ -224,18 +233,21 @@ data/
 The project includes a complete API (`api.php`) for:
 
 ### **NFT Operations**
+
 - `GET api.php?action=get_nfts` - Get all NFTs with filters
 - `GET api.php?action=get_nft&id=nft_1` - Get specific NFT
 - `POST api.php` with `action=create_nft` - Create new NFT
 - `POST api.php` with `action=simulate_purchase` - Simulate purchase
 
 ### **Blockchain Integration**
+
 - `GET api.php?action=get_contract_info&contract=PropertyToken` - Contract details
 - `GET api.php?action=get_token_owner&token_id=1` - Get token owner from blockchain
 - `GET api.php?action=get_wallet_balance&wallet=0x...` - Get ETH balance
 - `GET api.php?action=get_network_info` - Network status
 
 ### **Marketplace Data**
+
 - `GET api.php?action=get_marketplace_stats` - Overall statistics
 - `GET api.php?action=get_trending` - Trending NFTs
 - `GET api.php?action=search&q=downtown` - Search properties
@@ -243,11 +255,13 @@ The project includes a complete API (`api.php`) for:
 ## 🎨 **UI/UX Features**
 
 ### **Preserved Original Design**
+
 - Maintains your existing CSS styling and layout
 - Responsive design for mobile/tablet devices
 - Original color scheme and typography
 
 ### **Enhanced Web3 Features**
+
 - **Wallet Connection**: MetaMask integration with status indicators
 - **Property Grid**: Beautiful NFT card layouts with property details
 - **Advanced Filters**: Search by location, price, property type
@@ -255,6 +269,7 @@ The project includes a complete API (`api.php`) for:
 - **Transaction Feedback**: Success/error notifications
 
 ### **Interactive Elements**
+
 - **Buy Now Buttons**: Direct purchase functionality
 - **Make Offer**: Submit offers on unlisted properties
 - **Property Details**: Rental yields, location, attributes
@@ -263,6 +278,7 @@ The project includes a complete API (`api.php`) for:
 ## 🧪 **Testing Guide**
 
 ### **1. Local Testing**
+
 ```bash
 # Start PHP server
 php -S localhost:8000
@@ -273,18 +289,21 @@ curl http://localhost:8000/api.php?action=get_marketplace_stats
 ```
 
 ### **2. Web3 Testing**
+
 1. Open browser developer console (F12)
 2. Connect MetaMask wallet
 3. Check console for Web3 connection logs
 4. Test buy/offer functionality
 
 ### **3. Smart Contract Testing**
+
 1. Visit [Sepolia Etherscan](https://sepolia.etherscan.io/)
 2. Search for contract addresses from `config.php`
 3. Verify contracts are deployed and accessible
 4. Check transaction history
 
 ### **4. API Testing**
+
 ```bash
 # Test marketplace stats
 curl "http://localhost:8000/api.php?action=get_marketplace_stats"
@@ -301,29 +320,36 @@ curl "http://localhost:8000/api.php?action=get_contract_info&contract=PropertyTo
 ### **Common Issues & Solutions**
 
 #### **"No Web3 wallet detected"**
+
 - **Solution**: Install MetaMask browser extension
 - **Alternative**: Use Brave browser with built-in Web3
 
 #### **"Wrong network" warning**
+
 - **Solution**: Switch MetaMask to Sepolia testnet
 - **Chain ID**: 11155111
 - **RPC URL**: https://rpc.sepolia.org
 
 #### **"Permission denied" errors**
+
 - **Solution**: Ensure write permissions on `data/` directory
 - **Windows**: Right-click folder → Properties → Security
 - **Linux/Mac**: `chmod 755 data/`
 
 #### **"Contract call failed"**
+
 - **Solution**: Check Sepolia testnet connectivity
 - **Alternative**: Use different RPC URL in `config.php`
 
 #### **"Transaction failed"**
+
 - **Solution**: Ensure you have Sepolia ETH for gas fees
 - **Get test ETH**: [Sepolia Faucet](https://sepoliafaucet.com/)
 
 ### **Debug Mode**
+
 Enable detailed logging by adding to `config.php`:
+
 ```php
 // Enable debug mode
 ini_set('error_reporting', E_ALL);
@@ -336,12 +362,14 @@ error_log('Debug: KrayState marketplace loaded');
 To upgrade from JSON storage to full database:
 
 1. **Import the original SQL schema**:
+
    ```sql
    -- Use your existing home_db.sql file
    -- Add new tables for NFT data
    ```
 
 2. **Update configuration**:
+
    ```php
    // Replace JSON functions with PDO database calls
    $conn = new PDO("mysql:host=localhost;dbname=home_db", $user, $pass);
@@ -365,16 +393,19 @@ For production deployment:
 ## 📞 **Support & Resources**
 
 ### **Smart Contract Resources**
+
 - [Hardhat Documentation](https://hardhat.org/docs)
 - [OpenZeppelin Contracts](https://docs.openzeppelin.com/contracts/)
 - [Ethereum Development](https://ethereum.org/developers/)
 
 ### **Web3 Integration**
+
 - [Web3.js Documentation](https://web3js.readthedocs.io/)
 - [MetaMask Developer Docs](https://docs.metamask.io/)
 - [Ethereum JSON-RPC](https://ethereum.org/en/developers/docs/apis/json-rpc/)
 
 ### **Testing Resources**
+
 - [Sepolia Testnet Faucet](https://sepoliafaucet.com/)
 - [Sepolia Etherscan](https://sepolia.etherscan.io/)
 - [MetaMask Test Networks](https://metamask.zendesk.com/hc/en-us/articles/13946422437147-How-to-view-testnets-in-MetaMask)
@@ -384,6 +415,7 @@ For production deployment:
 ## 🎉 **You're Ready to Go!**
 
 Your KrayState NFT Marketplace is now fully functional with:
+
 - ✅ **Smart contract integration** with your deployed contracts
 - ✅ **Web3 wallet connectivity** via MetaMask
 - ✅ **Complete marketplace UI** with property listings
