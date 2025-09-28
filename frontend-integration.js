@@ -1,15 +1,15 @@
 // KrayState ArEstate - Web3 Integration Helper
 // Use this file as a reference for connecting your frontend to the smart contracts
 
-import { ethers } from 'ethers';
+import { ethers } from "ethers";
 
 // Contract addresses on Sepolia testnet
 export const CONTRACT_ADDRESSES = {
   IdentityRegistry: "0xD4b19AB3f4e22557b32aD8d88E0C0737c5f8B933",
-  Compliance: "0x3982a23b37d0e82040B8Ae9Cef4274094fD5a6f9", 
+  Compliance: "0x3982a23b37d0e82040B8Ae9Cef4274094fD5a6f9",
   PropertyToken: "0xc601F6352300Af039FA9E4F63545cC52c33D44D8",
   LeaseAgreement: "0x987C8053eb163bb63bb4EEB85cAaDF3041d2D922",
-  EscrowPayment: "0x4722813a0d172B8e13fB092f032dd84341aE8515"
+  EscrowPayment: "0x4722813a0d172B8e13fB092f032dd84341aE8515",
 };
 
 // Network configuration
@@ -17,7 +17,7 @@ export const NETWORK_CONFIG = {
   chainId: 11155111,
   name: "Sepolia",
   rpcUrl: "https://sepolia.gateway.tenderly.co",
-  blockExplorer: "https://sepolia.etherscan.io"
+  blockExplorer: "https://sepolia.etherscan.io",
 };
 
 // Web3 Provider Setup
@@ -30,15 +30,15 @@ export class KrayStateWeb3 {
 
   // Connect to MetaMask or other wallet
   async connectWallet() {
-    if (typeof window.ethereum !== 'undefined') {
+    if (typeof window.ethereum !== "undefined") {
       try {
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        await window.ethereum.request({ method: "eth_requestAccounts" });
         this.provider = new ethers.BrowserProvider(window.ethereum);
         this.signer = await this.provider.getSigner();
-        
+
         // Switch to Sepolia if not already
         await this.switchToSepolia();
-        
+
         return await this.signer.getAddress();
       } catch (error) {
         console.error("Failed to connect wallet:", error);
@@ -53,25 +53,27 @@ export class KrayStateWeb3 {
   async switchToSepolia() {
     try {
       await window.ethereum.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: '0xaa36a7' }], // Sepolia chainId in hex
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: "0xaa36a7" }], // Sepolia chainId in hex
       });
     } catch (switchError) {
       // If network doesn't exist, add it
       if (switchError.code === 4902) {
         await window.ethereum.request({
-          method: 'wallet_addEthereumChain',
-          params: [{
-            chainId: '0xaa36a7',
-            chainName: 'Sepolia Testnet',
-            nativeCurrency: {
-              name: 'ETH',
-              symbol: 'ETH',
-              decimals: 18
+          method: "wallet_addEthereumChain",
+          params: [
+            {
+              chainId: "0xaa36a7",
+              chainName: "Sepolia Testnet",
+              nativeCurrency: {
+                name: "ETH",
+                symbol: "ETH",
+                decimals: 18,
+              },
+              rpcUrls: ["https://sepolia.gateway.tenderly.co"],
+              blockExplorerUrls: ["https://sepolia.etherscan.io"],
             },
-            rpcUrls: ['https://sepolia.gateway.tenderly.co'],
-            blockExplorerUrls: ['https://sepolia.etherscan.io']
-          }]
+          ],
         });
       }
     }
@@ -81,30 +83,30 @@ export class KrayStateWeb3 {
   initializeContracts(ABIs) {
     this.contracts = {
       identityRegistry: new ethers.Contract(
-        CONTRACT_ADDRESSES.IdentityRegistry, 
-        ABIs.IdentityRegistry, 
+        CONTRACT_ADDRESSES.IdentityRegistry,
+        ABIs.IdentityRegistry,
         this.signer
       ),
       compliance: new ethers.Contract(
-        CONTRACT_ADDRESSES.Compliance, 
-        ABIs.Compliance, 
+        CONTRACT_ADDRESSES.Compliance,
+        ABIs.Compliance,
         this.signer
       ),
       propertyToken: new ethers.Contract(
-        CONTRACT_ADDRESSES.PropertyToken, 
-        ABIs.PropertyToken, 
+        CONTRACT_ADDRESSES.PropertyToken,
+        ABIs.PropertyToken,
         this.signer
       ),
       leaseAgreement: new ethers.Contract(
-        CONTRACT_ADDRESSES.LeaseAgreement, 
-        ABIs.LeaseAgreement, 
+        CONTRACT_ADDRESSES.LeaseAgreement,
+        ABIs.LeaseAgreement,
         this.signer
       ),
       escrowPayment: new ethers.Contract(
-        CONTRACT_ADDRESSES.EscrowPayment, 
-        ABIs.EscrowPayment, 
+        CONTRACT_ADDRESSES.EscrowPayment,
+        ABIs.EscrowPayment,
         this.signer
-      )
+      ),
     };
   }
 
@@ -113,7 +115,8 @@ export class KrayStateWeb3 {
     return await this.contracts.identityRegistry.isVerified(address);
   }
 
-  async registerUser(identityAddress, country = 840) { // 840 = USA
+  async registerUser(identityAddress, country = 840) {
+    // 840 = USA
     const tx = await this.contracts.identityRegistry.registerIdentity(
       this.signer.getAddress(),
       identityAddress,
@@ -133,7 +136,14 @@ export class KrayStateWeb3 {
   }
 
   // Lease Management Functions
-  async createLease(landlord, tenant, monthlyRent, startDate, endDate, propertyAddress) {
+  async createLease(
+    landlord,
+    tenant,
+    monthlyRent,
+    startDate,
+    endDate,
+    propertyAddress
+  ) {
     const tx = await this.contracts.leaseAgreement.createLease(
       landlord,
       tenant,
