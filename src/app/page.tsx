@@ -8,27 +8,27 @@ export default function Home() {
   const [searchType, setSearchType] = useState("buy")
 
   const stats = [
-    { number: "10K+", label: "Properties Listed", icon: Building },
-    { number: "5K+", label: "Happy Customers", icon: Users },
-    { number: "98%", label: "Satisfaction Rate", icon: Star },
-    { number: "50+", label: "Cities Covered", icon: MapPin }
+    { number: "1000+", label: "Tokenized Properties", icon: Building },
+    { number: "15K+", label: "Token Holders", icon: Users },
+    { number: "99.9%", label: "Smart Contract Uptime", icon: Star },
+    { number: "24/7", label: "Automated Processing", icon: MapPin }
   ]
 
   const features = [
     {
       icon: TrendingUp,
-      title: "Market Analytics",
-      description: "Get insights on property values, market trends, and investment opportunities"
+      title: "Property Tokenization",
+      description: "Transform real estate into ERC-3643 compliant security tokens enabling fractional ownership and seamless trading"
     },
     {
       icon: Shield,
-      title: "Verified Listings",
-      description: "All properties are verified and authenticated for your safety and security"
+      title: "Regulatory Compliance",
+      description: "Built-in compliance engine with KYC/AML integration ensuring all transactions meet regulatory requirements"
     },
     {
       icon: Clock,
-      title: "Quick Processing",
-      description: "Fast approval processes and seamless transaction management"
+      title: "Smart Automation",
+      description: "Automated lease management, payment processing, and escrow handling through smart contracts"
     }
   ]
 
@@ -41,13 +41,13 @@ export default function Home() {
           <div className="text-center">
             <div className="animate-fade-in-up">
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-100 mb-6 tracking-tight">
-                Find Your
+                Revolutionize Real Estate with
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
-                  {" "}Dream Home
+                  {" "}Blockchain
                 </span>
               </h1>
-              <p className="text-xl sm:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
-                Discover exceptional properties, connect with trusted agents, and make your next move with confidence
+              <p className="text-xl sm:text-2xl text-gray-300 mb-8 max-w-4xl mx-auto leading-relaxed">
+                KrayState ArEstate transforms property investment through tokenization, enabling fractional ownership, automated compliance, and seamless trading on the Integra Chain ecosystem
               </p>
             </div>
 
@@ -71,11 +71,11 @@ export default function Home() {
                     ))}
                   </div>
                 </div>
-                <div className="flex flex-col sm:flex-row gap-4">
+                                <div className="flex flex-col sm:flex-row gap-4">
                   <div className="flex-1">
                     <input
                       type="text"
-                      placeholder="Enter location, property type, or keywords..."
+                      placeholder="Enter property ID, token symbol, or location..."
                       className="w-full px-6 py-4 bg-gray-700/50 border border-gray-600 rounded-lg text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
@@ -135,24 +135,24 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-100 mb-4">
-              Why Choose Our Platform?
+              Revolutionary Blockchain Features
             </h2>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              We provide comprehensive real estate solutions with cutting-edge technology and expert support
+              Leveraging cutting-edge blockchain technology to transform real estate investment and management
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="group bg-gray-800/50 backdrop-blur-sm p-8 rounded-2xl border border-gray-700/50 hover:border-gray-600/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
+                        <div className="group bg-gray-800/50 backdrop-blur-sm p-8 rounded-2xl border border-gray-700/50 hover:border-gray-600/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600/20 rounded-full mb-6 group-hover:bg-blue-600/30 transition-colors group-hover:scale-110 transform duration-300">
-                <HomeIcon/>
+                <HomeIcon className="w-8 h-8 text-blue-400" />
               </div>
-              <h3 className="text-2xl font-semibold mb-4 text-gray-100">Buy Properties</h3>
+              <h3 className="text-2xl font-semibold mb-4 text-gray-100">Tokenized Properties</h3>
               <p className="text-gray-300 leading-relaxed mb-6">
-                Discover a wide range of properties for sale in your preferred location. From luxury homes to affordable apartments, find your perfect match.
+                Invest in fractional property ownership through ERC-3643 compliant security tokens. Access premium real estate with lower barriers to entry.
               </p>
               <a href="/properties" className="text-blue-400 hover:text-blue-300 font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
-                Explore Properties
+                Explore Tokens
                 <TrendingUp className="w-4 h-4" />
               </a>
             </div>
@@ -161,12 +161,12 @@ export default function Home() {
               <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-600/20 rounded-full mb-6 group-hover:bg-purple-600/30 transition-colors group-hover:scale-110 transform duration-300">
                 <Building className="w-8 h-8 text-purple-400" />
               </div>
-              <h3 className="text-2xl font-semibold mb-4 text-gray-100">Sell Properties</h3>
+              <h3 className="text-2xl font-semibold mb-4 text-gray-100">Smart Contracts</h3>
               <p className="text-gray-300 leading-relaxed mb-6">
-                List your property and reach thousands of potential buyers. Get maximum exposure with our marketing tools and expert guidance.
+                Automated lease management, escrow services, and payment processing with transparent blockchain execution and compliance.
               </p>
-              <a href="/contact" className="text-purple-400 hover:text-purple-300 font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
-                List Your Property
+              <a href="/about" className="text-purple-400 hover:text-purple-300 font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
+                Learn More
                 <TrendingUp className="w-4 h-4" />
               </a>
             </div>
@@ -175,12 +175,12 @@ export default function Home() {
               <div className="inline-flex items-center justify-center w-16 h-16 bg-green-600/20 rounded-full mb-6 group-hover:bg-green-600/30 transition-colors group-hover:scale-110 transform duration-300">
                 <Users className="w-8 h-8 text-green-400" />
               </div>
-              <h3 className="text-2xl font-semibold mb-4 text-gray-100">Expert Guidance</h3>
+              <h3 className="text-2xl font-semibold mb-4 text-gray-100">KYC/AML Compliance</h3>
               <p className="text-gray-300 leading-relaxed mb-6">
-                Get professional advice from our experienced real estate experts. Navigate the market with confidence and make informed decisions.
+                Integrated identity verification and regulatory compliance system ensuring all participants meet legal requirements for security token transactions.
               </p>
-              <a href="/about" className="text-green-400 hover:text-green-300 font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
-                Meet Our Experts
+              <a href="/contact" className="text-green-400 hover:text-green-300 font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
+                Get Verified
                 <TrendingUp className="w-4 h-4" />
               </a>
             </div>
@@ -193,10 +193,10 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-100 mb-4">
-              Advanced Features
+              Blockchain Technology Stack
             </h2>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              Powered by technology to give you the best real estate experience
+              Built on Integra Chain with enterprise-grade security and compliance features
             </p>
           </div>
 
