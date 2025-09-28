@@ -1,15 +1,18 @@
-const express = require('express');
-const path = require('path');
-const fs = require('fs');
+const express = require("express");
+const path = require("path");
+const fs = require("fs");
 
 const app = express();
 const PORT = 8000;
 
 // Serve static files (CSS, JS, images)
-app.use('/css', express.static(path.join(__dirname, 'css')));
-app.use('/js', express.static(path.join(__dirname, 'js')));
-app.use('/images', express.static(path.join(__dirname, 'images')));
-app.use('/uploaded_files', express.static(path.join(__dirname, 'uploaded_files')));
+app.use("/css", express.static(path.join(__dirname, "css")));
+app.use("/js", express.static(path.join(__dirname, "js")));
+app.use("/images", express.static(path.join(__dirname, "images")));
+app.use(
+  "/uploaded_files",
+  express.static(path.join(__dirname, "uploaded_files"))
+);
 
 // Parse JSON and URL-encoded data
 app.use(express.json());
@@ -17,102 +20,103 @@ app.use(express.urlencoded({ extended: true }));
 
 // Mock data for demonstration
 const mockProperties = [
-    {
-        id: 1,
-        title: 'Luxury Downtown Condo',
-        location: 'Downtown Manhattan, NY',
-        price: '1,250,000',
-        type: 'Condominium',
-        bedrooms: 2,
-        bathrooms: 2,
-        sqft: 1200,
-        image: 'images/property-1.jpg',
-        description: 'Prime downtown condominium with city views and modern amenities.',
-        nft_available: true,
-        token_price: '1.5',
-        rental_yield: '8.5'
-    },
-    {
-        id: 2,
-        title: 'Suburban Family Villa',
-        location: 'Westfield, NJ',
-        price: '850,000',
-        type: 'Villa',
-        bedrooms: 4,
-        bathrooms: 3,
-        sqft: 2800,
-        image: 'images/property-2.jpg',
-        description: 'Beautiful suburban villa perfect for family living.',
-        nft_available: true,
-        token_price: '2.8',
-        rental_yield: '6.2'
-    },
-    {
-        id: 3,
-        title: 'Commercial Office Space',
-        location: 'Financial District, NYC',
-        price: '2,100,000',
-        type: 'Commercial',
-        bedrooms: 0,
-        bathrooms: 4,
-        sqft: 4500,
-        image: 'images/property-3.jpg',
-        description: 'Premium office space in the heart of the financial district.',
-        nft_available: true,
-        token_price: '5.2',
-        rental_yield: '12.3'
-    }
+  {
+    id: 1,
+    title: "Luxury Downtown Condo",
+    location: "Downtown Manhattan, NY",
+    price: "1,250,000",
+    type: "Condominium",
+    bedrooms: 2,
+    bathrooms: 2,
+    sqft: 1200,
+    image: "images/property-1.jpg",
+    description:
+      "Prime downtown condominium with city views and modern amenities.",
+    nft_available: true,
+    token_price: "1.5",
+    rental_yield: "8.5",
+  },
+  {
+    id: 2,
+    title: "Suburban Family Villa",
+    location: "Westfield, NJ",
+    price: "850,000",
+    type: "Villa",
+    bedrooms: 4,
+    bathrooms: 3,
+    sqft: 2800,
+    image: "images/property-2.jpg",
+    description: "Beautiful suburban villa perfect for family living.",
+    nft_available: true,
+    token_price: "2.8",
+    rental_yield: "6.2",
+  },
+  {
+    id: 3,
+    title: "Commercial Office Space",
+    location: "Financial District, NYC",
+    price: "2,100,000",
+    type: "Commercial",
+    bedrooms: 0,
+    bathrooms: 4,
+    sqft: 4500,
+    image: "images/property-3.jpg",
+    description: "Premium office space in the heart of the financial district.",
+    nft_available: true,
+    token_price: "5.2",
+    rental_yield: "12.3",
+  },
 ];
 
 // Route for homepage
-app.get('/', (req, res) => {
-    const htmlContent = generateHomePage();
-    res.send(htmlContent);
+app.get("/", (req, res) => {
+  const htmlContent = generateHomePage();
+  res.send(htmlContent);
 });
 
-app.get('/home.php', (req, res) => {
-    const htmlContent = generateHomePage();
-    res.send(htmlContent);
+app.get("/home.php", (req, res) => {
+  const htmlContent = generateHomePage();
+  res.send(htmlContent);
 });
 
 // Route for listings
-app.get('/listings.php', (req, res) => {
-    const htmlContent = generateListingsPage();
-    res.send(htmlContent);
+app.get("/listings.php", (req, res) => {
+  const htmlContent = generateListingsPage();
+  res.send(htmlContent);
 });
 
 // Route for NFT marketplace
-app.get('/nft_marketplace.php', (req, res) => {
-    const htmlContent = generateNFTMarketplacePage();
-    res.send(htmlContent);
+app.get("/nft_marketplace.php", (req, res) => {
+  const htmlContent = generateNFTMarketplacePage();
+  res.send(htmlContent);
 });
 
 // API endpoints
-app.get('/api.php', (req, res) => {
-    const action = req.query.action;
-    
-    switch(action) {
-        case 'get_properties':
-            res.json({ success: true, data: mockProperties });
-            break;
-        case 'get_marketplace_stats':
-            res.json({
-                success: true,
-                data: {
-                    total_properties: mockProperties.length,
-                    nft_enabled: mockProperties.filter(p => p.nft_available).length,
-                    total_value: '4.2M',
-                    avg_yield: '9.0'
-                }
-            });
-            break;
-        default:
-            res.json({ success: false, error: 'Invalid action' });
-    }
+app.get("/api.php", (req, res) => {
+  const action = req.query.action;
+
+  switch (action) {
+    case "get_properties":
+      res.json({ success: true, data: mockProperties });
+      break;
+    case "get_marketplace_stats":
+      res.json({
+        success: true,
+        data: {
+          total_properties: mockProperties.length,
+          nft_enabled: mockProperties.filter((p) => p.nft_available).length,
+          total_value: "4.2M",
+          avg_yield: "9.0",
+        },
+      });
+      break;
+    default:
+      res.json({ success: false, error: "Invalid action" });
+  }
 });
 
 function generateHomePage() {
-    return `
+  return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -243,7 +247,9 @@ function generateHomePage() {
         <div class="container">
             <h3>Featured Properties</h3>
             <div class="property-grid">
-                ${mockProperties.map(property => `
+                ${mockProperties
+                  .map(
+                    (property) => `
                 <div class="property-card">
                     <div class="property-image">
                         <i class="fas fa-image fa-3x"></i>
@@ -257,17 +263,23 @@ function generateHomePage() {
                             <span><i class="fas fa-bath"></i> ${property.bathrooms} Baths</span>
                             <span><i class="fas fa-ruler-combined"></i> ${property.sqft.toLocaleString()} sqft</span>
                         </div>
-                        ${property.nft_available ? `
+                        ${
+                          property.nft_available
+                            ? `
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
                             <span class="nft-badge"><i class="fas fa-coins"></i> NFT Available</span>
                             <small style="color: #27ae60;">Yield: ${property.rental_yield}%</small>
-                        </div>` : ''}
+                        </div>`
+                            : ""
+                        }
                         <div style="margin-top: 1rem;">
                             <a href="#" class="btn btn-primary" style="width: 100%; text-align: center; display: block;">View Details</a>
                         </div>
                     </div>
                 </div>
-                `).join('')}
+                `
+                  )
+                  .join("")}
             </div>
         </div>
     </section>
@@ -303,7 +315,7 @@ function generateHomePage() {
 }
 
 function generateListingsPage() {
-    return `
+  return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -349,7 +361,9 @@ function generateListingsPage() {
     <div class="container">
         <h2 class="page-title">Property Listings</h2>
         <div class="property-grid">
-            ${mockProperties.map(property => `
+            ${mockProperties
+              .map(
+                (property) => `
             <div class="property-card">
                 <div class="property-image">
                     <i class="fas fa-image fa-3x"></i>
@@ -364,15 +378,21 @@ function generateListingsPage() {
                         <span><i class="fas fa-ruler-combined"></i> ${property.sqft.toLocaleString()} sqft</span>
                     </div>
                     <p style="color: #666; margin-bottom: 1rem;">${property.description}</p>
-                    ${property.nft_available ? `
+                    ${
+                      property.nft_available
+                        ? `
                     <div class="nft-available">
                         <i class="fas fa-coins"></i> NFT Tokenization Available
                         <br><small>Token Price: ${property.token_price} ETH | Yield: ${property.rental_yield}%</small>
-                    </div>` : ''}
+                    </div>`
+                        : ""
+                    }
                     <a href="#" class="btn">View Full Details</a>
                 </div>
             </div>
-            `).join('')}
+            `
+              )
+              .join("")}
         </div>
     </div>
 </body>
@@ -380,7 +400,7 @@ function generateListingsPage() {
 }
 
 function generateNFTMarketplacePage() {
-    return `
+  return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -465,7 +485,10 @@ function generateNFTMarketplacePage() {
         </div>
 
         <div class="nft-grid">
-            ${mockProperties.filter(p => p.nft_available).map(property => `
+            ${mockProperties
+              .filter((p) => p.nft_available)
+              .map(
+                (property) => `
             <div class="nft-card">
                 <div class="nft-image">
                     <i class="fas fa-home"></i>
@@ -486,7 +509,9 @@ function generateNFTMarketplacePage() {
                     </button>
                 </div>
             </div>
-            `).join('')}
+            `
+              )
+              .join("")}
         </div>
     </div>
 
@@ -550,20 +575,22 @@ function generateNFTMarketplacePage() {
 }
 
 app.listen(PORT, () => {
-    console.log('🏠 KrayState ArEstate Server running at:');
-    console.log('🌐 http://localhost:' + PORT);
-    console.log('');
-    console.log('📄 Available pages:');
-    console.log('   • Homepage: http://localhost:' + PORT + '/');
-    console.log('   • Properties: http://localhost:' + PORT + '/listings.php');
-    console.log('   • NFT Market: http://localhost:' + PORT + '/nft_marketplace.php');
-    console.log('');
-    console.log('🔧 Features:');
-    console.log('   ✅ Traditional real estate listings');
-    console.log('   ✅ NFT tokenization options');
-    console.log('   ✅ Web3 wallet connectivity');
-    console.log('   ✅ Mock property data');
-    console.log('   ✅ Responsive design');
+  console.log("🏠 KrayState ArEstate Server running at:");
+  console.log("🌐 http://localhost:" + PORT);
+  console.log("");
+  console.log("📄 Available pages:");
+  console.log("   • Homepage: http://localhost:" + PORT + "/");
+  console.log("   • Properties: http://localhost:" + PORT + "/listings.php");
+  console.log(
+    "   • NFT Market: http://localhost:" + PORT + "/nft_marketplace.php"
+  );
+  console.log("");
+  console.log("🔧 Features:");
+  console.log("   ✅ Traditional real estate listings");
+  console.log("   ✅ NFT tokenization options");
+  console.log("   ✅ Web3 wallet connectivity");
+  console.log("   ✅ Mock property data");
+  console.log("   ✅ Responsive design");
 });
 
 module.exports = app;

@@ -3,6 +3,7 @@
 ## 🚀 Running Without Installation
 
 ### Option 1: XAMPP Portable (Recommended)
+
 1. Download XAMPP Portable from: https://portableapps.com/apps/development/xampp
 2. Extract to any folder (e.g., C:\xampp-portable)
 3. Copy your project to: xampp-portable\htdocs\kraystate
@@ -11,6 +12,7 @@
 6. Visit: http://localhost/kraystate/home.php
 
 ### Option 2: PHP Zip Download (Manual)
+
 1. Go to: https://windows.php.net/downloads/releases/
 2. Download PHP 8.2+ "Thread Safe" ZIP
 3. Extract to C:\php
@@ -23,7 +25,9 @@
 6. Run: php -S localhost:8000
 
 ### Option 3: Online Testing
+
 Upload your files to:
+
 - 000webhost.com (free PHP hosting)
 - InfinityFree.net
 - AwardSpace.com
@@ -31,6 +35,7 @@ Upload your files to:
 ## 🎯 Your Real Estate Website Features
 
 Once running, you'll have:
+
 - ✅ Traditional property listings
 - ✅ User registration and login
 - ✅ Property search and filters
@@ -41,6 +46,7 @@ Once running, you'll have:
 - ✅ Blockchain property verification
 
 ## 📁 Main Pages
+
 - home.php - Homepage with property listings
 - listings.php - All property listings
 - view_property.php - Individual property details
@@ -49,7 +55,9 @@ Once running, you'll have:
 - admin/ - Admin panel
 
 ## 🔧 Quick Test (Static HTML)
+
 If you can't run PHP immediately:
+
 1. Rename home.php to home.html
 2. Open in any web browser
 3. Most features will work except:
