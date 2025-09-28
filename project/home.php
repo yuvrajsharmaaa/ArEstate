@@ -2,13 +2,19 @@
 
 include 'components/connect.php';
 
-if(isset($_COOKIE['user_id'])){
-   $user_id = $_COOKIE['user_id'];
-}else{
-   $user_id = '';
-}
+// Remove authentication - set default user for demo
+$user_id = 'demo_user';
 
-include 'components/save_send.php';
+// Initialize message arrays
+$warning_msg = [];
+$success_msg = [];
+$info_msg = [];
+$error_msg = [];
+
+// Include save_send.php only if connection exists
+if(isset($conn) && $conn) {
+   include 'components/save_send.php';
+}
 
 ?>
 
@@ -255,15 +261,21 @@ include 'components/save_send.php';
 
    <div class="box-container">
       <?php
-         $total_images = 0;
-         $select_properties = $conn->prepare("SELECT * FROM `property` ORDER BY date DESC LIMIT 6");
-         $select_properties->execute();
-         if($select_properties->rowCount() > 0){
-            while($fetch_property = $select_properties->fetch(PDO::FETCH_ASSOC)){
+         if(isset($conn) && $conn) {
+            $total_images = 0;
+            $select_properties = $conn->prepare("SELECT * FROM `property` ORDER BY date DESC LIMIT 6");
+            $select_properties->execute();
+            if($select_properties->rowCount() > 0){
+               while($fetch_property = $select_properties->fetch(PDO::FETCH_ASSOC)){
+                  
+               $select_user = $conn->prepare("SELECT * FROM `users` WHERE id = ?");
+               $select_user->execute([$fetch_property['user_id']]);
+               $fetch_user = $select_user->fetch(PDO::FETCH_ASSOC);
                
-            $select_user = $conn->prepare("SELECT * FROM `users` WHERE id = ?");
-            $select_user->execute([$fetch_property['user_id']]);
-            $fetch_user = $select_user->fetch(PDO::FETCH_ASSOC);
+               // Provide fallback if user not found
+               if(!$fetch_user) {
+                  $fetch_user = ['name' => 'Demo User'];
+               }
 
             if(!empty($fetch_property['image_02'])){
                $image_coutn_02 = 1;
@@ -337,9 +349,12 @@ include 'components/save_send.php';
          </div>
       </form>
       <?php
+            }
+         }else{
+            echo '<p class="empty">no properties added yet! <a href="post_property.php" style="margin-top:1.5rem;" class="btn">add new</a></p>';
          }
-      }else{
-         echo '<p class="empty">no properties added yet! <a href="post_property.php" style="margin-top:1.5rem;" class="btn">add new</a></p>';
+      } else {
+         echo '<p class="empty">Database connection not available. <a href="database_manager.php" style="margin-top:1.5rem;" class="btn">Setup Database</a></p>';
       }
       ?>
       

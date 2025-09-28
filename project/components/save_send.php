@@ -1,6 +1,12 @@
 <?php
 
-if(isset($_POST['save'])){
+// Initialize message arrays if not exists
+if(!isset($warning_msg)) $warning_msg = [];
+if(!isset($success_msg)) $success_msg = [];
+if(!isset($info_msg)) $info_msg = [];
+if(!isset($error_msg)) $error_msg = [];
+
+if(isset($_POST['save']) && isset($conn)){
    if($user_id != ''){
 
       $save_id = create_unique_id();
@@ -15,7 +21,7 @@ if(isset($_POST['save'])){
          $remove_saved->execute([$property_id, $user_id]);
          $success_msg[] = 'removed from saved!';
       }else{
-         $insert_saved = $conn->prepare("INSERT INTO`saved`(id, property_id, user_id) VALUES(?,?,?)");
+         $insert_saved = $conn->prepare("INSERT INTO `saved`(id, property_id, user_id) VALUES(?,?,?)");
          $insert_saved->execute([$save_id, $property_id, $user_id]);
          $success_msg[] = 'listing saved!';
       }

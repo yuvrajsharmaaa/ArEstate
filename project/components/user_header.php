@@ -46,12 +46,11 @@
             <li><a href="saved.php">saved <i class="far fa-heart"></i></a></li>
             <li><a href="#">account <i class="fas fa-angle-down"></i></a>
                <ul>
-                  <li><a href="login.php">login now</a></li>
-                  <li><a href="register.php">register new</a></li>
-                  <?php if($user_id != ''){ ?>
-                  <li><a href="update.php">update profile</a></li>
-                  <li><a href="components/user_logout.php" onclick="return confirm('logout from this website?');">logout</a>
-                  <?php } ?></li>
+                  <li><a href="dashboard.php">dashboard</a></li>
+                  <li><a href="post_property.php">post property</a></li>
+                  <li><a href="my_listings.php">my listings</a></li>
+                  <li><a href="about.php">about us</a></li>
+                  <li><a href="contact.php">contact us</a></li>
                </ul>
             </li>
          </ul>

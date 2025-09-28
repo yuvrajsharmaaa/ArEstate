@@ -8,9 +8,32 @@ $password = '';
 $database = 'home_db';
 
 try {
-    // First, connect without specifying database to create it
-    $pdo = new PDO("mysql:host=$host", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    // Try different connection methods
+    $connectionMethods = [
+        "mysql:host=$host",
+        "mysql:host=$host;port=3306",
+        "mysql:host=127.0.0.1",
+        "mysql:host=127.0.0.1;port=3306"
+    ];
+    
+    $pdo = null;
+    foreach ($connectionMethods as $dsn) {
+        try {
+            $pdo = new PDO($dsn, $username, $password, [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"
+            ]);
+            echo "<p style='color: blue;'>✅ Connected using: $dsn</p>";
+            break;
+        } catch (PDOException $e) {
+            echo "<p style='color: orange;'>⚠️ Failed with $dsn: " . $e->getMessage() . "</p>";
+            continue;
+        }
+    }
+    
+    if (!$pdo) {
+        throw new PDOException("All connection methods failed");
+    }
     
     // Create database
     $pdo->exec("CREATE DATABASE IF NOT EXISTS $database");
