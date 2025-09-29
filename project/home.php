@@ -381,6 +381,8 @@ if(isset($conn) && $conn) {
 
 <!-- custom js file link  -->
 <script src="js/script.js"></script>
+<script src="js/contract-addresses.js"></script>
+<script src="js/web3-integration.js"></script>
 
 <?php include 'components/message.php'; ?>
 
