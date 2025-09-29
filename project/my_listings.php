@@ -2,25 +2,28 @@
 
 include 'components/connect.php';
 
-if(isset($_COOKIE['user_id'])){
-   $user_id = $_COOKIE['user_id'];
-}else{
-   $user_id = '';
-   header('location:login.php');
-}
+// Remove authentication - set default user for demo
+$user_id = 'demo_user';
+
+// Initialize message arrays
+$warning_msg = [];
+$success_msg = [];
+$info_msg = [];
+$error_msg = [];
 
 if(isset($_POST['delete'])){
 
    $delete_id = $_POST['property_id'];
    $delete_id = filter_var($delete_id, FILTER_SANITIZE_STRING);
 
-   $verify_delete = $conn->prepare("SELECT * FROM `property` WHERE id = ?");
-   $verify_delete->execute([$delete_id]);
+   if($conn){
+      $verify_delete = $conn->prepare("SELECT * FROM `property` WHERE id = ?");
+      $verify_delete->execute([$delete_id]);
 
-   if($verify_delete->rowCount() > 0){
-      $select_images = $conn->prepare("SELECT * FROM `property` WHERE id = ?");
-      $select_images->execute([$delete_id]);
-      while($fetch_images = $select_images->fetch(PDO::FETCH_ASSOC)){
+      if($verify_delete->rowCount() > 0){
+         $select_images = $conn->prepare("SELECT * FROM `property` WHERE id = ?");
+         $select_images->execute([$delete_id]);
+         while($fetch_images = $select_images->fetch(PDO::FETCH_ASSOC)){
          $image_01 = $fetch_images['image_01'];
          $image_02 = $fetch_images['image_02'];
          $image_03 = $fetch_images['image_03'];
@@ -49,6 +52,9 @@ if(isset($_POST['delete'])){
       $success_msg[] = 'listing deleted successfully!';
    }else{
       $warning_msg[] = 'listing deleted already!';
+   }
+   } else {
+      $error_msg[] = 'Database connection unavailable!';
    }
 
 }
@@ -82,10 +88,11 @@ if(isset($_POST['delete'])){
 
    <?php
       $total_images = 0;
-      $select_properties = $conn->prepare("SELECT * FROM `property` WHERE user_id = ? ORDER BY date DESC");
-      $select_properties->execute([$user_id]);
-      if($select_properties->rowCount() > 0){
-         while($fetch_property = $select_properties->fetch(PDO::FETCH_ASSOC)){
+      if($conn){
+         $select_properties = $conn->prepare("SELECT * FROM `property` WHERE user_id = ? ORDER BY date DESC");
+         $select_properties->execute([$user_id]);
+         if($select_properties->rowCount() > 0){
+            while($fetch_property = $select_properties->fetch(PDO::FETCH_ASSOC)){
 
          $property_id = $fetch_property['id'];
 
@@ -132,6 +139,9 @@ if(isset($_POST['delete'])){
          }
       }else{
          echo '<p class="empty">no properties added yet! <a href="post_property.php" style="margin-top:1.5rem;" class="btn">add new</a></p>';
+      }
+      } else {
+         echo '<p class="empty">Database connection unavailable!</p>';
       }
       ?>
 
